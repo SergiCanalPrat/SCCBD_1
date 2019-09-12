@@ -2,14 +2,16 @@
   "name": "sccbd1",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "backend/app.js",
   "scripts": {
+    "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "morgan": "^1.9.1",
-    "express": "^4.16.4"
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "morgan": "^1.9.1"
   }
 }
