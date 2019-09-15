@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { post } from 'selenium-webdriver/http';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,16 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'frontend';
+  hola: any;
+  p: any;
+  
+  get(){
+    this.hola == "Hola mundo"
+  }
+
+  post(){
+    this.hola = this.p 
+  }
 }
+
+
