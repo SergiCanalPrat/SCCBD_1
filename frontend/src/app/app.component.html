@@ -1,20 +1,12 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Frontend</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
 
-  <body>  
-     <app-root>SMART CITY</app-root>
-     <p></p>
-      <div>{{hola}}</div>
-      <button (click) = "get()">GET</button>
-    <p></p>
-      <input name="p"></input>
-      <button (click) = "post()">POST</button>
-  </body>
-</html>
+
+<!-- main app container -->
+<div class="jumbotron">
+  <div class="container">
+      <div class="row">
+          <div class="col-sm-6 offset-sm-3">
+              <router-outlet></router-outlet>
+          </div>
+      </div>
+  </div>
+</div>
