@@ -9,9 +9,11 @@ import { MainService } from 'src/app/services/main.service';
 export class MainComponent implements OnInit {
   hola: any;
   mens: string;
+  name: string;
     
   constructor(private mainService: MainService) { 
     this.mens = "";
+    this.name = "";
    }
 
   ngOnInit() {
