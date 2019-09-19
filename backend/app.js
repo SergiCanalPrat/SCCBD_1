@@ -16,17 +16,22 @@ app.listen(PORT, () => {
 
 //implementacion del cors
 app.unsubscribe((req, res, next) =>{
-	res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept, Authorization");
+	res.header("Access-Control-Allow-Headers" ,"http://localhost:4200"); ///¿Añadir local host?
+	res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
 	if(req.method == 'OPTIONS'){
-		res.header("Access-Control-Allow-Headers", "POST, GET" )
+		res.header("Access-Control-Allow-Headers", "POST", "GET" )
 	} next()
 })
 
+app.use(cors());
 //funciones
-app.post( '/test',
-	(req, res) => res.json (req.body)
+app.post( '/post',
+	(req, res) => res.json (req.json)
 ) 
 
-app.get('/test',
-	(req, res) => res.json({ msg: "hello"})
+app.get('/get',
+	(req, res) => res.json("hello")
 )

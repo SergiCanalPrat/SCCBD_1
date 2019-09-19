@@ -6,4 +6,4 @@ const funciones = require('../backend/app')
 api.get('/get',funciones.get)
 
 //post
-api.post('/post', funciones.post)
+api.post('/post/:mens', funciones.post)

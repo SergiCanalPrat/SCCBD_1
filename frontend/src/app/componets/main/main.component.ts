@@ -7,7 +7,7 @@ import { MainService } from 'src/app/services/main.service';
   styleUrls: ['./main.component.css']
 })
 export class MainComponent implements OnInit {
-  hola: any;
+  hola: Object;
   mens: string;
   name: string;
     
@@ -17,20 +17,23 @@ export class MainComponent implements OnInit {
    }
 
   ngOnInit() {
-    console.log("Inicializada", this.mens)
   }
+
   get(){
     //this.hola = "Hola mundo";    
     console.log(this.hola)
     this.mainService.get().subscribe(res =>{
       this.hola = res;
-      console.log(this.hola, res)
+      console.log("respuesta",res)
     })
   }
 
   post(){
-    this.hola = this.mens;
-    console.log(this.mens)
+    this.mainService.post(this.mens).subscribe(res=>{
+      this.hola = res;
+      console.log(this.hola, this.mens, res)
+    })
+    
   }
 
 }
