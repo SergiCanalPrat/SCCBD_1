@@ -20,7 +20,8 @@ export class MainComponent implements OnInit {
   }
 
   get(){
-    //this.hola = "Hola mundo";    
+     
+    //recoger la respuesta
     console.log(this.hola)
     this.mainService.get().subscribe(res =>{
       this.hola = res;
@@ -29,6 +30,7 @@ export class MainComponent implements OnInit {
   }
 
   post(){
+
     this.mainService.post(this.mens).subscribe(res=>{
       this.hola = res;
       console.log(this.hola, this.mens, res)
