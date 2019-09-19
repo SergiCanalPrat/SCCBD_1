@@ -7,9 +7,10 @@ import { MainService } from 'src/app/services/main.service';
   styleUrls: ['./main.component.css']
 })
 export class MainComponent implements OnInit {
-  hola: Object;
+  getres: Object;
   mens: string;
   name: string;
+  postres: Object;
     
   constructor(private mainService: MainService) { 
     this.mens = "";
@@ -20,20 +21,16 @@ export class MainComponent implements OnInit {
   }
 
   get(){
-     
-    //recoger la respuesta
-    console.log(this.hola)
     this.mainService.get().subscribe(res =>{
-      this.hola = res;
+      this.getres = res;
       console.log("respuesta",res)
     })
   }
 
   post(){
-
-    this.mainService.post(this.mens).subscribe(res=>{
-      this.hola = res;
-      console.log(this.hola, this.mens, res)
+    this.mainService.post(this.mens).subscribe(res =>{
+      this.postres = res;
+      console.log(this.postres, this.mens, res.toString())
     })
     
   }

@@ -5,8 +5,9 @@ const logger = require ('morgan');
 const cors = require('cors');
 const crypto = require('crypto');
 const app = express();
+
 app.use(logger('dev')); // Log requests (GET..)
-app.use(express('json')); // Needed to retrieve JSON
+app.use(express.json()); // Needed to retrieve JSON
 
 //conexion al puerto
 const PORT = process.env.port || 3000;
