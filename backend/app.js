@@ -37,7 +37,7 @@ app.get('/get',
 	(req, res) => res.json("hello")
 )
 
-function decrypt(){
+/*function decrypt(){
 	   //desencriptacion
 	   window.crypto.subtle.decrypt({
 		name:"AES-CBC",
@@ -51,4 +51,4 @@ function decrypt(){
 	  .catch(function(err){
 		  console.error(err);
 	  })
-}
+}*/
