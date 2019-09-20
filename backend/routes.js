@@ -1,9 +1,30 @@
 'use strict'
-const api = express.Router()
-const funciones = require('../backend/app')
 
-//get
-api.get('/get',funciones.get)
+function encript(){
+    window.crypto.subtle.encrypt({
+        name:"AES-CBC",
+        iv: window.crypto.getRandomValues(new Uint8Array(16)),
+    },
+    key, data
+   ).then(function(encripted){
+       console.log(new Uint8Array(encripted));
+   }).catch(function(err){
+       console.error(err);       
+   });
+}
 
-//post
-api.post('/post/:post', funciones.post)
+function decrypt(){
+	   //desencriptacion
+	   window.crypto.subtle.decrypt({
+		name:"AES-CBC",
+		iv: ArrayBuffer(16),  
+	  },
+	 key, data 
+	  )
+	  .then(function(decrypted){
+		  console-log(new Uint8Array(decrypted));
+	  })
+	  .catch(function(err){
+		  console.error(err);
+	  })
+}

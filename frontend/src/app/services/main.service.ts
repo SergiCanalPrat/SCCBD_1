@@ -10,7 +10,8 @@ export class MainService {
   get(){
   return this.http.get('http://localhost:3000/get');
   } 
-  post(mens: string){
-    return this.http.post('http://localhost:3000/post', mens);
+  post(mens: Object){
+    console.log("envio", mens)
+    return this.http.post('http://localhost:3000/post' +  `/${mens}` , mens);
   }
 }

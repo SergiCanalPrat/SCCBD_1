@@ -5,6 +5,8 @@ const logger = require ('morgan');
 const cors = require('cors');
 const crypto = require('crypto');
 const app = express();
+const routes = require('./routes')
+
 
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
@@ -29,27 +31,13 @@ app.unsubscribe((req, res, next) =>{
 
 app.use(cors());
 //funciones
-app.post( '/post',	(req, res) => 
-	res.json (req.body)
+app.post( '/post/:mns',	(req, res) => {
+	let mns = req.params.mns;
 	
-) 
+	res.json (req.params.mns)
+}) 
 
-app.get('/get',
-	(req, res) => res.json("hello")
-)
+app.get('/get', (req, res) => {
+	res.json("hello")
+})
 
-/*function decrypt(){
-	   //desencriptacion
-	   window.crypto.subtle.decrypt({
-		name:"AES-CBC",
-		iv: ArrayBuffer(16),  
-	  },
-	 key, data 
-	  )
-	  .then(function(decrypted){
-		  console-log(new Uint8Array(decrypted));
-	  })
-	  .catch(function(err){
-		  console.error(err);
-	  })
-}*/
