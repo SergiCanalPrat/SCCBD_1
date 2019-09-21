@@ -32,12 +32,13 @@ app.unsubscribe((req, res, next) =>{
 app.use(cors());
 //funciones
 app.post( '/post/:mns',	(req, res) => {
-	let mns = req.params.mns;
 	
+	let mns = req.params.mns;
 	res.json (req.params.mns)
 }) 
 
-app.get('/get', (req, res) => {
-	res.json("hello")
+app.get('/get/:mns', (req, res) => {
+	let mns = req.params.mns;
+	res.json (req.params.mns)
 })
 

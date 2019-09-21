@@ -1,6 +1,6 @@
 'use strict'
 
-function encript(){
+function encrypt(){
     window.crypto.subtle.encrypt({
         name:"AES-CBC",
         iv: window.crypto.getRandomValues(new Uint8Array(16)),
