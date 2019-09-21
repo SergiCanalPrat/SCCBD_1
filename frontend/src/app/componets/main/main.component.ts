@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MainService } from 'src/app/services/main.service';
 
-
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -12,7 +11,8 @@ export class MainComponent implements OnInit {
   getres: Object;
   mens: Object;
   postres: Object;
-   
+  enmens: Object;
+
   constructor(private mainService: MainService) {}
   ngOnInit() {
   }
@@ -24,6 +24,7 @@ export class MainComponent implements OnInit {
     })
   }
   post(){
+
     this.mainService.post(this.mens).subscribe(res =>{
       this.postres = res;
       console.log("Respuesta", res)
