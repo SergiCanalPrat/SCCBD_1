@@ -1,13 +1,17 @@
-<h1>SMART CITY</h1>
+<h2>SMART CITY</h2>
+
+<label >Message: </label>
+<input type="text" name="mng" #mng="ngModel" [(ngModel)]="mens"> 
+<p></p>
 
 <div>
-    <p>{{getres}}</p>
-    <button (click)="get()" >GET</button>
+    <button class="btn btn-success" type="button" (click)="post()"> POST (Encrypt)</button> 
+    <label>  Encrypted message: <p></p> {{postres}}</label>
+    <p></p>
 </div>
-<p></p>
+
 <div>
-    
-    <input type="text" name="mng" #mng="ngModel" [(ngModel)]="mens"> 
-   <button class="btn btn-success" type="button" (click)="post()">POST</button> 
-   <p>{{postres}}</p>
+    <button (click)="get()" >GET (Decrypt)</button>
+    <label>  Decrypted message:<p></p> {{getres}} </label>
 </div>
+
