@@ -5,7 +5,7 @@ const logger = require ('morgan');
 const cors = require('cors');
 const crypto = require('crypto');
 const app = express();
-const routes = require('./routes')
+
 
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
@@ -13,12 +13,12 @@ app.use(express.json()); // Needed to retrieve JSON
 //conexion al puerto
 const PORT = process.env.port || 3000;
 app.listen(PORT, () => {
-	console.log('Connected to Port ',PORT )
+	console.log('Connected to Port: ', PORT )
 });
 
 //implementacion del cors
 app.unsubscribe((req, res, next) =>{
-	res.header("Access-Control-Allow-Headers" ,"http://localhost:4200"); ///¿Añadir local host?
+	res.header("Access-Control-Allow-Headers" ,"http://localhost:4200"); 
 	res.header(
         "Access-Control-Allow-Headers",
         "Origin, X-Requested-With, Content-Type, Accept, Authorization"
@@ -27,7 +27,6 @@ app.unsubscribe((req, res, next) =>{
 		res.header("Access-Control-Allow-Headers", "POST", "GET" )
 	} next()
 })
-
 app.use(cors());
 //funciones
 
@@ -47,43 +46,23 @@ app.get('/get/:mns', (req,res) => {
 	res.json (demns)
 })
 
+//funcion de encriptar
 function encrypt (msg){
-	const algorithm = 'aes-256-cbc';
-	const password = 'MyPassword';
-	// Use the async `crypto.scrypt()` instead.
-	const key = crypto.scryptSync(password, 'salt', 32);
-	// Use `crypto.randomBytes` to generate a random iv instead of the static iv
-	// shown here.
-	const iv = Buffer.alloc(16, 0); // Initialization vector.
-	
-	const cipher = crypto.createCipheriv(algorithm, key, iv);
-	
-	let encrypted = cipher.update(msg, 'utf8', 'hex');
-	encrypted += cipher.final('hex');
-	console.log('Mensaje de la función encrypt: '+encrypted);
-	return encrypted;
-	// Prints encrypted message
+	console.log('encrypt del server 1')
+	let encrypted = crypto.createCipher('aes-256-cbc', key,iv);
+	let cipher = cipher.update(msg);
+	cipher = Buffer.concat([encrypted, cipher.final()]);
+	return {cipherData: cipher.toString('hex')};
 	}
 
+//funcion de encriptar
 function decrypt (msg){
-	console.log('decript del server 1')
-	const algorithm = 'aes-256-cbc';
-	const password = 'MyPassword';
-	// Use the async `crypto.scrypt()` instead.
-	const key = crypto.scryptSync(password, 'salt', 32);
-	// The IV is usually passed along with the ciphertext.
-	const iv = Buffer.alloc(16, 0); // Initialization vector.
-
-	const decipher = crypto.createDecipheriv(algorithm, key, iv);
-	console.log('decript del server 2')
-	// Encrypted using same algorithm, key and iv.
-	const encrypted = msg;
-	let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-	console.log('decript del server 3')
-	console.log('Mensaje de la función decrypt antes de decript del server 4: '+decrypted);
-	decrypted += decipher.final('utf8');
-	console.log('Mensaje de la función decrypt: '+decrypted);
-	console.log('decript del server 4')
-	return decrypted;
-	// Prints: some clear text data
+	console.log('decrypt del server 1')
+	let descrypted = crypto.createCipher('aes-256-cbc',key,iv);
+	let decipher = decipher.update(msg);
+	decipher = Buffer.concat([descrypted, decipher.final()]);
+	return {decipher: decipher.toString('hex')}
 }
+
+
+

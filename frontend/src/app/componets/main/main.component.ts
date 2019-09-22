@@ -62,14 +62,12 @@ export class MainComponent implements OnInit {
     console.log('decoded msg - comprobación: ' + mens1)
     //si aquí enviamos mens, estaremos enviando un Object ArrayBuffer que siempre es el mismo
     //si ponemos mens1, estaremos enviando un string cifrado
-/*     this.mainService.post(mens1).subscribe(res => {
+     this.mainService.post(mens1).subscribe(res => {
       console.log('este es mi mens2: ' + mens)
       console.log('esta es mi res: ' + res)
       this.postres = res;
-      console.log("Respuesta", res)
-    }) */
-    this.postres = await this.mainService.post(mens1).toPromise();
-    console.log("Respuesta", this.postres);
+      console.log("respuesta post: ", res)
+    })
   }
 }
 
@@ -105,7 +103,7 @@ async function decrypt(key, ciphertext, iv) {
   const ret = self.crypto.subtle.decrypt(
     {
       name: "AES-CBC",
-      iv: iv
+      iv
     },
     key,
     ciphertext
