@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const app = express();
 
 
+wind
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
 
