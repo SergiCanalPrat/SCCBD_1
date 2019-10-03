@@ -31,20 +31,41 @@ export class MainComponent implements OnInit {
     /* this.mainService.get(enmens).subscribe(res => {
       console.log('empezamos get3')
       this.getres = str2ab(res);
-      console.log("respuesta", res)
-    }) */
-    this.getres = await this.mainService.get(enmens).toPromise();
-    console.log("respuesta", this.getres)
-
+      console.log("respuesta",res)
+    })
     console.log('llega hasta antes cambiar de nuevo a ArrayBuffer')
-    //enmens = str2ab(this.getres);
-    console.log('llega hasta antes de final 1')
-    
-    decrypt(this.key, hex2ab(this.getres), this.iv)
-    
+     //enmens = str2ab(this.getres);
+     console.log('llega hasta antes de final 1')
+     enmens = await decrypt(this.key, this.getres, this.iv)
+     console.log("respuesta final1:",enmens)
+     enmens = ab2str(enmens);
+     this.mens = enmens;
+  }*/
+/*
+  async get(){    
+    const key = await genkey(); //epera a que le pase la clave   
+    this.mens = String(this.postres); //this.postres.toString()    
+    var buf = new TextEncoder().encode(this.mens); //encripted message    
+
+    let enmens = await decrypt(key, buf, this.iv);
+    console.log("get");
+    this.mainService.get(enmens).subscribe(res =>{
+
+      this.getres = res;
+      console.log("respuesta get: ",res)
+    })
+    //desencriptar
+    self.crypto.subtle.decrypt(
+      {
+        name: "AES-CBC",
+        iv: new ArrayBuffer(16),
+      },
+      this.key,
+      data = this.getres,
+    )*/
   }
 
-  async post() {
+  async post(){
     this.iv = genIv()
     console.log('este es mi iv' + this.iv)
     this.key = await genkey();
@@ -68,6 +89,23 @@ export class MainComponent implements OnInit {
       this.postres = res;
       console.log("respuesta post: ", res)
     })
+  }
+
+  generate() {
+    self.crypto.subtle.generateKey(
+      {
+        name: "AES-CBC",
+        length: 256,
+      }, false,
+      ["encrypt", "decrypt"]
+    )
+      .then(function (key) {
+        console.log(key);
+        // return key;
+      })
+    /*.catch(function (err) {
+      console.error(err);
+    });*/
   }
 }
 

@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const app = express();
 
 
-wind
+
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
 
@@ -29,8 +29,9 @@ app.unsubscribe((req, res, next) =>{
 	} next()
 })
 app.use(cors());
-//funciones
 
+
+//FUNCIONES POST, GET, ENCRIPTAR, DESENCRIPTAR
 
 app.post( '/post/:mns',	(req, res) => {
 	let mns = req.params.mns;
