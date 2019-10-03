@@ -50,7 +50,6 @@ export class MainComponent implements OnInit {
     let enmens = await decrypt(key, buf, this.iv);
     console.log("get");
     this.mainService.get(enmens).subscribe(res =>{
-
       this.getres = res;
       console.log("respuesta get: ",res)
     })
