@@ -36,7 +36,7 @@ export class MainComponent implements OnInit {
     })
     console.log('llega hasta antes cambiar de nuevo a ArrayBuffer')
      //enmens = str2ab(this.getres);
-     console.log('llega hasta antes de final 1')
+     console.log('llega hasta antesdnyjsrhsede final 1  '+ this.getres)
      enmens = await decrypt(this.key, this.getres, this.iv)
      console.log("respuesta final1:",enmens)
      enmens = ab2str(enmens);
@@ -91,7 +91,6 @@ export class MainComponent implements OnInit {
       console.log("respuesta post: ", res)
     })
   }
-
 }
 
 async function genkey() {

@@ -14,6 +14,7 @@ function encript(){
    });
 }
 
+
 function decrypt(){
 	   //desencriptacion
 	   window.crypto.subtle.decrypt({

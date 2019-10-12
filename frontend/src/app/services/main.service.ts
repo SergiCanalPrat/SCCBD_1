@@ -12,7 +12,7 @@ export class MainService {
   return this.http.get('http://localhost:3000/get'+  `/${mens}` , mens);
   } 
   post(mens: Object){
-    //console.log("envio", mens)
+    console.log("envio", mens)
     return this.http.post('http://localhost:3000/post' +  `/${mens}` , mens);
   }
 }
