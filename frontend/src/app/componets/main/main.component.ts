@@ -46,10 +46,11 @@ export class MainComponent implements OnInit {
   async get(){    
     const key = await genkey(); //epera a que le pase la clave   
     this.mens = String(this.postres); //this.postres.toString()    
-    var buf = new TextEncoder().encode(this.mens); //encripted message    
-
+    var buf =  new TextEncoder().encode(this.mens); //encripted message    
+    console.log("get1");
     let enmens = await decrypt(key, buf, this.iv);
-    console.log("get");
+
+    console.log("get11");
     this.mainService.get(enmens).subscribe(res =>{
       this.getres = res;
       console.log("respuesta get: ",res)
@@ -125,7 +126,7 @@ async function decrypt(key, ciphertext, iv) {
   const ret = self.crypto.subtle.decrypt(
     {
       name: "AES-CBC",
-      iv
+      iv,
     },
     key,
     ciphertext

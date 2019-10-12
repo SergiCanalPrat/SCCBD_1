@@ -68,4 +68,3 @@ function encrypt (msg){
 		// Prints: some clear text data
 	
 	}
-
