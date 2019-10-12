@@ -7,8 +7,9 @@ import { HttpClient } from '@angular/common/http';
 export class MainService {
 
   constructor(private http: HttpClient) { }
-  get(mens: Object){
-  return this.http.get('http://localhost:3000/get'+  `/${mens}` , mens);
+  get(mens2: Object){
+    console.log("recibo", mens2)
+  return this.http.get('http://localhost:3000/get'+  `/${mens2}` , mens2);
   } 
   post(mens: Object){
     console.log("envio", mens)
