@@ -13,6 +13,7 @@
     "@types/jquery": "^3.3.31",
     "bigint-crypto-utils": "^2.2.1",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "express": "^4.16.4",
     "morgan": "^1.9.1"
   }

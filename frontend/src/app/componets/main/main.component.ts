@@ -4,6 +4,7 @@ import { invalid } from '@angular/compiler/src/render3/view/util';
 import { Buffer } from 'buffer'
 import { toBase64String } from '@angular/compiler/src/output/source_map';
 
+
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -90,22 +91,6 @@ export class MainComponent implements OnInit {
     })
   }
 
-  generate() {
-    self.crypto.subtle.generateKey(
-      {
-        name: "AES-CBC",
-        length: 256,
-      }, false,
-      ["encrypt", "decrypt"]
-    )
-      .then(function (key) {
-        console.log(key);
-        // return key;
-      })
-    /*.catch(function (err) {
-      console.error(err);
-    });*/
-  }
 }
 
 async function genkey() {
