@@ -11,8 +11,8 @@ import { toBase64String } from '@angular/compiler/src/output/source_map';
 })
 
 export class MainComponent implements OnInit {
-  getres: Object;
-  mens: string;
+  getres: ArrayBuffer;
+  mens: Object;
   postres: Object;
   enmens: string;
   iv: Object;
@@ -24,16 +24,23 @@ export class MainComponent implements OnInit {
   }
    async get(){
     console.log('empezamos get1')
-    var buf  = str2ab(this.postres);
     console.log('este es el postres que tengo: '+this.postres)
+    //let enmens = ab2str(this.postres)
+    let enmens = this.postres
     console.log('empezamos get2')
-    let enmens = decrypt(this.key, buf, this.iv)
-    console.log('empezamos get3')
     this.mainService.get(enmens).subscribe(res =>{
-      console.log('empezamos get4')
-      this.getres = res;
+      console.log('empezamos get3')
+      this.getres = str2ab(res);
       console.log("respuesta",res)
     })
+    console.log('llega hasta antes cambiar de nuevo a ArrayBuffer')
+     //enmens = str2ab(this.getres);
+     console.log('llega hasta antes de final 1')
+     enmens = await decrypt(this.key, this.getres, this.iv)
+     console.log("respuesta final1:",enmens)
+     enmens = ab2str(enmens);
+     this.mens = enmens;
+
   }
   
   async post(){

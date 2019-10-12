@@ -36,7 +36,6 @@ app.post( '/post/:mns',	(req, res) => {
 	let mns = req.params.mns;
 	console.log('este mensaje recibo del frontend: '+mns);
 	let enmns = encrypt(mns);
-	console.log('este mensaje recibo del frontend y lo encripto: '+enmns);
 	res.json (enmns)
 }) 
 
@@ -60,7 +59,7 @@ function encrypt (msg){
 	const cipher = crypto.createCipheriv(algorithm, key, iv);
 	
 	let encrypted = cipher.update(msg, 'utf8', 'hex');
-	encrypted += cipher.final('');
+	encrypted += cipher.final('hex');
 	console.log('Mensaje de la función encrypt: '+encrypted);
 	return encrypted;
 	// Prints encrypted message
@@ -81,7 +80,8 @@ function decrypt (msg){
 	const encrypted = msg;
 	let decrypted = decipher.update(encrypted, 'hex', 'utf8');
 	console.log('decript del server 3')
-	decrypted += decipher.final('hex');
+	console.log('Mensaje de la función decrypt antes de decript del server 4: '+decrypted);
+	decrypted += decipher.final('utf8');
 	console.log('Mensaje de la función decrypt: '+decrypted);
 	console.log('decript del server 4')
 	return decrypted;
