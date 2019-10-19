@@ -70,15 +70,7 @@ function decrypt (msg){
 	decipher = Buffer.concat([descrypted, decipher.final()]);
 	return {decipher: decipher.toString('hex')}
 }
-//funcion para key
-function key(){
-	console.log('crear key')
-}
-//funcion de iv
-function iv(){
-	console.log("crear iv")
 
-}
 
 
 
