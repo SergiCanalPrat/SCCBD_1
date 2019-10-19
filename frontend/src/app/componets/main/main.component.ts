@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MainService } from 'src/app/services/main.service';
-import { invalid } from '@angular/compiler/src/render3/view/util';
-import { Buffer } from 'buffer';
-import { toBase64String } from '@angular/compiler/src/output/source_map';
-import { ThrowStmt } from '@angular/compiler';
-import * as hexToArrayBuffer from 'hex-to-array-buffer';
+import { Buffer } from 'buffer':
+//import * as hexToArrayBuffer from 'hex-to-array-buffer'
 import * as arrToString from 'arraybuffer-to-string';
+
 const bigintCryptoUtils = require('bigint-crypto-utils');
+const hexToArrayBuffer = require('hex-to-array-buffer');
 
 @Component({
   selector: 'app-main',
