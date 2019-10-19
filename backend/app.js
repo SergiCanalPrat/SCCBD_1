@@ -38,6 +38,9 @@ const KEY_LENGTH = 32;
 const IV_LENGTH = 16; // For AES, this is always 16
 let iv = crypto.randomBytes(IV_LENGTH);
 let key = crypto.randomBytes(KEY_LENGTH);
+let n;
+let d;
+let e;
 
 app.post( '/post/:mns',	(req, res) => {
 	let mns = req.params.mns;
@@ -72,6 +75,29 @@ function decrypt (msg){
 	return {decryptedData: decrypted.toString('hex')};
 }
 
-
-
-
+//funcion para crear key RSA
+async function KeyRSA(){
+	let p = await bigintCryptoUtils.prime(1024);
+	let q = await bigintCryptoUtils.prime(1025);	
+	n = p * q;
+	let r = BigInt('1');
+	let phi_n = (p-r)*(q-r);
+	e = BigInt('65537');
+	d = bigintCryptoUtils.modIvn(e, phi_n);
+}
+//funcion para encriptar RSA
+function encryptRSA(msg){
+	let msgbuf = Buffer.from(msg,'utf8');
+	let msgbig = BigInt('0x' + buf.toString('hex'));
+	let cryptoRSA = bigintCryptoUtils.modPow(big,e,n)
+	return cryptoRSA;
+}
+//funcion para desencryptar RSA
+function decryptRSA(msg){
+	let msgbig = BigInt('0x' + mns);
+	let decrypto = bigintCryptoUtils.modPow(msgbig, d, n);
+	let decryptoHex = decrypto.toString(16);
+    let decryptobuf = Buffer.from(decryptoHex, 'hex');
+    let decryptedRSA = decryptobuf.toString('utf8');	
+	return decryptedRSA;
+}

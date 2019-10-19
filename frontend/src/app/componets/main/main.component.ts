@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MainService } from 'src/app/services/main.service';
 import { invalid } from '@angular/compiler/src/render3/view/util';
-import { Buffer } from 'buffer'
+import { Buffer } from 'buffer';
 import { toBase64String } from '@angular/compiler/src/output/source_map';
 import { ThrowStmt } from '@angular/compiler';
-
+import * as hexToArrayBuffer from 'hex-to-array-buffer';
+import * as arrToString from 'arraybuffer-to-string';
+const bigintCryptoUtils = require('bigint-crypto-utils');
 
 @Component({
   selector: 'app-main',
@@ -20,6 +22,11 @@ export class MainComponent implements OnInit {
   iv: Object;
   key: CryptoKey;
   menshex
+
+  //Parametros de RSA
+  n
+  e
+  d
 
   constructor(private mainService: MainService) { }
   ngOnInit() {
@@ -104,7 +111,9 @@ async function genkey() {
     ["encrypt", "decrypt"]
   );
   return key;
-}function genIv() {
+}
+
+function genIv() {
   let iv = self.crypto.getRandomValues(new Uint8Array(16));
   return iv;
 }
@@ -165,4 +174,33 @@ function stringToHex (tmp) {
       str += d2h(c) + ' ';
   }
   return str;
+}
+
+
+//FUNCIONES RSA 
+//funcion para crear key RSA
+async function KeyRSA(){
+	let p = await bigintCryptoUtils.prime(1024);
+	let q = await bigintCryptoUtils.prime(1025);	
+	this.n = p * q;
+	let r = BigInt('1');
+	let phi_n = (p-r)*(q-r);
+	this.e = BigInt('65537');
+	this.d = bigintCryptoUtils.modIvn(e, phi_n);
+}
+//funcion para encriptar RSA
+function encryptRSA(msg){
+	let msgbuf = Buffer.from(msg,'utf8');
+	let msgbig = BigInt('0x' + msgbuf.toString('hex'));
+	let cryptedRSA = bigintCryptoUtils.modPow(msgbig, this.e, this.n)
+	return cryptedRSA;
+}
+//funcion para desencryptar RSA
+function decryptRSA(msg){
+	let msgbig = BigInt('0x' + msg);
+  let decryptRSA  = bigintCryptoUtils.modPow(msgbig,this.d,this.n);
+  let decrypt = decryptRSA.toString(16);
+  let decryptHex = hexToArrayBuffer(decrypt);
+	let decryptedRSA = arrToString(decryptHex);
+	return decryptedRSA;
 }
