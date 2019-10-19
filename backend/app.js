@@ -66,9 +66,9 @@ function encrypt (msg){
 //funcion de encriptar
 function decrypt (msg){
 	console.log('decrypt del server 1');
-	let descrypted = crypto.createDecipher('aes-256-cbc',key,iv);
-	let decipher = descrypted.update(msg);
-	decipher = Buffer.concat([descrypted, decipher.final()]);
+	let cipher = crypto.createDecipher('aes-256-cbc',key,iv);
+	let decrypted = cipher.update(msg);
+	decrypted = Buffer.concat([decrypted, cipher.final()]);
 	return {decipher: decipher.toString('hex')};
 }
 
