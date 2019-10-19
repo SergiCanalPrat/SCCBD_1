@@ -42,14 +42,14 @@ let key = crypto.randomBytes(KEY_LENGTH);
 app.post( '/post/:mns',	(req, res) => {
 	let mns = req.params.mns;
 	console.log('este mensaje recibo del frontend: '+ mns);
-	let enmns = encrypt(mns);
+	let enmns = decrypt(mns);
 	res.json (enmns);
 }) 
 
 app.get('/get/:mns', (req,res) => {
 	let emns = req.params.mns;
 	console.log('este mensaje recibo del server: '+ emns);
-	let demns = decrypt(emns);
+	let demns = encrypt(emns);
 	console.log('este mensaje recibo del server y lo desencripto: '+ demns);
 	res.json (demns);
 })
@@ -65,11 +65,11 @@ function encrypt (msg){
 
 //funcion de encriptar
 function decrypt (msg){
-	console.log('decrypt del server 1');
-	let cipher = crypto.createDecipher('aes-256-cbc',key,iv);
+	console.log('decrypted del server 1');
+	let cipher = crypto.createCipher('aes-256-cbc', key,iv);
 	let decrypted = cipher.update(msg);
 	decrypted = Buffer.concat([decrypted, cipher.final()]);
-	return {decipher: decipher.toString('hex')};
+	return {decryptedData: decrypted.toString('hex')};
 }
 
 

@@ -3,6 +3,7 @@ import { MainService } from 'src/app/services/main.service';
 import { invalid } from '@angular/compiler/src/render3/view/util';
 import { Buffer } from 'buffer'
 import { toBase64String } from '@angular/compiler/src/output/source_map';
+import { ThrowStmt } from '@angular/compiler';
 
 
 @Component({
@@ -14,21 +15,25 @@ import { toBase64String } from '@angular/compiler/src/output/source_map';
 export class MainComponent implements OnInit {
   getres: Object;
   mens
-  postres: Object;
+  postres: string;
   enmens: string;
   iv: Object;
   key: CryptoKey;
+  menshex
 
   constructor(private mainService: MainService) { }
   ngOnInit() {
 
   }
   async get() {
-    console.log('empezamos get1')
-    console.log('este es el postres que tengo: ' + this.postres)
+    console.log('emepazmo en GET')
+    this.mainService.get(this.postres).subscribe(res =>{
+      this.getres = res.toString();
+      console.log('respuesta del get'+ this.getres)
+    })
+    //console.log('este es el postres que tengo: ' + this.postres)
     //let enmens = ab2str(this.postres)
-    let enmens = this.postres
-    console.log('empezamos get2')
+    //console.log('empezamos get2')
     /* this.mainService.get(enmens).subscribe(res => {
       console.log('empezamos get3')
       this.getres = str2ab(res);
@@ -67,28 +72,24 @@ export class MainComponent implements OnInit {
   }
 
   async post(){
-    this.iv = genIv()
-    console.log('este es mi iv' + this.iv)
-    this.key = await genkey();
+    this.iv = genIv() //como lo genero
+    console.log('este es mi iv ' + this.iv)    
     console.log('este es mi mens1: ' + this.mens)
-
+    this.key = await genkey();
+    console.log('esta es la key '+ this.key)
     //var buf = new TextEncoder().encode(this.mens);
-    this.mens = stringToHex(this.mens)
-    console.log('este es mi mens to hex: ' + this.mens)
-    let mens = await encrypt(hex2ab(this.mens), this.key, this.iv)
-    console.log('este es el mensaje que envio al server: ' + mens)
-
+    this.menshex = stringToHex(this.mens)
+    console.log('este es mi mens to hex: ' + this.menshex)
+    let cipher = await encrypt(hex2ab(this.menshex), this.key, this.iv)
+    console.log('este es el mensaje que envio al server: '+ cipher)
     //var mens1 = new TextDecoder().decode(mens)
-    var mens1 = ab2hex(mens);
-
-    console.log('decoded msg - comprobación: ' + mens1)
+    var cipherhex = ab2hex(cipher)
+    console.log('decoded msg - comprobación: ' + cipherhex)
     //si aquí enviamos mens, estaremos enviando un Object ArrayBuffer que siempre es el mismo
     //si ponemos mens1, estaremos enviando un string cifrado
-     this.mainService.post(mens1).subscribe(res => {
-      console.log('este es mi mens2: ' + mens)
-      console.log('esta es mi res: ' + res)
-      this.postres = res;
-      console.log("respuesta post: ", res)
+      this.mainService.post(cipherhex).subscribe(res => {
+      this.postres = res.toString();
+      console.log("respuesta post: ", res.toString())
     })
   }
 }
@@ -103,10 +104,14 @@ async function genkey() {
     ["encrypt", "decrypt"]
   );
   return key;
+}function genIv() {
+  let iv = self.crypto.getRandomValues(new Uint8Array(16));
+  return iv;
 }
 
 async function encrypt(msg, key, iv) {
   // iv will be needed for decryption
+  console.log('entra en encrypt: ',msg)
   const ret = await window.crypto.subtle.encrypt({
       name: "AES-CBC",
       iv
@@ -114,7 +119,7 @@ async function encrypt(msg, key, iv) {
     key,
     msg
   );
-
+console.log('Elresultado de la encriptacion'+ ret)
   return ret;
 }
 
@@ -135,11 +140,6 @@ async function decrypt(key, ciphertext, iv) {
       this.mens = ciphertext;
       console.log("respuesta final1:", ciphertext)
     });
-}
-
-function genIv() {
-  let iv = self.crypto.getRandomValues(new Uint8Array(16));
-  return iv;
 }
 
 function ab2hex(buf) {
