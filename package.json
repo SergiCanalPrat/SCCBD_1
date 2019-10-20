@@ -19,15 +19,7 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "express": "^4.16.4",
-<<<<<<< HEAD
-    "morgan": "^1.9.1",
-    "nodemon": "^1.19.4",
-    "util": "^0.12.1"
-||||||| merged common ancestors
-    "morgan": "^1.9.1"
-=======
     "hex-to-array-buffer": "^1.1.0",
     "morgan": "^1.9.1"
->>>>>>> c460f66781d8e9e6684907c2733851d9803f4ef5
   }
 }
