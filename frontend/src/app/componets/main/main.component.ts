@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MainService } from 'src/app/services/main.service';
-import { Buffer } from 'buffer':
+import { Buffer } from 'buffer';
+import "bigint-as-any-ts";
 //import * as hexToArrayBuffer from 'hex-to-array-buffer'
 import * as arrToString from 'arraybuffer-to-string';
 
@@ -185,7 +186,7 @@ async function KeyRSA(){
 	let r = BigInt('1');
 	let phi_n = (p-r)*(q-r);
 	this.e = BigInt('65537');
-	this.d = bigintCryptoUtils.modIvn(e, phi_n);
+	this.d = bigintCryptoUtils.modIvn(this.e, phi_n);
 }
 //funcion para encriptar RSA
 function encryptRSA(msg){

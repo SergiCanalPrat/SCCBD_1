@@ -14,6 +14,7 @@
     "array-buffer-to-hex": "^1.0.0",
     "arraybuffer-to-string": "^1.0.2",
     "big-integer": "^1.6.47",
+    "bigint-as-any-ts": "^1.0.2",
     "bigint-crypto-utils": "^2.3.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
