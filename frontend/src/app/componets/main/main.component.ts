@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MainService } from 'src/app/services/main.service';
-import { Buffer } from 'buffer':
+import { Buffer } from 'buffer';
 //import * as hexToArrayBuffer from 'hex-to-array-buffer'
 import * as arrToString from 'arraybuffer-to-string';
 
@@ -54,10 +54,10 @@ export class MainComponent implements OnInit {
      this.mens = enmens;
   }*/
 /*
-  async get(){    
-    const key = await genkey(); //epera a que le pase la clave   
-    this.mens = String(this.postres); //this.postres.toString()    
-    var buf =  new TextEncoder().encode(this.mens); //encripted message    
+  async get(){
+    const key = await genkey(); //epera a que le pase la clave
+    this.mens = String(this.postres); //this.postres.toString()
+    var buf =  new TextEncoder().encode(this.mens); //encripted message
     console.log("get1");
     let enmens = await decrypt(key, buf, this.iv)
 
@@ -79,7 +79,7 @@ export class MainComponent implements OnInit {
 
   async post(){
     this.iv = genIv() //como lo genero
-    console.log('este es mi iv ' + this.iv)    
+    console.log('este es mi iv ' + this.iv)
     console.log('este es mi mens1: ' + this.mens)
     this.key = await genkey();
     console.log('esta es la key '+ this.key)
@@ -176,11 +176,11 @@ function stringToHex (tmp) {
 }
 
 
-//FUNCIONES RSA 
+//FUNCIONES RSA
 //funcion para crear key RSA
 async function KeyRSA(){
 	let p = await bigintCryptoUtils.prime(1024);
-	let q = await bigintCryptoUtils.prime(1025);	
+	let q = await bigintCryptoUtils.prime(1025);
 	this.n = p * q;
 	let r = BigInt('1');
 	let phi_n = (p-r)*(q-r);

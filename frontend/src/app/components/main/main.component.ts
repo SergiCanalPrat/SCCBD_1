@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MainService } from 'src/app/services/main.service';
 import { invalid } from '@angular/compiler/src/render3/view/util';
-import { Buffer } from 'buffer'
+import { Buffer } from 'buffer';
 import { toBase64String } from '@angular/compiler/src/output/source_map';
 import { ThrowStmt } from '@angular/compiler';
 
@@ -14,13 +14,13 @@ import { ThrowStmt } from '@angular/compiler';
 
 export class MainComponent implements OnInit {
   getres: Object;
-  mens
+  mens: string;
   postres: string;
   enmens: string;
   iv: Object;
   key: CryptoKey;
   menshex: string;
-  cipher: ArrayBuffer;
+  cipher: void | ArrayBuffer;
 
   constructor(private mainService: MainService) { }
   ngOnInit() {
