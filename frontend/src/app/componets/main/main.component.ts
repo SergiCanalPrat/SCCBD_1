@@ -185,7 +185,7 @@ async function KeyRSA(){
 	let r = BigInt('1');
 	let phi_n = (p-r)*(q-r);
 	this.e = BigInt('65537');
-	this.d = bigintCryptoUtils.modIvn(e, phi_n);
+	this.d = bigintCryptoUtils.modIvn(this.e, phi_n);
 }
 //funcion para encriptar RSA
 function encryptRSA(msg){
