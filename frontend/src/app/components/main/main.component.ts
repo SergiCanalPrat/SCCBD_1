@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MainService } from 'src/app/services/main.service';
-import { invalid } from '@angular/compiler/src/render3/view/util';
 import { Buffer } from 'buffer';
-import { toBase64String } from '@angular/compiler/src/output/source_map';
-import { ThrowStmt } from '@angular/compiler';
-
+import * as arrToString from 'arraybuffer-to-string';
+//@ts-ignore
+import * as hexToArrayBuffer from 'hex-to-array-buffer';
+import * as bigintCryptoUtils from 'bigint-crypto-utils';
 
 @Component({
   selector: 'app-main',
@@ -14,24 +14,27 @@ import { ThrowStmt } from '@angular/compiler';
 
 export class MainComponent implements OnInit {
   getres: Object;
-  mens: string;
-  postres: string;
+  mens
+  postres: Object;
   enmens: string;
   iv: Object;
   key: CryptoKey;
-  menshex: string;
-  cipher: void | ArrayBuffer;
+  menshex
+
+  //Parametros de RSA
+  n
+  e
+  d
 
   constructor(private mainService: MainService) { }
   ngOnInit() {
-
+    //llamar a la funcion para generar las claves
   }
   async get() {
-    var util = require('util')
     console.log('emepazmo en GET')
     this.mainService.get(this.postres).subscribe(res =>{
       this.getres = res.toString();
-      console.log('respuesta del get', util.inspect(this.getres))
+      console.log('respuesta del get'+ this.getres)
     })
     //console.log('este es el postres que tengo: ' + this.postres)
     //let enmens = ab2str(this.postres)
@@ -77,24 +80,19 @@ export class MainComponent implements OnInit {
     console.log('este es mi iv ' + this.iv)
     console.log('este es mi mens1: ' + this.mens)
     this.key = await genkey();
-    genkey().then(key => console.log('esta es la key ', key))
-    //var buf = new TextEncoder().encode(this.mens);
-    this.menshex = await stringToHex(this.mens);
-    stringToHex(this.mens).then(mensHex =>
-      console.log('este es mi mens to hex: ' + mensHex)
-    )
-    let mensHexToAb = hex2ab(this.menshex);
-    this.cipher = await encrypt(mensHexToAb, this.key, this.iv).then(
-      ret => console.log('El resultado de la encriptacion'+ ret + '\n' +
-        'este es el mensaje que envio al server: '+ this.cipher)
-    )
+    console.log('esta es la key '+ this.key)
+    this.menshex = stringToHex(this.mens)
+    console.log('este es mi mens to hex: ' + this.menshex)
+    let cipher = await encrypt(hex2ab(this.menshex), this.key, this.iv)
+    // let cipherRSA = await encryptRSA(this.menshex)  --> encriptar mensahe RSA
+    console.log('este es el mensaje que envio al server: '+ cipher)
     //var mens1 = new TextDecoder().decode(mens)
-    var cipherhex = ab2hex(this.cipher)
+    var cipherhex = ab2hex(cipher)
     console.log('decoded msg - comprobación: ' + cipherhex)
     //si aquí enviamos mens, estaremos enviando un Object ArrayBuffer que siempre es el mismo
     //si ponemos mens1, estaremos enviando un string cifrado
       this.mainService.post(cipherhex).subscribe(res => {
-      this.postres = res.toString();
+      this.postres = res;
       console.log("respuesta post: ", res.toString())
     })
   }
@@ -110,7 +108,9 @@ async function genkey() {
     ["encrypt", "decrypt"]
   );
   return key;
-}function genIv() {
+}
+
+function genIv() {
   let iv = self.crypto.getRandomValues(new Uint8Array(16));
   return iv;
 }
@@ -125,6 +125,7 @@ async function encrypt(msg, key, iv) {
     key,
     msg
   );
+console.log('Elresultado de la encriptacion'+ ret)
   return ret;
 }
 
@@ -159,7 +160,7 @@ function hex2ab(hex) {
 function d2h(d) {
   return d.toString(16);
 }
-async function stringToHex (tmp) {
+function stringToHex (tmp) {
   var str = '',
       i = 0,
       tmp_len = tmp.length,
@@ -171,3 +172,32 @@ async function stringToHex (tmp) {
   }
   return str;
 }
+
+
+//FUNCIONES RSA
+//funcion para crear key RSA
+async function KeyRSA(){
+	let p = await bigintCryptoUtils.prime(1024);
+	let q = await bigintCryptoUtils.prime(1025);
+	this.n = p * q;
+	let r = BigInt('1');
+  let phi_n = (p-r)*(q-r);
+  this.e = BigInt('65537');
+	this.d = bigintCryptoUtils.modIvn(this.e, phi_n);
+}
+//funcion para encriptar RSA
+async function encryptRSA(msg){ // MANDAR EN HEXA
+  //let msgbuf = Buffer.from(msg,'utf8');
+	let msgbig = BigInt('0x' + msg.toString(16));
+  let cryptedRSA = bigintCryptoUtils.modPow(msgbig, this.e, this.n)
+	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
+}
+//funcion para desencryptar RSA
+async function decryptRSA(msg){
+	let msgbig = BigInt('0x' + msg);
+  let decryptRSA  = bigintCryptoUtils.modPow(msgbig,this.d,this.n);
+  let decrypt = decryptRSA.toString(16);
+  let decryptHex = hexToArrayBuffer(decrypt);
+	let decryptedRSA = arrToString(decryptHex);
+	return decryptedRSA;
+}s
