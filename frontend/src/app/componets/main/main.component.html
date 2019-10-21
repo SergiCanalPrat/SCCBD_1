@@ -5,8 +5,8 @@
 <p></p>
 
 <div>
-    <button class="btn btn-success" type="button" (click)="post()"> POST (Encrypt)</button> 
-    <label>  Encrypted message: <p></p> {{postres}}</label>
+    <button (click)="post()"> POST (Encrypt)</button> 
+    <label>  Encrypted message: <p></p> {{postencrypt}}</label>
     <p></p>
 </div>
 
@@ -14,4 +14,3 @@
     <button (click)="get()" >GET (Decrypt)</button>
     <label>  Decrypted message:<p></p> {{enmens}} </label>
 </div>
-

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MainService } from 'src/app/services/main.service';
-import { Buffer } from 'buffer';
 import * as arrToString from 'arraybuffer-to-string'; 
 //@ts-ignore
 import * as hexToArrayBuffer from 'hex-to-array-buffer';
-import * as bigintCryptoUtils from 'bigint-crypto-utils';
+
+// mport * as bigintCryptoUtils from 'bigint-crypto-utils/test/modInv.js';
+
 
 @Component({
   selector: 'app-main',
@@ -13,28 +14,35 @@ import * as bigintCryptoUtils from 'bigint-crypto-utils';
 })
 
 export class MainComponent implements OnInit {
+  
   getres: Object;
   mens
   postres: Object;
   enmens: string;
-  iv: Object;
+  iv
   key: CryptoKey;
   menshex
+  postencrypt
 
   //Parametros de RSA
   n
   e
   d
-
+  
   constructor(private mainService: MainService) { }
   ngOnInit() {
+
     //llamar a la funcion para generar las claves
   }
   async get() {
-    console.log('emepazmo en GET')
-    this.mainService.get(this.postres).subscribe(res =>{
-      this.getres = res.toString();
-      console.log('respuesta del get'+ this.getres)
+    console.log('empezamos en GET')
+    this.mainService.get(this.postres).subscribe(async res =>{
+      this.getres = res;
+      console.log('getres: ', this.getres)
+      let decmens = await decrypt(this.key, this.getres,this.iv)
+      let decmenshex = buf2hex(decmens);
+      this.enmens = decmenshex.toString();
+      console.log('respuesta del get'+ this.enmens)
     })
     //console.log('este es el postres que tengo: ' + this.postres)
     //let enmens = ab2str(this.postres)
@@ -84,17 +92,18 @@ export class MainComponent implements OnInit {
     console.log('esta es la key '+ this.key)
     this.menshex = stringToHex(this.mens)
     console.log('este es mi mens to hex: ' + this.menshex)
-    let cipher = await encrypt(hex2ab(this.menshex), this.key, this.iv)
+    let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv)
     // let cipherRSA = await encryptRSA(this.menshex)  --> encriptar mensahe RSA
     console.log('este es el mensaje que envio al server: '+ cipher)
     //var mens1 = new TextDecoder().decode(mens)
-    var cipherhex = ab2hex(cipher)
-    console.log('decoded msg - comprobación: ' + cipherhex)
+    this.postencrypt = buf2hex(cipher)
+    console.log('decoded msg - comprobación: ' + this.postencrypt)
     //si aquí enviamos mens, estaremos enviando un Object ArrayBuffer que siempre es el mismo
     //si ponemos mens1, estaremos enviando un string cifrado
-      this.mainService.post(cipherhex).subscribe(res => {
-      this.postres = res;
-      console.log("respuesta post: ", res.toString())
+      this.mainService.post(this.postencrypt).subscribe(res => {
+     // this.postres = JSON.stringify(res);
+     this.postres = res;
+      console.log("respuesta post: ", this.postres)
     })
   }
 }
@@ -130,28 +139,22 @@ console.log('Elresultado de la encriptacion'+ ret)
   return ret;
 }
 
-async function decrypt(key, ciphertext, iv) {
-  console.log('func dec 1')
-  ciphertext = hex2ab(ciphertext)
-  const ret = self.crypto.subtle.decrypt(
+async function decrypt(key, ciphertext1, iv) {
+  console.log('func dec 1: ', ciphertext1)
+  let ciphertext2 = hex2ab2(ciphertext1)
+  console.log('Hace de hex2ab correctamente: ', ciphertext2)
+  const ret = await self.crypto.subtle.decrypt(
     {
       name: "AES-CBC",
       iv
     },
     key,
-    ciphertext
-  ).then(
-    function(ciphertext){
-      console.log("respuesta final2:", ciphertext)
-      ciphertext = ab2hex(ciphertext);
-      this.mens = ciphertext;
-      console.log("respuesta final1:", ciphertext)
-    });
+    ciphertext2
+  )
+  console.log('func dec 2')
+  return ret
 }
 
-function ab2hex(buf) {
-  return buf.toString('hex');
-}
 function hex2ab(hex) {
   var typedArray = new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function(h){
     return parseInt(h,16)
@@ -173,8 +176,18 @@ function stringToHex (tmp) {
   }
   return str;
 }
+function hex2ab2(hex){
+  var typedArray = new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function (h) {
+    return parseInt(h, 16)
+  }))
+  var buffer = typedArray.buffer
+  return buffer
+}
+function buf2hex(buffer) { // buffer is an ArrayBuffer
+  return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+}
 
-
+/* 
 //FUNCIONES RSA 
 //funcion para crear key RSA
 async function KeyRSA(){
@@ -201,4 +214,4 @@ async function decryptRSA(msg){
   let decryptHex = hexToArrayBuffer(decrypt);
 	let decryptedRSA = arrToString(decryptHex);
 	return decryptedRSA;
-}
+} */
