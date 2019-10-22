@@ -4,7 +4,8 @@ import { Buffer } from 'buffer';
 import * as arrToString from 'arraybuffer-to-string'; 
 //@ts-ignore
 import * as hexToArrayBuffer from 'hex-to-array-buffer';
-import * as bigintCryptoUtils from 'bigint-crypto-utils';
+//import * as bigintCryptoUtils from 'bigint-crypto-utils';
+const bigintCryptoUtils = require('bigint-crypto-utils');
 
 @Component({
   selector: 'app-main',
