@@ -3,8 +3,9 @@ import { MainService } from 'src/app/services/main.service';
 import * as arrToString from 'arraybuffer-to-string'; 
 //@ts-ignore
 import * as hexToArrayBuffer from 'hex-to-array-buffer';
-//import * as bigintCryptoUtils from 'bigint-crypto-utils';
-const bigintCryptoUtils = require('bigint-crypto-utils');
+
+// mport * as bigintCryptoUtils from 'bigint-crypto-utils/test/modInv.js';
+
 
 @Component({
   selector: 'app-main',
@@ -66,7 +67,6 @@ export class MainComponent implements OnInit {
     var buf =  new TextEncoder().encode(this.mens); //encripted message    
     console.log("get1");
     let enmens = await decrypt(key, buf, this.iv)
-
     console.log("get11");
     this.mainService.get(enmens).subscribe(res =>{
       this.getres = res;
