@@ -39,7 +39,7 @@ let n;
 let d;
 let e;
 
-app.post( '/post/:mns',	(req, res) => {
+app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, aemas el mensage viene cifrado, tendria colo que descifrarlo
 	let mns = req.params.mns;
 	console.log('este mensaje recibo del frontend: '+ mns);
 	let enmns = encrypt(mns);
@@ -83,11 +83,11 @@ function decrypt (enmsg){
 	decrypted = Buffer.concat([decrypted, decipher.final()]);
 	console.log('decrypted del server 3: ', buf2hex(decrypted));
 	console.log('decrypted del server 3.º: ', decrypted.toString());
-	decrypted = buf2hex(decrypted);
-	console.log('decrypted del server 4: ', decrypted);
+	let decryptedhex = buf2hex(decrypted);
+	console.log('decrypted del server 4: ', decryptedhex);
 	//return {decryptedData: decrypted.toString('hex')};
 	// return decrypted.toString('hex');
-	return decrypted.toString();
+	return decryptedhex.toString();
 }
 
 function buf2hex(buffer) { // buffer is an ArrayBuffer

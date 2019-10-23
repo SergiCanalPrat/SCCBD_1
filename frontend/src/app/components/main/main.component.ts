@@ -35,7 +35,7 @@ export class MainComponent implements OnInit {
     //llamar a la funcion para generar las claves
   }
   async get() {
-    console.log('empezamos en GET')
+    console.log('empezamos en GET  ', this.postres)
     this.mainService.get(this.postres).subscribe(async res =>{
       this.getres = res;
       console.log('getres: ', this.getres)
@@ -44,65 +44,25 @@ export class MainComponent implements OnInit {
       this.enmens = decmenshex.toString();
       console.log('respuesta del get'+ this.enmens)
     })
-    //console.log('este es el postres que tengo: ' + this.postres)
-    //let enmens = ab2str(this.postres)
-    //console.log('empezamos get2')
-    /* this.mainService.get(enmens).subscribe(res => {
-      console.log('empezamos get3')
-      this.getres = str2ab(res);
-      console.log("respuesta",res)
-    })
-    console.log('llega hasta antes cambiar de nuevo a ArrayBuffer')
-     //enmens = str2ab(this.getres);
-     console.log('llega hasta antesdnyjsrhsede final 1  '+ this.getres)
-     enmens = await decrypt(this.key, this.getres, this.iv)
-     console.log("respuesta final1:",enmens)
-     enmens = ab2str(enmens);
-     this.mens = enmens;
-  }*/
-/*
-  async get(){    
-    const key = await genkey(); //epera a que le pase la clave   
-    this.mens = String(this.postres); //this.postres.toString()    
-    var buf =  new TextEncoder().encode(this.mens); //encripted message    
-    console.log("get1");
-    let enmens = await decrypt(key, buf, this.iv)
-    console.log("get11");
-    this.mainService.get(enmens).subscribe(res =>{
-      this.getres = res;
-      console.log("respuesta get: ",res)
-    })
-    //desencriptar
-    self.crypto.subtle.decrypt(
-      {
-        name: "AES-CBC",
-        iv: new ArrayBuffer(16),
-      },
-      this.key,
-      data = this.getres,
-    )*/
   }
 
   async post(){
-    this.iv = genIv() //como lo genero
+    //encripto el mensaje y lo envio, espero que mjuetre por pantalla el mensaje encriptado
+    this.iv = genIv() //genero IV
     console.log('este es mi iv ' + this.iv)    
     console.log('este es mi mens1: ' + this.mens)
-    this.key = await genkey();
+    this.key = await genkey(); //genero la key
     console.log('esta es la key '+ this.key)
-    this.menshex = stringToHex(this.mens)
+    this.menshex = stringToHex(this.mens) 
     console.log('este es mi mens to hex: ' + this.menshex)
-    let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv)
+    let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv) //los datos han de estar en arraybuffer
     // let cipherRSA = await encryptRSA(this.menshex)  --> encriptar mensahe RSA
     console.log('este es el mensaje que envio al server: '+ cipher)
-    //var mens1 = new TextDecoder().decode(mens)
-    this.postencrypt = buf2hex(cipher)
+    this.postencrypt = buf2hex(cipher) 
     console.log('decoded msg - comprobación: ' + this.postencrypt)
-    //si aquí enviamos mens, estaremos enviando un Object ArrayBuffer que siempre es el mismo
-    //si ponemos mens1, estaremos enviando un string cifrado
-      this.mainService.post(this.postencrypt).subscribe(res => {
-     // this.postres = JSON.stringify(res);
-     this.postres = res;
-      console.log("respuesta post: ", this.postres)
+      this.mainService.post(this.postencrypt).subscribe(res => { //envio el mensage al serve en formato hexa
+        this.postres = res; //recibo la respuesta del server que es el buffer 
+        console.log("respuesta post: ", this.postres)
     })
   }
 }
