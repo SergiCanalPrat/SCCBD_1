@@ -12,6 +12,7 @@
   "dependencies": {
     "@angular/language-service": "^8.2.11",
     "@types/jquery": "^3.3.31",
+    "@types/node": "^12.11.1",
     "array-buffer-to-hex": "^1.0.0",
     "arraybuffer-to-string": "^1.0.2",
     "big-integer": "^1.6.47",
