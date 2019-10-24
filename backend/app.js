@@ -33,25 +33,32 @@ app.use(cors());
 
 const KEY_LENGTH = 32; 
 const IV_LENGTH = 16; // For AES, this is always 16
-let iv = crypto.randomBytes(IV_LENGTH);
-let key = crypto.randomBytes(KEY_LENGTH);
+//let iv = crypto.randomBytes(IV_LENGTH);
+//let key = crypto.randomBytes(KEY_LENGTH);let key = crypto.randomBytes(KEY_LENGTH);
 let n;
 let d;
 let e;
 
+app.get('/getiv', (req,res) => {
+	let iv = crypto.randomBytes(IV_LENGTH);
+	res.json (buf2hex(iv));
+})
+app.get('/getkey', (req,res) => {
+	let key = crypto.randomBytes(KEY_LENGTH);
+	res.json (buf2hex(key));
+})
+
 app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, aemas el mensage viene cifrado, tendria colo que descifrarlo
 	let mns = req.params.mns;
-	console.log('este mensaje recibo del frontend: '+ mns);
-	let enmns = encrypt(mns);
-	console.log('este mensaje recibo del servidor tras encriptar: '+ enmns);
-	let denmns = decrypt(enmns);
+	console.log('este mensaje recibo d frontend: '+ mns);
+	let denmns = decrypt(mns, this.key,  this.iv);
 	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmns);
 	//denmns = buf2hex(denmns)
 	//console.log('este mensaje recibo del servidor tras deseencriptar(hex): '+ denmns);
 	res.json (enmns);
 }) 
 
-app.get('/get/:mns', (req,res) => {
+app.get('/get', (req,res) => {
 	let emns = req.params.mns;
 	console.log('este mensaje recibo del server: '+ emns);
 	let demns = decrypt(emns);
@@ -74,10 +81,10 @@ function encrypt (msg){
 	}
 
 //funcion de desencriptar
-function decrypt (enmsg){
+function decrypt (enmsg, key, iv){
 	console.log('decrypted del server 1: ' + enmsg);
 	//console.log('decrypt key: '+buf2hex(key) + 'iv: '+buf2hex(iv));
-	let decipher = crypto.createDecipheriv('aes-256-cbc', key,iv);
+	let decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
 	let decrypted = decipher.update(enmsg);
 	console.log('decrypted del server 2: ', buf2hex(decrypted));
 	decrypted = Buffer.concat([decrypted, decipher.final()]);

@@ -19,8 +19,8 @@ export class MainComponent implements OnInit {
   mens
   postres: Object;
   enmens: string;
-  iv
-  key: CryptoKey;
+  iv;
+  key;
   menshex
   postencrypt
 
@@ -31,9 +31,17 @@ export class MainComponent implements OnInit {
   
   constructor(private mainService: MainService) { }
   ngOnInit() {
-
-    //llamar a la funcion para generar las claves
+    this.mainService.getiv().subscribe(res => {
+      this.iv = res;
+      console.log('valor iv '+ this.iv)
+    })
+    this.mainService.getkey().subscribe(res => {
+      this.key = res;
+      console.log('valor key '+ this.key)
+    })
+    
   }
+
   async get() {
     console.log('empezamos en GET  ', this.postres)
     this.mainService.get(this.postres).subscribe(async res =>{
@@ -48,10 +56,10 @@ export class MainComponent implements OnInit {
 
   async post(){
     //encripto el mensaje y lo envio, espero que mjuetre por pantalla el mensaje encriptado
-    this.iv = genIv() //genero IV
+    // this.iv = genIv() //genero IV
     console.log('este es mi iv ' + this.iv)    
     console.log('este es mi mens1: ' + this.mens)
-    this.key = await genkey(); //genero la key
+    // this.key = await genkey(); //genero la key
     console.log('esta es la key '+ this.key)
     this.menshex = stringToHex(this.mens) 
     console.log('este es mi mens to hex: ' + this.menshex)
@@ -67,7 +75,7 @@ export class MainComponent implements OnInit {
   }
 }
 
-async function genkey() {
+/*async function genkey() {
   let key = await self.crypto.subtle.generateKey(
     {
       name: "AES-CBC",
@@ -82,11 +90,13 @@ async function genkey() {
 function genIv() {
   let iv = self.crypto.getRandomValues(new Uint8Array(16));
   return iv;
-}
+}*/
 
 async function encrypt(msg, key, iv) {
   // iv will be needed for decryption
   console.log('entra en encrypt: ',msg)
+  iv = hex2ab2(iv); 
+  console.log('este es el iv '+ iv)
   const ret = await window.crypto.subtle.encrypt({
       name: "AES-CBC",
       iv
@@ -105,7 +115,7 @@ async function decrypt(key, ciphertext1, iv) {
   const ret = await self.crypto.subtle.decrypt(
     {
       name: "AES-CBC",
-      iv
+      iv,
     },
     key,
     ciphertext2
@@ -114,12 +124,12 @@ async function decrypt(key, ciphertext1, iv) {
   return ret
 }
 
-function hex2ab(hex) {
+/*function hex2ab(hex) {
   var typedArray = new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function(h){
     return parseInt(h,16)
   }))
   return typedArray.buffer;
-}
+}*/
 function d2h(d) {
   return d.toString(16);
 }
