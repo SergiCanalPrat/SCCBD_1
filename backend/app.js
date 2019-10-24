@@ -43,6 +43,7 @@ app.get('/getiv', (req,res) => {
 	let iv = crypto.randomBytes(IV_LENGTH);
 	res.json (buf2hex(iv));
 })
+
 app.get('/getkey', (req,res) => {
 	let key = crypto.randomBytes(KEY_LENGTH);
 	res.json (buf2hex(key));
