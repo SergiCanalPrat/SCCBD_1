@@ -3,6 +3,8 @@ import { MainService } from 'src/app/services/main.service';
 import * as arrToString from 'arraybuffer-to-string'; 
 //@ts-ignore
 import * as hexToArrayBuffer from 'hex-to-array-buffer';
+import { CheckboxControlValueAccessor } from '@angular/forms';
+import { async } from '@angular/core/testing';
 
 // mport * as bigintCryptoUtils from 'bigint-crypto-utils/test/modInv.js';
 
@@ -33,11 +35,15 @@ export class MainComponent implements OnInit {
   ngOnInit() {
     this.mainService.getiv().subscribe(res => {
       this.iv = res;
-      console.log('valor iv '+ this.iv)
+      this.iv = hex2ab2(this.iv); 
+          console.log('valor iv '+ this.iv)
     })
+
     this.mainService.getkey().subscribe(res => {
       this.key = res;
+      this.key = hex2ab2(this.key);     
       console.log('valor key '+ this.key)
+
     })
     
   }
@@ -66,8 +72,10 @@ export class MainComponent implements OnInit {
     let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv) //los datos han de estar en arraybuffer
     // let cipherRSA = await encryptRSA(this.menshex)  --> encriptar mensahe RSA
     console.log('este es el mensaje que envio al server: '+ cipher)
-    this.postencrypt = buf2hex(cipher) 
-    console.log('decoded msg - comprobación: ' + this.postencrypt)
+    this.postencrypt= stringToHex(cipher)
+    console.log('este es el mensaje que envio al server: '+ cipher)
+   // this.postencrypt = buf2hex(cipher) 
+    console.log('comprobación: ' + this.postencrypt)
       this.mainService.post(this.postencrypt).subscribe(res => { //envio el mensage al serve en formato hexa
         this.postres = res; //recibo la respuesta del server que es el buffer 
         console.log("respuesta post: ", this.postres)
@@ -94,18 +102,31 @@ function genIv() {
 
 async function encrypt(msg, key, iv) {
   // iv will be needed for decryption
-  console.log('entra en encrypt: ',msg)
-  iv = hex2ab2(iv); 
+  console.log('entra en encrypt: ',msg)//  
   console.log('este es el iv '+ iv)
-  const ret = await window.crypto.subtle.encrypt({
+
+  return await window.crypto.subtle.importKey(
+    "raw",
+    key, {
       name: "AES-CBC",
+      length: 256,
+    },
+    true,
+    ["encrypt", "decrypt"] 
+  ).then(function encrypt2(key2) {
+    return window.crypto.subtle.encrypt({
+      name: "AES-CBC",
+      length: 256,
       iv
     },
-    key,
+    key2,
     msg
-  );
-console.log('Elresultado de la encriptacion'+ ret)
-  return ret;
+    ).then(function encrypt3(res) {
+      var string = new TextDecoder("utf-8").decode(new Uint8Array(res));
+      console.log(string);
+      return string;
+    });
+  });
 }
 
 async function decrypt(key, ciphertext1, iv) {
