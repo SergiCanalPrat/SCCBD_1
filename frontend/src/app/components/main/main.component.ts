@@ -17,14 +17,15 @@ import { async } from '@angular/core/testing';
 
 export class MainComponent implements OnInit {
   
-  getres: Object;
-  mens
+  getres;
+  mens;
   postres: Object;
   enmens: string;
   iv;
   key;
-  menshex
-  postencrypt
+  menshex;
+  gethex;
+  postencrypt;
 
   //Parametros de RSA
   n
@@ -36,44 +37,38 @@ export class MainComponent implements OnInit {
     this.mainService.getiv().subscribe(res => {
       this.iv = res;
       this.iv = hex2ab2(this.iv); 
-          console.log('valor iv '+ this.iv)
+      console.log('valor iv '+ this.iv)
     })
-
     this.mainService.getkey().subscribe(res => {
       this.key = res;
       this.key = hex2ab2(this.key);     
       console.log('valor key '+ this.key)
-
     })
     
   }
 
   async get() {
     console.log('empezamos en GET  ', this.postres)
-    this.mainService.get(this.postres).subscribe(async res =>{
+      this.mainService.get().subscribe(async res =>{
       this.getres = res;
-      console.log('getres: ', this.getres)
-      let decmens = await decrypt(this.key, this.getres,this.iv)
-      let decmenshex = buf2hex(decmens);
-      this.enmens = decmenshex.toString();
-      console.log('respuesta del get'+ this.enmens)
+      console.log('getres: ',this.getres)      
+      this.gethex = stringToHex(this.getres)
+      console.log('mensage en hex'+ this.gethex)
+      let decmens = await decrypt(hex2ab2(this.gethex), this.key,this.iv)
+
+      let decmenshex = stringToHex(decmens)
+      console.log('respuesta del get '+ decmenshex)
     })
   }
 
-  async post(){
-    //encripto el mensaje y lo envio, espero que mjuetre por pantalla el mensaje encriptado
-    // this.iv = genIv() //genero IV
-    console.log('este es mi iv ' + this.iv)    
-    console.log('este es mi mens1: ' + this.mens)
-    // this.key = await genkey(); //genero la key
-    console.log('esta es la key '+ this.key)
+  async post(){   //encripto el mensaje y lo envio, espero que mjuetre por pantalla el mensaje encriptado
+    console.log('este es mi mens1: ' + this.mens) 
     this.menshex = stringToHex(this.mens) 
     console.log('este es mi mens to hex: ' + this.menshex)
     let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv) //los datos han de estar en arraybuffer
     // let cipherRSA = await encryptRSA(this.menshex)  --> encriptar mensahe RSA
     console.log('este es el mensaje que envio al server: '+ cipher)
     this.postencrypt= stringToHex(cipher)
-    console.log('este es el mensaje que envio al server: '+ cipher)
    // this.postencrypt = buf2hex(cipher) 
     console.log('comprobación: ' + this.postencrypt)
       this.mainService.post(this.postencrypt).subscribe(res => { //envio el mensage al serve en formato hexa
@@ -81,6 +76,61 @@ export class MainComponent implements OnInit {
         console.log("respuesta post: ", this.postres)
     })
   }
+}
+
+async function encrypt(msg, key, iv) {
+  console.log('entra en encrypt: ',msg)//  
+  console.log('este es el iv '+ iv)  
+  return await window.crypto.subtle.importKey(
+    "raw",
+    key, {
+      name: "AES-CBC",
+      length: 256,
+    },
+    true,
+    ["encrypt", "decrypt"] 
+  ).then(function encrypt2(key2) {
+    return window.crypto.subtle.encrypt({
+      name: "AES-CBC",
+      length: 256,
+      iv
+    },
+    key2,
+    msg
+    ).then(function encrypt3(res) {
+      var string = new TextDecoder("utf-8").decode(new Uint8Array(res));
+      console.log('mensaje encriptado' + string);
+      return string;
+    });
+  });
+}
+
+async function decrypt(ciphertext1, key, iv) {
+  console.log('func dec 1: ', ciphertext1)
+  console.log('este es el iv '+ iv) 
+  return await window.crypto.subtle.importKey(
+    "raw",
+    key,
+    {
+      name:"AES-CBC",
+      length:256,
+    },
+    true,
+    ["encrypt","decrypt"]
+  ).then(function decrypt2(key2){
+    return window.crypto.subtle.decrypt({
+      name:"AES-CBC",
+      length:256,
+      iv
+    },
+    key2,
+    ciphertext1,
+    ).then(function decrypt3 (decrypted){
+      var string = new TextDecoder("utf8").decode(new Uint8Array(decrypted));
+      console.log(string);
+      return string;
+    });
+  });
 }
 
 /*async function genkey() {
@@ -100,57 +150,6 @@ function genIv() {
   return iv;
 }*/
 
-async function encrypt(msg, key, iv) {
-  // iv will be needed for decryption
-  console.log('entra en encrypt: ',msg)//  
-  console.log('este es el iv '+ iv)
-
-  return await window.crypto.subtle.importKey(
-    "raw",
-    key, {
-      name: "AES-CBC",
-      length: 256,
-    },
-    true,
-    ["encrypt", "decrypt"] 
-  ).then(function encrypt2(key2) {
-    return window.crypto.subtle.encrypt({
-      name: "AES-CBC",
-      length: 256,
-      iv
-    },
-    key2,
-    msg
-    ).then(function encrypt3(res) {
-      var string = new TextDecoder("utf-8").decode(new Uint8Array(res));
-      console.log(string);
-      return string;
-    });
-  });
-}
-
-async function decrypt(key, ciphertext1, iv) {
-  console.log('func dec 1: ', ciphertext1)
-  let ciphertext2 = hex2ab2(ciphertext1)
-  console.log('Hace de hex2ab correctamente: ', ciphertext2)
-  const ret = await self.crypto.subtle.decrypt(
-    {
-      name: "AES-CBC",
-      iv,
-    },
-    key,
-    ciphertext2
-  )
-  console.log('func dec 2')
-  return ret
-}
-
-/*function hex2ab(hex) {
-  var typedArray = new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function(h){
-    return parseInt(h,16)
-  }))
-  return typedArray.buffer;
-}*/
 function d2h(d) {
   return d.toString(16);
 }
@@ -167,7 +166,7 @@ function stringToHex (tmp) {
   return str;
 }
 function hex2ab2(hex){
-  var typedArray = new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function (h) {
+  var typedArray = new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function(h){
     return parseInt(h, 16)
   }))
   var buffer = typedArray.buffer
