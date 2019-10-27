@@ -53,8 +53,8 @@ app.get('/getkey', (req,res) => {
 app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas el mensage viene cifrado, tendria colo que descifrarlo
 	let mns = req.params.mns;
 	console.log('este mensaje recibo d frontend: '+ mns);
-	let menbuf = hex2ab2(mns);
-	console.log('mensage encriptado  ', menbuf);
+	let mnsbuf = hex2ab2(mns);
+	console.log('mensage encriptado  ', mnsbuf);
 	let denmns = decrypt(mns, this.key, this.iv);
 	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmns);
 	//denmns = buf2hex(denmns)
@@ -92,10 +92,9 @@ function decrypt (enmsg, keyd, ivd){
 	console.log('decrypted del server 1: ' + enmsg);
 	//console.log('decrypt key: '+buf2hex(this.key) + 'iv: '+buf2hex(this.iv));
 	let decipher = crypto.createDecipheriv('aes-256-cbc', keyd, ivd);
-	let decrypted = decipher.update(enmsg);
+	let decrypted = decipher.update(enmsg, 'binary', 'utf8');
 	console.log('decrypted del server 2: ', buf2hex(decrypted));
-	decrypted = Buffer.concat([decrypted, decipher.final()]);
-	console.log('decrypted del server 3: ', buf2hex(decrypted));
+	decrypted = Buffer.concat([decrypted, decipher.final('utf8')]); //saltaaaaaaaaaaaathfrdckytcuytcoucvout
 	console.log('decrypted del server 3.º: ', decrypted.toString());
 	let decryptedhex = buf2hex(decrypted);
 	console.log('decrypted del server 4: ', decryptedhex);
