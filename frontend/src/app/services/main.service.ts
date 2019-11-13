@@ -8,7 +8,6 @@ export class MainService {
 
   constructor(private http: HttpClient) { }
   getiv(){
-    console.log("LLEGA AQUI")
     return this.http.get('http://localhost:3000/getiv')
   }
 
@@ -16,8 +15,8 @@ export class MainService {
     return this.http.get('http://localhost:3000/getkey')
   }
 
-  get() {
-    console.log('envio mi peticion')
+  get(mens: Object) {
+    console.log("recibo", mens)
   return this.http.get('http://localhost:3000/get');
   } 
 

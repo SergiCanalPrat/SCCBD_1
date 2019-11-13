@@ -40,7 +40,7 @@ let d;
 let e;
 
 app.get('/getiv', (req,res) => {	
-	res.json (iv);
+	res.json (buf2hex(iv));
 })
 
 app.get('/getkey', (req,res) => {
