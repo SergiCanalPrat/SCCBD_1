@@ -36,7 +36,7 @@ export class MainComponent implements OnInit {
   ngOnInit() {
     this.mainService.getiv().subscribe(res => {
       this.iv = res;
-      this.iv = hex2ab2(this.iv); //fundamental
+      //this.iv = hex2ab2(this.iv); //fundamental
       console.log('valor iv '+ this.iv)
     })
     this.mainService.getkey().subscribe(res => {
@@ -63,7 +63,7 @@ export class MainComponent implements OnInit {
 
   async post(){   //encripto el mensaje y lo envio, espero que mjuetre por pantalla el mensaje encriptado
     console.log('este es mi mens1: ' + this.mens) 
-    this.menshex = stringToHex(this.mens) 
+    //this.menshex = stringToHex(this.mens) 
     //console.log('este es mi mens to hex: ' + this.menshex)
     let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv) //los datos han de estar en arraybuffer
     // let cipherRSA = await encryptRSA(this.menshex)  --> encriptar mensahe RSA
