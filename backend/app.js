@@ -33,32 +33,27 @@ app.use(cors());
 
 const KEY_LENGTH = 32; 
 const IV_LENGTH = 16; // For AES, this is always 16
-let iv ;
-let key;
+let iv = crypto.randomBytes(IV_LENGTH);
+let key = crypto.randomBytes(KEY_LENGTH);
 let n;
 let d;
 let e;
 
 app.get('/getiv', (req,res) => {	
-	this.iv = crypto.randomBytes(IV_LENGTH);
-	res.json (buf2hex(this.iv));
-
+	res.json (buf2hex(iv));
 })
 
 app.get('/getkey', (req,res) => {
-	this.key = crypto.randomBytes(KEY_LENGTH);
-	res.json (buf2hex(this.key));
+	res.json (buf2hex(key));
 })
 
 app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas el mensage viene cifrado, tendria colo que descifrarlo
 	let mns = req.params.mns;
 	console.log('este mensaje recibo d frontend: '+ mns);
-	let mnsbuf = hex2ab2(mns);
-	console.log('mensage encriptado  ', mnsbuf);
-	let denmns = decrypt(mns, this.key, this.iv);
+	//let mnsbuf = hex2ab2(mns);
+	//console.log('mensage encriptado  ', mnsbuf);
+	let denmns =  decrypt(mns);
 	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmns);
-	//denmns = buf2hex(denmns)
-	//console.log('este mensaje recibo del servidor tras deseencriptar(hex): '+ denmns);
 	res.json (enmns);
 }) 
 
@@ -67,19 +62,17 @@ app.get('/get', (req,res) => {
 	let emns = "hola"
 	let emnsbuf = hex2ab2(emns);
 	console.log('este mensaje recibo del server: '+ emnsbuf);
-	let demns = encrypt(emns, this.key, this.iv);
+	let demns = encrypt(emns);
 	console.log('este mnesage que me enviare encryptado: '+ demns);
 	res.json (demns);
 })
 
 //funcion de encriptar
-function encrypt (msg, keye, ive){
+function encrypt (msg){
 	console.log('encrypt del server 1 '+ msg);
-
 	//console.log('encrypt key: '+buf2hex(key) + 'iv: '+buf2hex(iv));
-	let cipher = crypto.createCipheriv('aes-256-cbc', keye,ive);
-	let encrypted = cipher.update(msg);
-	console.log('mensaje encriptado', buf2hex(encrypted));
+	let cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+	let encrypted = cipher.update(msg, 'utf8');
 	encrypted = Buffer.concat([encrypted, cipher.final()]);
 	// return {encryptedData: encrypted.toString('hex')};
 	let encryptedhex = buf2hex(encrypted);
@@ -88,18 +81,15 @@ function encrypt (msg, keye, ive){
 	}
 
 //funcion de desencriptar
-function decrypt (enmsg, keyd, ivd){
-	console.log('decrypted del server 1: ' + enmsg);
-	//console.log('decrypt key: '+buf2hex(this.key) + 'iv: '+buf2hex(this.iv));
-	let decipher = crypto.createDecipheriv('aes-256-cbc', keyd, ivd);
-	let decrypted = decipher.update(enmsg, 'binary', 'utf8');
-	console.log('decrypted del server 2: ', buf2hex(decrypted));
-	decrypted = Buffer.concat([decrypted, decipher.final('utf8')]); //saltaaaaaaaaaaaathfrdckytcuytcoucvout
+function decrypt (msg){
+	console.log('decrypted del server 1: ' + msg);
+	let decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+	let decrypted = decipher.update(msg, 'utf8');
+	decrypted = Buffer.concat([decrypted, decipher.final()]); //saltaaaaaaaaaaaathfrdckytcuytcoucvout
 	console.log('decrypted del server 3.º: ', decrypted.toString());
 	let decryptedhex = buf2hex(decrypted);
 	console.log('decrypted del server 4: ', decryptedhex);
-	//return {decryptedData: decrypted.toString('hex')};
-	// return decrypted.toString('hex');
+
 	return decryptedhex.toString();
 }
 

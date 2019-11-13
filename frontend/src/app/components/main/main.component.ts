@@ -36,7 +36,7 @@ export class MainComponent implements OnInit {
   ngOnInit() {
     this.mainService.getiv().subscribe(res => {
       this.iv = res;
-      this.iv = hex2ab2(this.iv); 
+      this.iv = hex2ab2(this.iv); //fundamental
       console.log('valor iv '+ this.iv)
     })
     this.mainService.getkey().subscribe(res => {
