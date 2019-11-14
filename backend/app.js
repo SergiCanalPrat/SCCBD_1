@@ -50,11 +50,9 @@ app.get('/getkey', (req,res) => {
 app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas el mensage viene cifrado, tendria colo que descifrarlo
 	let mns = req.params.mns;
 	console.log('este mensaje recibo d frontend: '+ mns);
-	//let mnsbuf = hex2ab2(mns);
-	//console.log('mensage encriptado  ', mnsbuf);
 	let denmns =  decrypt(mns);
 	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmns);
-	res.json (enmns);
+	res.json (denmns);
 }) 
 
 app.get('/get', (req,res) => {
@@ -64,7 +62,7 @@ app.get('/get', (req,res) => {
 	console.log('este mensaje recibo del server: '+ emnsbuf);
 	let demns = encrypt(emns);
 	console.log('este mnesage que me enviare encryptado: '+ demns);
-	res.json (demns);
+	res.json (emns);
 })
 
 //funcion de encriptar
@@ -84,7 +82,7 @@ function encrypt (msg){
 function decrypt (msg){
 	console.log('decrypted del server 1: ' + msg);
 	let decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
-	let decrypted = decipher.update(msg, 'utf8');
+	let decrypted = decipher.update(msg,'hex');
 	decrypted = Buffer.concat([decrypted, decipher.final()]); //saltaaaaaaaaaaaathfrdckytcuytcoucvout
 	console.log('decrypted del server 3.º: ', decrypted.toString());
 	let decryptedhex = buf2hex(decrypted);
