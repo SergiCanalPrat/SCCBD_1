@@ -39,6 +39,7 @@ let n;
 let d;
 let e;
 
+
 app.post( '/post/:mns',	(req, res) => {
 	let mns = req.params.mns;
 	console.log('este mensaje recibo del frontend: '+ mns);
