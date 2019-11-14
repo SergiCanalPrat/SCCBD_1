@@ -52,14 +52,13 @@ app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas
 	console.log('este mensaje recibo d frontend: '+ mns);
 	let denmns =  decrypt(mns);
 	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmns);
-	res.json (denmn);
+	res.json (denmns);
 }) 
 
 app.get('/get', (req,res) => {
 	//let emns = req.params.mns;
 	let emns = "hola"
-	//let emnsbuf = hex2ab2(emns);
-	//console.log('este mensaje recibo del server: '+ emnsbuf);
+	console.log('este mensaje envio al backend: '+ emns);
 	let demns = encrypt(emns);
 	console.log('este mnesage que me enviare encryptado: '+ demns);
 	res.json (demns);
@@ -69,7 +68,7 @@ app.get('/get', (req,res) => {
 function encrypt (msg){
 	console.log('encrypt del server 1 '+ msg);
 	let cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-	let encrypted = cipher.update(msg, 'hex');
+	let encrypted = cipher.update(msg, 'utf8');
 	encrypted = Buffer.concat([encrypted, cipher.final()]);
 	//let encryptedhex = buf2hex(encrypted);
 	console.log('encrypt del server 2 - final: ' + encrypted);
