@@ -16,7 +16,6 @@ export class MainService {
   }
 
   get(mens: Object) {
-    console.log("recibo", mens)
   return this.http.get('http://localhost:3000/get');
   } 
 

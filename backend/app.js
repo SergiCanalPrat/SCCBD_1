@@ -52,29 +52,27 @@ app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas
 	console.log('este mensaje recibo d frontend: '+ mns);
 	let denmns =  decrypt(mns);
 	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmns);
-	res.json (denmns);
+	res.json (denmn);
 }) 
 
 app.get('/get', (req,res) => {
 	//let emns = req.params.mns;
 	let emns = "hola"
-	let emnsbuf = hex2ab2(emns);
-	console.log('este mensaje recibo del server: '+ emnsbuf);
+	//let emnsbuf = hex2ab2(emns);
+	//console.log('este mensaje recibo del server: '+ emnsbuf);
 	let demns = encrypt(emns);
 	console.log('este mnesage que me enviare encryptado: '+ demns);
-	res.json (emns);
+	res.json (demns);
 })
 
 //funcion de encriptar
 function encrypt (msg){
 	console.log('encrypt del server 1 '+ msg);
-	//console.log('encrypt key: '+buf2hex(key) + 'iv: '+buf2hex(iv));
 	let cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-	let encrypted = cipher.update(msg, 'utf8');
+	let encrypted = cipher.update(msg, 'hex');
 	encrypted = Buffer.concat([encrypted, cipher.final()]);
-	// return {encryptedData: encrypted.toString('hex')};
-	let encryptedhex = buf2hex(encrypted);
-	console.log('encrypt del server 2 - final: ' + encryptedhex);
+	//let encryptedhex = buf2hex(encrypted);
+	console.log('encrypt del server 2 - final: ' + encrypted);
 	return encrypted; 
 	}
 
@@ -85,10 +83,7 @@ function decrypt (msg){
 	let decrypted = decipher.update(msg,'hex');
 	decrypted = Buffer.concat([decrypted, decipher.final()]); //saltaaaaaaaaaaaathfrdckytcuytcoucvout
 	console.log('decrypted del server 3.º: ', decrypted.toString());
-	let decryptedhex = buf2hex(decrypted);
-	console.log('decrypted del server 4: ', decryptedhex);
-
-	return decryptedhex.toString();
+	return decrypted;
 }
 
 

@@ -43,12 +43,10 @@ export class MainComponent implements OnInit {
   }
 
   async get() {
-    console.log('empezamos en GET  ', this.postres)
-    console.log('este es mi iv ' + this.iv)    
-    console.log('esta es la key '+ this.key)
-
+    console.log('empezamos en GET  ')
     this.mainService.get(this.postres).subscribe(async res =>{
-      this.getres = res;
+      console.log('El mensage proveneiente del server')
+      this.getres = stringToHex(res);
       console.log('getres: ', this.getres)
       let decmens = await decrypt( hex2ab2(this.getres), this.key, this.iv)
       console.log('mensaje desen ', decmens)
