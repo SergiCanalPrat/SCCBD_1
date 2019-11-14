@@ -44,14 +44,16 @@ export class MainComponent implements OnInit {
 
   async get() {
     console.log('empezamos en GET  ')
+    // mensaje 
     this.mainService.get(this.postres).subscribe(async res =>{
-      console.log('El mensage proveneiente del server')
-      this.getres = stringToHex(res);
-      console.log('getres: ', this.getres)
+      console.log('El mensaje proveniente del server: ' + JSON.stringify(this.postres))
+      //this.getres = stringToHex(Object.values(this.postres));
+      this.getres = buf2hex(Object.values(this.postres)[1]);
+      console.log('getres: ',  JSON.stringify(this.getres))
       let decmens = await decrypt( hex2ab2(this.getres), this.key, this.iv)
       console.log('mensaje desen ', decmens)
       let decmenshex = buf2hex(decmens);
-      console.log('comprovacion ' + decmenshex);
+      console.log('comprobacion ' + decmenshex);
       this.enmens = decmenshex.toString();
       console.log('respuesta del get'+ this.enmens)
     })
