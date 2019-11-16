@@ -57,7 +57,10 @@ app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas
 
 app.get('/get', (req,res) => {
 	//let emns = req.params.mns;
-	let emns = "hola"
+	let emns = 'hola'
+	let emns1 = ascii_to_hexa(emns)
+	//let emns1 = toHex(emns)
+	console.log('emns en hexa: '+ emns1);
 	console.log('este mensaje envio al backend: '+ emns);
 	let demns = encrypt(emns);
 	console.log('este mnesage que me enviare encryptado: '+ demns);
@@ -98,6 +101,21 @@ function buf2hex(buffer) { // buffer is an ArrayBuffer
 	var buffer = typedArray.buffer
 	return buffer
   }
+
+  function d2h(d) {
+	return d.toString(16);
+  }
+  
+  function ascii_to_hexa(str)
+  {
+	var arr1 = [];
+	for (var n = 0, l = str.length; n < l; n ++) 
+     {
+		var hex = Number(str.charCodeAt(n)).toString(16);
+		arr1.push(hex);
+	 }
+	return arr1.join('');
+   }
  
 /* 
 //funcion para crear key RSA
