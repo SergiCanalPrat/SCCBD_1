@@ -48,24 +48,16 @@ export class MainComponent implements OnInit {
     // mensaje
 
     this.mainService.get(this.postres).subscribe(async res =>{
+      this.postres = res;
       // console.log('El mensaje proveniente del server: ' + JSON.stringify(this.postres))
       console.log('El mensaje proveniente del server: ' + JSON.stringify(this.postres))
-      console.log('Object.values(this.postres)[1]) = ', Object.values(this.postres)[1]);
       this.getres1 = buf2hex(Object.values(this.postres)[1]);
-      console.log('this.getres[1] = ', this.getres1);
-
-
+      console.log('resouesta en hex  ', this.getres1);
       let decmens = await decrypt( hex2ab2(this.getres1), this.key, this.iv)
       console.log('DECRYPT FET = ', decmens)
-
-      this.getres = stringToHex(Object.values(this.postres));
-      console.log('this.getres =  ', this.getres)
-
-      console.log('getres: ',  JSON.stringify(this.getres))
-      console.log('mensaje desen ', decmens)
       let decmenshex = buf2hex(decmens);
       console.log('comprobacion ' + decmenshex);
-      this.enmens = decmenshex.toString();
+      this.enmens = decmenshex.toString();  //solo falta ponerlo en script, sigen en hexa
       console.log('respuesta del get'+ this.enmens)
     })
   }
@@ -113,15 +105,9 @@ console.log('Elresultado de la encriptacion'+ ret)
 
 async function decrypt(msg, key, iv) {
   console.log('entra en decrypt ', msg)
-
   iv = hex2ab2(iv);
-  console.log ('IV: ', iv)
-
-  console.log ('Key: ', key)
   key = hex2ab2(key);
-
-  console.log ('ENTRA AL CONST RESULT: ', key)
-
+  console.log ('ENTRA AL CONST RESULT: ', key);
   const privateKey = await window.crypto.subtle.importKey(
     "raw",
     key,
@@ -129,14 +115,11 @@ async function decrypt(msg, key, iv) {
     true,
     ["encrypt", "decrypt"]
   );
-
   console.log ('importKey fet: ', key)
   console.log ('iv: ', iv)
   console.log ('privateKey: ', privateKey)
   console.log ('msg: ', msg)
-
 //DOM EXCEPTION
-
   const ret = await window.crypto.subtle.decrypt(
     {
       name: "AES-CBC",
@@ -145,7 +128,6 @@ async function decrypt(msg, key, iv) {
     privateKey,
     msg
   );
-
   console.log ('surt del ret: ', ret)
 
   return ret;

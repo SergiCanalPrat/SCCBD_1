@@ -59,10 +59,8 @@ app.get('/get', (req,res) => {
 	//let emns = req.params.mns;
 	let emns = 'hola'
 	let emns1 = ascii_to_hexa(emns)
-	//let emns1 = toHex(emns)
-	console.log('emns en hexa: '+ emns1);
-	console.log('este mensaje envio al backend: '+ emns);
-	let demns = encrypt(emns);
+	console.log('este mensaje envio al backend: '+ emns1);
+	let demns = encrypt(emns1);
 	console.log('este mnesage que me enviare encryptado: '+ demns);
 	res.json (demns);
 })
@@ -71,10 +69,10 @@ app.get('/get', (req,res) => {
 function encrypt (msg){
 	console.log('encrypt del server 1 '+ msg);
 	let cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-	let encrypted = cipher.update(msg, 'utf8');
+	let encrypted = cipher.update(msg, 'hex');
 	encrypted = Buffer.concat([encrypted, cipher.final()]);
 	//let encryptedhex = buf2hex(encrypted);
-	console.log('encrypt del server 2 - final: ' + encrypted);
+	console.log('encrypt del server 2 - final: ' + encrypted.toString());
 	return encrypted; 
 	}
 
@@ -83,7 +81,7 @@ function decrypt (msg){
 	console.log('decrypted del server 1: ' + msg);
 	let decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
 	let decrypted = decipher.update(msg,'hex');
-	decrypted = Buffer.concat([decrypted, decipher.final()]); //saltaaaaaaaaaaaathfrdckytcuytcoucvout
+	decrypted = Buffer.concat([decrypted, decipher.final()]);
 	console.log('decrypted del server 3.º: ', decrypted.toString());
 	return decrypted;
 }
