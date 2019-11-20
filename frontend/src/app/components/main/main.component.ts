@@ -3,8 +3,8 @@ import { MainService } from 'src/app/services/main.service';
 import * as arrToString from 'arraybuffer-to-string';
 //@ts-ignore
 import * as hexToArrayBuffer from 'hex-to-array-buffer';
+//import * as bigintCryptoUtils from 'bigint-utils-latest.browser.mod.min.js';
 
-// mport * as bigintCryptoUtils from 'bigint-crypto-utils/test/modInv.js';
 
 
 @Component({
@@ -32,10 +32,10 @@ export class MainComponent implements OnInit {
 
   constructor(private mainService: MainService) { }
   ngOnInit() {
-    // this.iv = this.mainService.getiv().subscribe(res => {
-    //   this.iv = res;
-    //   console.log('valor iv '+ this.iv)
-    // })
+     this.iv = this.mainService.getiv().subscribe(res => {
+       this.iv = res;
+      console.log('valor iv '+ this.iv)
+    })
     this.mainService.getkey().subscribe(res => {
       this.key = res;
       console.log('valor key '+ this.key)
@@ -50,23 +50,14 @@ export class MainComponent implements OnInit {
     this.mainService.get(this.postres).subscribe(async res =>{
       // console.log('El mensaje proveniente del server: ' + JSON.stringify(this.postres))
       console.log('El mensaje proveniente del server: ' + JSON.stringify(this.postres))
-      console.log('Object.values(this.postres)[1]) = ', Object.values(this.postres)[1]);
       this.getres1 = buf2hex(Object.values(this.postres)[1]);
-      console.log('this.getres[1] = ', this.getres1);
-
-
       let decmens = await decrypt( hex2ab2(this.getres1), this.key, this.iv)
-      console.log('DECRYPT FET = ', decmens)
-
+      console.log('DECRYPT FET= ', decmens)
       this.getres = stringToHex(Object.values(this.postres));
-      console.log('this.getres =  ', this.getres)
-
-      console.log('getres: ',  JSON.stringify(this.getres))
-      console.log('mensaje desen ', decmens)
       let decmenshex = buf2hex(decmens);
       console.log('comprobacion ' + decmenshex);
       this.enmens = decmenshex.toString();
-      console.log('respuesta del get'+ this.enmens)
+      console.log('comprebacion 2.0'+ this.enmens)
     })
   }
 
@@ -179,7 +170,7 @@ function buf2hex(buffer) { // buffer is an ArrayBuffer
   return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
 }
 
-/*
+
 //FUNCIONES RSA
 //funcion para crear key RSA
 async function KeyRSA(){
@@ -193,7 +184,7 @@ async function KeyRSA(){
 }
 //funcion para encriptar RSA
 async function encryptRSA(msg){ // MANDAR EN HEXA
-  //let msgbuf = Buffer.from(msg,'utf8');
+  let msgbuf = Buffer.from(msg,'utf8');
 	let msgbig = BigInt('0x' + msg.toString(16));
   let cryptedRSA = bigintCryptoUtils.modPow(msgbig, this.e, this.n)
 	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
@@ -206,4 +197,4 @@ async function decryptRSA(msg){
   let decryptHex = hexToArrayBuffer(decrypt);
 	let decryptedRSA = arrToString(decryptHex);
 	return decryptedRSA;
-} */
+} 

@@ -3,7 +3,6 @@
 const express = require ('express');
 const logger = require ('morgan');
 const cors = require('cors');
-//const cipher = require('ci')
 const crypto = require('crypto');
 const app = express();
 const bigintCryptoUtils = require('bigint-crypto-utils');
@@ -35,39 +34,41 @@ app.use(cors());
 
 const KEY_LENGTH = 32;
 const IV_LENGTH = 16; // For AES, this is always 16
-//let iv = crypto.randomBytes(IV_LENGTH);
-//let key = crypto.randomBytes(KEY_LENGTH);
-let key = KeyRSA();
+let iv = crypto.randomBytes(IV_LENGTH);
+let key = crypto.randomBytes(KEY_LENGTH);
 let n;
 let d;
 let e;
 
+
 console.log (key);
-// app.get('/getiv', (req,res) => {
-// 	res.json (buf2hex(iv));
-// })
+ app.get('/getiv', (req,res) => {
+	res.json (buf2hex(iv));
+ })
 
 app.get('/getkey', (req,res) => {
-	//res.json (buf2hex(this.key));
-	res.json (this.key)
+	KeyRSA();
+	res.json (buf2hex(n));
+	
 })
 
 app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas el mensage viene cifrado, tendria colo que descifrarlo
 	let mns = req.params.mns;
 	console.log('este mensaje recibo de frontend: '+ mns);
-	let denmns =  decryptRSA(mns);
-	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmns);
-	res.json (denmns);
+	//let denmns =  decrypt(mns);
+	let denmnsRSA = decryptRSA(mns);
+	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmnsRSA);
+	res.json (denmnsRSA);
 })
 
 app.get('/get', (req,res) => {
-	//let emns = req.params.mns;
 	let emns = 'hola'
 	let emns1 = ascii_to_hexa(emns)
-	console.log('este mensaje envio al backend: '+ emns1);
-	let demns = encryptRSA(emns1);
-	console.log('este mnesage que me enviare encryptado: '+ demns);
-	res.json (demns);
+	console.log('este mensaje envio al backend: '+ emns);
+	//let demns = encrypt(emns1);
+	let demnsRSA = 	encryptRSA(emns)
+	console.log('este mnesage que me enviare encryptado: '+ demnsRSA);
+	res.json (demnsRSA);
 })
 
 //funcion de encriptar
@@ -76,7 +77,7 @@ function encrypt (msg){
 	let cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
 	let encrypted = cipher.update(msg, 'hex');
 	encrypted = Buffer.concat([encrypted, cipher.final()]);
-	//let encryptedhex = buf2hex(encrypted);
+	let encryptedhex = buf2hex(encrypted);
 	console.log('encrypt del server 2 - final: ' + encrypted.toString());
 	return encrypted;
 	}
@@ -123,27 +124,37 @@ function buf2hex(buffer) { // buffer is an ArrayBuffer
 
 //funcion para crear key RSA
 async function KeyRSA(){
+	console.log('Voy a crear la Key')
 	let p = await bigintCryptoUtils.prime(1024);
 	let q = await bigintCryptoUtils.prime(1025);
 	n = p * q;
+	console.log('variable n ',n)
 	let r = BigInt('1');
-	let phi_n = (p-r)*(q-r);
+	let phi_n = (p-r)*(q-r);	
 	e = BigInt('65537');
 	d = bigintCryptoUtils.modInv(e, phi_n);
+	console.log('variables finales', e, d)
 }
 //funcion para encriptar RSA
 function encryptRSA(msg){
 	let msgbuf = Buffer.from(msg,'utf8');
-	let msgbig = BigInt('0x' + buf.toString('hex'));
-	let cryptoRSA = bigintCryptoUtils.modPow(big,e,n)
+	console.log('1', msgbuf)
+	let msgbig = BigInt('0x' + msgbuf.toString('hex'));
+	console.log('2', msgbig)
+	let cryptoRSA = bigintCryptoUtils.modPow(msgbig,e,n)
+	console.log('3', cryptoRSA)
 	return cryptoRSA;
 }
 //funcion para desencryptar RSA
 function decryptRSA(msg){
-	let msgbig = BigInt('0x' + mns);
+	let msgbig = BigInt('0x' + msg);
 	let decrypto = bigintCryptoUtils.modPow(msgbig, d, n);
+	console.log('1', decrypto)
 	let decryptoHex = decrypto.toString(16);
-    let decryptobuf = Buffer.from(decryptoHex, 'hex');
-    let decryptedRSA = decryptobuf.toString('utf8');
+	console.log('2', decryptoHex)
+	let decryptobuf = Buffer.from(decryptoHex, 'hex');
+	console.log('1', decryptobuf)
+	let decryptedRSA = decryptobuf.toString('utf8');
+	console.log('1', decryptedRSA)
 	return decryptedRSA;
 }
