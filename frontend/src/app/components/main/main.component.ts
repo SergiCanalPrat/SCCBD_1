@@ -14,7 +14,7 @@ import * as bigintCryptoUtils from 'bigint-crypto-utils';
 })
 
 export class MainComponent implements OnInit {
-
+  
   getres: Object;
   getres1: Object;
   mens
@@ -26,21 +26,35 @@ export class MainComponent implements OnInit {
   postencrypt;
 
   //Parametros de RSA
+  e;
   d;
   n;
-  e;
   nfront;
   dfront;
 
+  dback;
+  nback;
+
   constructor(private mainService: MainService) { }
   ngOnInit() {
+ 
+  /* KeyRSA(){
+      let p = await bigintCryptoUtils.prime(1024);
+      let q = await bigintCryptoUtils.prime(1025);
+      this.n = p * q;
+      let r = BigInt('1');
+      let phi_n = (p-r)*(q-r);
+      this.e = BigInt('65537');
+      this.d = bigintCryptoUtils.modInv(this.e, phi_n);
+    }*/
+
     this.mainService.getiv().subscribe(res => {
-       this.d = res;
-      console.log('valor de d ', this.d)
+       this.dback = res;
+     // console.log('valor de d ', this.dback)
     })
     this.mainService.getkey().subscribe(res => {
-      this.n = res;
-      console.log('valor de n ', this.n)
+      this.nback = res;
+     // console.log('valor de n ', this.nback)
     })
 
   }
@@ -54,7 +68,7 @@ export class MainComponent implements OnInit {
 
       //this.getres1 = buf2hex(Object.values(this.postres)[1]);
      // let decmens = await decrypt( hex2ab2(this.getres1), this.key, this.iv)
-     let decmens = await decryptRSA(this.postres, this.d, this.n)
+     let decmens = await decryptRSA(this.postres, this.dback, this.nback)
       console.log('DECRYPT FET= ', decmens)
      /* this.getres = stringToHex(Object.values(this.postres));
       let decmenshex = buf2hex(decmens);
@@ -66,28 +80,15 @@ export class MainComponent implements OnInit {
 
   async post(){
     //encripto el mensaje y lo envio, espero que mjuetre por pantalla el mensaje encriptado
-    let p = await bigintCryptoUtils.prime(1024);
-    let q = await bigintCryptoUtils.prime(1025);
-    console.log ("initial front_n is: " + this.nfront)
-    this.nfront = p * q;
-    console.log ("new front_n is: " + this.nfront)
-    let r = BigInt('1');
-    let phi_n = (p-r)*(q-r);
-    this.e = BigInt('65537');
-    this.dfront = bigintCryptoUtils.modInv(this.e, phi_n);
-
-    this.menshex = stringToHex(this.mens)
+     //creo la clave del cliente
+    this.menshex = this.mens.toString();
     console.log('este es mi mens to hex: ' + this.menshex)
     //let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv) //los datos han de estar en arraybuffer
-    let cipher = await encryptRSA(this.menshex, this.e, this.nfront) //los datos han de estar en arraybuffer
-    // this.postencrypt = buf2hex(cipher)
-    //Voy a enviarlo todo como string y lo separaré con la letra "a" ya que siempre van a ser números
-    //se puede utilizar cualquier separador
-    let new_cipher = cipher + 'a' + this.dfront + 'a' + this.nfront;
-    console.log('encrtypted msg - comprobación: ' + cipher);
-    console.log('encrtypted msg - comprobación2: ' + new_cipher);
-      this.mainService.post(new_cipher).subscribe(res => { //envio el mensage al serve en formato hexa
-        console.log("respuesta post1: ")
+    console.log('la e ',this.e)
+    let cipher = await encryptRSA(this.menshex, this.e, this.n)
+    this.postencrypt = buf2hex(cipher)
+    console.log('decoded msg - comprobación: ' + this.postencrypt)
+      this.mainService.post(this.postencrypt).subscribe(res => { //envio el mensage al serve en formato hexa
         this.postres = res; //recibo la respuesta del server que es el buffer
         console.log("respuesta post2: ", this.postres) //la respuesta esta en hex e de pasarla a utf8
 
@@ -194,22 +195,19 @@ function buf2hex(buffer) { // buffer is an ArrayBuffer
 //funcion para crear key RSA
 async function KeyRSA(front_n, front_e, front_d){
 	let p = await bigintCryptoUtils.prime(1024);
-  let q = await bigintCryptoUtils.prime(1025);
-  console.log ("initial front_n is: " + front_n)
-  front_n = p * q;
-  console.log ("new front_n is: " + front_n)
+	let q = await bigintCryptoUtils.prime(1025);
+	front_n = p * q;
 	let r = BigInt('1');
   let phi_n = (p-r)*(q-r);
   front_e = BigInt('65537');
 	front_d = bigintCryptoUtils.modInv(front_e, phi_n);
 }
 //funcion para encriptar RSA
-async function encryptRSA(msg,e,nfront){ // MANDAR EN HEXA
+async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
   //let msgbuf = .from(msg,'utf8');
-
-  let msghex = msg.toString();
-	let msgbig = BigInt('0x' + msghex);
-  let cryptedRSA = bigintCryptoUtils.modPow(msgbig, e, nfront)
+  let msgbig = BigInt('0x' + msg)
+  console.log('men en big', msgbig);
+  let cryptedRSA = bigintCryptoUtils.modPow(msgbig, e, n)
 	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
 }
 //funcion para desencryptar RSA
