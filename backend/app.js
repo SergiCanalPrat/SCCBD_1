@@ -36,6 +36,7 @@ const KEY_LENGTH = 32;
 const IV_LENGTH = 16; // For AES, this is always 16
 let iv = crypto.randomBytes(IV_LENGTH);
 let key = crypto.randomBytes(KEY_LENGTH);
+let db = KeyRSA();
 let n;
 let d;
 let e;
@@ -43,12 +44,13 @@ let e;
 
 console.log (key);
  app.get('/getiv', (req,res) => {
-	res.json (buf2hex(iv));
+	//res.json (buf2hex(iv));
+	res.json(db)
  })
 
 app.get('/getkey', (req,res) => {
-	KeyRSA();
-	res.json (buf2hex(n));
+	//res.json (buf2hex(key));	
+	res.json(n.toString(16));
 	
 })
 
@@ -66,9 +68,9 @@ app.get('/get', (req,res) => {
 	let emns1 = ascii_to_hexa(emns)
 	console.log('este mensaje envio al backend: '+ emns);
 	//let demns = encrypt(emns1);
-	let demnsRSA = 	encryptRSA(emns);
-	console.log('este mnesage que me enviare encryptado: '+ demnsRSA);
+	let demnsRSA = 	encryptRSA(emns);	
 	let demnsRSAhex = demnsRSA.toString(16)
+	console.log('este mnesage que me enviare encryptado: '+ demnsRSAhex);
 	res.json (demnsRSAhex);
 })
 
@@ -99,7 +101,7 @@ function buf2hex(buffer) { // buffer is an ArrayBuffer
   }
 
 
-  function hex2ab2(hex){
+function hex2ab2(hex){
 	var typedArray = new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function(h){
 	  return parseInt(h, 16)
 	}))
@@ -107,11 +109,11 @@ function buf2hex(buffer) { // buffer is an ArrayBuffer
 	return buffer
   }
 
-  function d2h(d) {
+function d2h(d) {
 	return d.toString(16);
   }
 
-  function ascii_to_hexa(str)
+function ascii_to_hexa(str)
   {
 	var arr1 = [];
 	for (var n = 0, l = str.length; n < l; n ++)
@@ -126,22 +128,19 @@ function buf2hex(buffer) { // buffer is an ArrayBuffer
 //funcion para crear key RSA
 async function KeyRSA(){
 	console.log('Voy a crear la Key')
+	let r = BigInt('1')
 	let p = await bigintCryptoUtils.prime(1024);
 	let q = await bigintCryptoUtils.prime(1025);
 	n = p * q;
-	console.log('variable n ',n)
-	let r = BigInt('1');
 	let phi_n = (p-r)*(q-r);	
 	e = BigInt('65537');
 	d = bigintCryptoUtils.modInv(e, phi_n);
-	console.log('variables finales', e, d)
+	return d;
 }
 //funcion para encriptar RSA
 function encryptRSA(msg){
 	let msgbuf = Buffer.from(msg,'utf8');
-	console.log('1', msgbuf)
 	let msgbig = BigInt('0x' + msgbuf.toString('hex'));
-	console.log('2', msgbig)
 	let cryptoRSA = bigintCryptoUtils.modPow(msgbig,e,n)
 	console.log('3', cryptoRSA)
 	return cryptoRSA;

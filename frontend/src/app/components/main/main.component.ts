@@ -22,23 +22,22 @@ export class MainComponent implements OnInit {
   enmens: string;
   iv;
   key;
-  menshex
-  postencrypt
+  menshex;
+  postencrypt;
 
   //Parametros de RSA
-  n
-  e
-  d
+  d;
+  n;
 
   constructor(private mainService: MainService) { }
   ngOnInit() {
      this.iv = this.mainService.getiv().subscribe(res => {
-       this.iv = res;
-      console.log('valor iv '+ this.iv)
+       this.n = res;
+      console.log('valor iv ', this.n)
     })
     this.mainService.getkey().subscribe(res => {
-      this.key = res;
-      console.log('valor key '+ this.key)
+      this.d = res;
+      console.log('valor de d ', this.d)
     })
 
   }
@@ -46,12 +45,12 @@ export class MainComponent implements OnInit {
   async get() {
     console.log('empezamos en GET  ')
     // mensaje
-
     this.mainService.get(this.postres).subscribe(async res =>{
-      // console.log('El mensaje proveniente del server: ' + JSON.stringify(this.postres))
+      this.postres=res;
       console.log('El mensaje proveniente del server: ' + JSON.stringify(this.postres))
-      this.getres1 = buf2hex(Object.values(this.postres)[1]);
-      let decmens = await decrypt( hex2ab2(this.getres1), this.key, this.iv)
+      //this.getres1 = buf2hex(Object.values(this.postres)[1]);
+     // let decmens = await decrypt( hex2ab2(this.getres1), this.key, this.iv)
+     let decmens = decryptRSA(this.postres)
       console.log('DECRYPT FET= ', decmens)
       this.getres = stringToHex(Object.values(this.postres));
       let decmenshex = buf2hex(decmens);
@@ -191,10 +190,12 @@ async function encryptRSA(msg){ // MANDAR EN HEXA
 }
 //funcion para desencryptar RSA
 async function decryptRSA(msg){
-	let msgbig = BigInt('0x' + msg);
-  let decryptRSA  = bigintCryptoUtils.modPow(msgbig,this.d,this.n);
+  let msgbig = BigInt('0x' + msg);
+  console.log('el message  ', msgbig)
+  let decryptRSA  = bigintCryptoUtils.modPow(msgbig,this.d, this.n);
   let decrypt = decryptRSA.toString(16);
   let decryptHex = hexToArrayBuffer(decrypt);
-	let decryptedRSA = arrToString(decryptHex);
+  let decryptedRSA = arrToString(decryptHex);
+  console.log('desencriptado  ', decryptedRSA)
 	return decryptedRSA;
 } 
