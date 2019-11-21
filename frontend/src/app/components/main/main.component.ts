@@ -3,7 +3,7 @@ import { MainService } from 'src/app/services/main.service';
 import * as arrToString from 'arraybuffer-to-string';
 //@ts-ignore
 import * as hexToArrayBuffer from 'hex-to-array-buffer';
-//import * as bigintCryptoUtils from 'bigint-utils-latest.browser.mod.min.js';
+import * as bigintCryptoUtils from 'bigint-crypto-utils';
 
 
 
@@ -180,12 +180,12 @@ async function KeyRSA(){
 	let r = BigInt('1');
   let phi_n = (p-r)*(q-r);
   this.e = BigInt('65537');
-	this.d = bigintCryptoUtils.modIvn(this.e, phi_n);
+	this.d = bigintCryptoUtils.modInv(this.e, phi_n);
 }
 //funcion para encriptar RSA
 async function encryptRSA(msg){ // MANDAR EN HEXA
   let msgbuf = Buffer.from(msg,'utf8');
-	let msgbig = BigInt('0x' + msg.toString(16));
+	let msgbig = BigInt('0x' + msgbuf.toString('hex'));
   let cryptedRSA = bigintCryptoUtils.modPow(msgbig, this.e, this.n)
 	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
 }
