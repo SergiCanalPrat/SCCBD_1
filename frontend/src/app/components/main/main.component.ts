@@ -31,13 +31,13 @@ export class MainComponent implements OnInit {
 
   constructor(private mainService: MainService) { }
   ngOnInit() {
-     this.iv = this.mainService.getiv().subscribe(res => {
-       this.n = res;
-      console.log('valor iv ', this.n)
+    this.mainService.getiv().subscribe(res => {
+       this.d = res;
+      console.log('valor de d ', this.d)
     })
     this.mainService.getkey().subscribe(res => {
-      this.d = res;
-      console.log('valor de d ', this.d)
+      this.n = res;
+      console.log('valor de n ', this.n)
     })
 
   }
@@ -50,13 +50,13 @@ export class MainComponent implements OnInit {
       console.log('El mensaje proveniente del server: ' + JSON.stringify(this.postres))
       //this.getres1 = buf2hex(Object.values(this.postres)[1]);
      // let decmens = await decrypt( hex2ab2(this.getres1), this.key, this.iv)
-     let decmens = decryptRSA(this.postres)
+     let decmens = await decryptRSA(this.postres, this.d, this.n)
       console.log('DECRYPT FET= ', decmens)
-      this.getres = stringToHex(Object.values(this.postres));
+     /* this.getres = stringToHex(Object.values(this.postres));
       let decmenshex = buf2hex(decmens);
       console.log('comprobacion ' + decmenshex);
       this.enmens = decmenshex.toString();
-      console.log('comprebacion 2.0'+ this.enmens)
+      console.log('comprebacion 2.0'+ this.enmens)*/
     })
   }
 
@@ -189,10 +189,12 @@ async function encryptRSA(msg){ // MANDAR EN HEXA
 	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
 }
 //funcion para desencryptar RSA
-async function decryptRSA(msg){
+async function decryptRSA(msg,d,n){
   let msgbig = BigInt('0x' + msg);
+  let dbig = BigInt('0x' + d);
+  let nbig = BigInt('0x' + n);
   console.log('el message  ', msgbig)
-  let decryptRSA  = bigintCryptoUtils.modPow(msgbig,this.d, this.n);
+  let decryptRSA  = bigintCryptoUtils.modPow(msgbig, dbig, nbig);
   let decrypt = decryptRSA.toString(16);
   let decryptHex = hexToArrayBuffer(decrypt);
   let decryptedRSA = arrToString(decryptHex);

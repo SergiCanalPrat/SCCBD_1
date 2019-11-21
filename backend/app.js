@@ -36,7 +36,7 @@ const KEY_LENGTH = 32;
 const IV_LENGTH = 16; // For AES, this is always 16
 let iv = crypto.randomBytes(IV_LENGTH);
 let key = crypto.randomBytes(KEY_LENGTH);
-let db = KeyRSA();
+KeyRSA();
 let n;
 let d;
 let e;
@@ -45,7 +45,7 @@ let e;
 console.log (key);
  app.get('/getiv', (req,res) => {
 	//res.json (buf2hex(iv));
-	res.json(db)
+	res.json(d.toString(16));
  })
 
 app.get('/getkey', (req,res) => {
@@ -135,7 +135,7 @@ async function KeyRSA(){
 	let phi_n = (p-r)*(q-r);	
 	e = BigInt('65537');
 	d = bigintCryptoUtils.modInv(e, phi_n);
-	return d;
+	//return d;
 }
 //funcion para encriptar RSA
 function encryptRSA(msg){
