@@ -66,9 +66,10 @@ app.get('/get', (req,res) => {
 	let emns1 = ascii_to_hexa(emns)
 	console.log('este mensaje envio al backend: '+ emns);
 	//let demns = encrypt(emns1);
-	let demnsRSA = 	encryptRSA(emns)
+	let demnsRSA = 	encryptRSA(emns);
 	console.log('este mnesage que me enviare encryptado: '+ demnsRSA);
-	res.json (demnsRSA);
+	let demnsRSAhex = demnsRSA.toString(16)
+	res.json (demnsRSAhex);
 })
 
 //funcion de encriptar

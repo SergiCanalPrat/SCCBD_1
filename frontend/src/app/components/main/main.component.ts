@@ -184,8 +184,8 @@ async function KeyRSA(){
 }
 //funcion para encriptar RSA
 async function encryptRSA(msg){ // MANDAR EN HEXA
-  let msgbuf = Buffer.from(msg,'utf8');
-	let msgbig = BigInt('0x' + msgbuf.toString('hex'));
+  //let msgbuf = .from(msg,'utf8');
+	let msgbig = BigInt('0x' + msg.toString('hex'));
   let cryptedRSA = bigintCryptoUtils.modPow(msgbig, this.e, this.n)
 	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
 }
