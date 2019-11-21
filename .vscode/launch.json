@@ -8,10 +8,11 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}\\backend\\app.js",
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ]
+            "program": "${workspaceFolder}/backend/app.js",
+            "outFiles": ["${workspaceRoot}/compiled/**/*.js"],
+            "webRoot": "${workspaceFolder}/frontend/src",
+            "breakOnLoad": "true"
+
         }
     ]
 }
