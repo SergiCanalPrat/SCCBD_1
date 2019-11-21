@@ -65,10 +65,11 @@ export class MainComponent implements OnInit {
 
     this.menshex = stringToHex(this.mens)
     console.log('este es mi mens to hex: ' + this.menshex)
-    let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv) //los datos han de estar en arraybuffer
-    this.postencrypt = buf2hex(cipher)
-    console.log('decoded msg - comprobación: ' + this.postencrypt)
-      this.mainService.post(this.postencrypt).subscribe(res => { //envio el mensage al serve en formato hexa
+    //let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv) //los datos han de estar en arraybuffer
+    let cipher = await encryptRSA(this.menshex) //los datos han de estar en arraybuffer
+    // this.postencrypt = buf2hex(cipher)
+    console.log('decoded msg - comprobación: ' + cipher)
+      this.mainService.post(cipher).subscribe(res => { //envio el mensage al serve en formato hexa
         this.postres = res; //recibo la respuesta del server que es el buffer
         console.log("respuesta post: ", this.postres) //la respuesta esta en hex e de pasarla a utf8
 
@@ -79,9 +80,9 @@ export class MainComponent implements OnInit {
 async function encrypt(msg, key, iv) {
   // iv will be needed for decryption
   console.log('entra en encrypt: ',msg)
-  iv = hex2ab2(iv);
-  key = hex2ab2(key);
-  console.log('este es el iv '+ iv)
+  // iv = hex2ab2(iv);
+  //key = hex2ab2(key);
+  // console.log('este es el iv '+ iv)
   const result = await window.crypto.subtle.importKey(
     "raw",
     key,
@@ -97,7 +98,7 @@ async function encrypt(msg, key, iv) {
     result,
     msg
   );
-console.log('Elresultado de la encriptacion'+ ret)
+console.log('El resultado de la encriptacion ' + ret)
   return ret;
 }
 
@@ -184,7 +185,9 @@ async function KeyRSA(){
 //funcion para encriptar RSA
 async function encryptRSA(msg){ // MANDAR EN HEXA
   //let msgbuf = .from(msg,'utf8');
-	let msgbig = BigInt('0x' + msg.toString('hex'));
+
+  let msghex = msg.toString();
+	let msgbig = BigInt('0x' + msghex);
   let cryptedRSA = bigintCryptoUtils.modPow(msgbig, this.e, this.n)
 	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
 }
