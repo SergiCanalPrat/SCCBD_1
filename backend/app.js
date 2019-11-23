@@ -56,9 +56,10 @@ app.get('/getkey', (req,res) => {
 
 app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas el mensage viene cifrado, tendria colo que descifrarlo
 	let mns = req.params.mns;
-	console.log('este mensaje recibo de frontend: '+ mns);
+	console.log('este mensaje recibo de frontend1: '+ mns);
+	console.log('este mensaje recibo de frontend2: '+ mns.mensaje + mns.d + mns.n);
 	//let denmns =  decrypt(mns);
-	let denmnsRSA = decryptRSA(mns);
+	let denmnsRSA = decryptRSA(mns.mensaje, mns.d, mns.n);
 	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmnsRSA);
 	res.json (denmnsRSA);
 })

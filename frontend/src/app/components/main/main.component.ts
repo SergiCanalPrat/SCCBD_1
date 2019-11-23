@@ -28,6 +28,9 @@ export class MainComponent implements OnInit {
   //Parametros de RSA
   d;
   n;
+  e;
+  nfront;
+  dfront;
 
   constructor(private mainService: MainService) { }
   ngOnInit() {
@@ -45,9 +48,10 @@ export class MainComponent implements OnInit {
   async get() {
     console.log('empezamos en GET  ')
     // mensaje
-    this.mainService.get(this.postres).subscribe(async res =>{
-      this.postres=res;
-      console.log('El mensaje proveniente del server: ' + JSON.stringify(this.postres))
+    this.mainService.get(this.postres[0]).subscribe(async res =>{
+      this.postres = res;
+      //console.log('El mensaje proveniente del server: ' + JSON.stringify(this.postres[0]))
+
       //this.getres1 = buf2hex(Object.values(this.postres)[1]);
      // let decmens = await decrypt( hex2ab2(this.getres1), this.key, this.iv)
      let decmens = await decryptRSA(this.postres, this.d, this.n)
@@ -62,16 +66,29 @@ export class MainComponent implements OnInit {
 
   async post(){
     //encripto el mensaje y lo envio, espero que mjuetre por pantalla el mensaje encriptado
+    let p = await bigintCryptoUtils.prime(1024);
+    let q = await bigintCryptoUtils.prime(1025);
+    console.log ("initial front_n is: " + this.nfront)
+    this.nfront = p * q;
+    console.log ("new front_n is: " + this.nfront)
+    let r = BigInt('1');
+    let phi_n = (p-r)*(q-r);
+    this.e = BigInt('65537');
+    this.dfront = bigintCryptoUtils.modInv(this.e, phi_n);
 
     this.menshex = stringToHex(this.mens)
     console.log('este es mi mens to hex: ' + this.menshex)
     //let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv) //los datos han de estar en arraybuffer
-    let cipher = await encryptRSA(this.menshex) //los datos han de estar en arraybuffer
+    let cipher = await encryptRSA(this.menshex, this.e, this.nfront) //los datos han de estar en arraybuffer
     // this.postencrypt = buf2hex(cipher)
-    console.log('decoded msg - comprobación: ' + cipher)
-      this.mainService.post(cipher).subscribe(res => { //envio el mensage al serve en formato hexa
+    let new_cipher = {mensaje: cipher, d: this.dfront, n: this.nfront};
+    new_cipher = JSON.stringify(new_cipher)
+    console.log('encrtypted msg - comprobación: ' + cipher);
+    console.log('encrtypted msg - comprobación2: ' + new_cipher.mensaje + new_cipher.d + new_cipher.n);
+      this.mainService.post(new_cipher).subscribe(res => { //envio el mensage al serve en formato hexa
+        console.log("respuesta post1: ")
         this.postres = res; //recibo la respuesta del server que es el buffer
-        console.log("respuesta post: ", this.postres) //la respuesta esta en hex e de pasarla a utf8
+        console.log("respuesta post2: ", this.postres) //la respuesta esta en hex e de pasarla a utf8
 
     })
   }
@@ -155,7 +172,8 @@ function stringToHex (tmp) {
 
   for (; i < tmp_len; i += 1) {
       c = tmp.charCodeAt(i);
-      str += d2h(c) + ' ';
+      //str += d2h(c) + ' ';
+      str += d2h(c);
   }
   return str;
 }
@@ -173,22 +191,24 @@ function buf2hex(buffer) { // buffer is an ArrayBuffer
 
 //FUNCIONES RSA
 //funcion para crear key RSA
-async function KeyRSA(){
+async function KeyRSA(front_n, front_e, front_d){
 	let p = await bigintCryptoUtils.prime(1024);
-	let q = await bigintCryptoUtils.prime(1025);
-	this.n = p * q;
+  let q = await bigintCryptoUtils.prime(1025);
+  console.log ("initial front_n is: " + front_n)
+  front_n = p * q;
+  console.log ("new front_n is: " + front_n)
 	let r = BigInt('1');
   let phi_n = (p-r)*(q-r);
-  this.e = BigInt('65537');
-	this.d = bigintCryptoUtils.modInv(this.e, phi_n);
+  front_e = BigInt('65537');
+	front_d = bigintCryptoUtils.modInv(front_e, phi_n);
 }
 //funcion para encriptar RSA
-async function encryptRSA(msg){ // MANDAR EN HEXA
+async function encryptRSA(msg,e,nfront){ // MANDAR EN HEXA
   //let msgbuf = .from(msg,'utf8');
 
   let msghex = msg.toString();
 	let msgbig = BigInt('0x' + msghex);
-  let cryptedRSA = bigintCryptoUtils.modPow(msgbig, this.e, this.n)
+  let cryptedRSA = bigintCryptoUtils.modPow(msgbig, e, nfront)
 	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
 }
 //funcion para desencryptar RSA
