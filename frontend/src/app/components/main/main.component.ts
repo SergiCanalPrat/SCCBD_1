@@ -81,10 +81,11 @@ export class MainComponent implements OnInit {
     //let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv) //los datos han de estar en arraybuffer
     let cipher = await encryptRSA(this.menshex, this.e, this.nfront) //los datos han de estar en arraybuffer
     // this.postencrypt = buf2hex(cipher)
-    let new_cipher = {mensaje: cipher, d: this.dfront, n: this.nfront};
-    new_cipher = JSON.stringify(new_cipher)
+    //Voy a enviarlo todo como string y lo separaré con la letra "a" ya que siempre van a ser números
+    //se puede utilizar cualquier separador
+    let new_cipher = cipher + 'a' + this.dfront + 'a' + this.nfront;
     console.log('encrtypted msg - comprobación: ' + cipher);
-    console.log('encrtypted msg - comprobación2: ' + new_cipher.mensaje + new_cipher.d + new_cipher.n);
+    console.log('encrtypted msg - comprobación2: ' + new_cipher);
       this.mainService.post(new_cipher).subscribe(res => { //envio el mensage al serve en formato hexa
         console.log("respuesta post1: ")
         this.postres = res; //recibo la respuesta del server que es el buffer

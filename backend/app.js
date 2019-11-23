@@ -57,9 +57,19 @@ app.get('/getkey', (req,res) => {
 app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas el mensage viene cifrado, tendria colo que descifrarlo
 	let mns = req.params.mns;
 	console.log('este mensaje recibo de frontend1: '+ mns);
-	console.log('este mensaje recibo de frontend2: '+ mns.mensaje + mns.d + mns.n);
+	//Como me está llegando el mensaje + "a" + d + "a" + n, lo que hago es dividirlo con el separador "a"  y guardar cada valor
+	let cadena = mns.split("a", 3);
+	let mensaje = cadena[0];
+	let d = cadena[1];
+	let n = cadena[2];
+
+	console.log('este mensaje recibo de frontend2(mensaje): '+ mensaje);
+	console.log('este mensaje recibo de frontend2(d): '+ d );
+	console.log('este mensaje recibo de frontend2(n): '+ n + "\n");
 	//let denmns =  decrypt(mns);
-	let denmnsRSA = decryptRSA(mns.mensaje, mns.d, mns.n);
+
+	//Faltaría pasar los valores de string a hexa
+	let denmnsRSA = decryptRSA(mensaje, d, n);
 	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmnsRSA);
 	res.json (denmnsRSA);
 })
@@ -147,9 +157,11 @@ function encryptRSA(msg){
 	return cryptoRSA;
 }
 //funcion para desencryptar RSA
-function decryptRSA(msg){
+function decryptRSA(msg, d, n){
 	let msgbig = BigInt('0x' + msg);
-	let decrypto = bigintCryptoUtils.modPow(msgbig, d, n);
+	let dbig = BigInt('0x' + d);
+	let nbig = BigInt('0x' + n);
+	let decrypto = bigintCryptoUtils.modPow(msgbig, dbig, nbig);
 	console.log('1', decrypto)
 	let decryptoHex = decrypto.toString(16);
 	console.log('2', decryptoHex)
