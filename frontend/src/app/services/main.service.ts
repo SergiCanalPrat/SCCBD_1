@@ -14,8 +14,14 @@ export class MainService {
   getkey(){
     return this.http.get('http://localhost:3000/getkey')
   }
+  postn(n: Object){
+    return this.http.post('http://localhost:3000/postn'+  `/${n}` , n)
+  }
 
-  get(mens: Object) {
+  postd(d: Object){
+    return this.http.post('http://localhost:3000/postd'+  `/${d}` , d)
+  }
+  get() {
   return this.http.get('http://localhost:3000/get');
   } 
 

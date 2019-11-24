@@ -40,6 +40,8 @@ KeyRSA();
 let n;
 let d;
 let e;
+let nfront;
+let dfront;
 
 
 console.log (key);
@@ -54,22 +56,34 @@ app.get('/getkey', (req,res) => {
 	
 })
 
+app.post('/postd/:d', (req,res) => {
+	dfront = req.params.d
+ })
+
+app.post('/postn/:n', (req,res) => {
+	nfront = req.params.n
+	
+})
+
+
+
 app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas el mensage viene cifrado, tendria colo que descifrarlo
 	let mns = req.params.mns;
 	console.log('este mensaje recibo de frontend1: '+ mns);
 	//Como me está llegando el mensaje + "a" + d + "a" + n, lo que hago es dividirlo con el separador "a"  y guardar cada valor
-	let cadena = mns.split("a", 3);
+	/*let cadena = mns.split("a", 3);
 	let mensaje = cadena[0];
 	let d = cadena[1];
 	let n = cadena[2];
 
 	console.log('este mensaje recibo de frontend2(mensaje): '+ mensaje);
 	console.log('este mensaje recibo de frontend2(d): '+ d );
-	console.log('este mensaje recibo de frontend2(n): '+ n + "\n");
+	console.log('este mensaje recibo de frontend2(n): '+ n + "\n");*/
 	//let denmns =  decrypt(mns);
 
 	//Faltaría pasar los valores de string a hexa
-	let denmnsRSA = decryptRSA(mensaje, d, n);
+	console.log('valore     s   ', dfront, nfront)
+	let denmnsRSA = decryptRSA(mns, dfront, nfront);
 	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmnsRSA);
 	res.json (denmnsRSA);
 })
@@ -80,7 +94,7 @@ app.get('/get', (req,res) => {
 	console.log('este mensaje envio al backend: '+ emns);
 	//let demns = encrypt(emns1);
 	let demnsRSA = 	encryptRSA(emns);	
-	let demnsRSAhex = demnsRSA.toString(16)
+	let demnsRSAhex = demnsRSA.toString(16);
 	console.log('este mnesage que me enviare encryptado: '+ demnsRSAhex);
 	res.json (demnsRSAhex);
 })
@@ -159,9 +173,9 @@ function encryptRSA(msg){
 //funcion para desencryptar RSA
 function decryptRSA(msg, d, n){
 	let msgbig = BigInt('0x' + msg);
-	let dbig = BigInt('0x' + d);
-	let nbig = BigInt('0x' + n);
-	let decrypto = bigintCryptoUtils.modPow(msgbig, dbig, nbig);
+	//let dbig = BigInt('0x' + d);
+	//let nbig = BigInt('0x' + n);
+	let decrypto = bigintCryptoUtils.modPow(msgbig, d, n);
 	console.log('1', decrypto)
 	let decryptoHex = decrypto.toString(16);
 	console.log('2', decryptoHex)

@@ -29,8 +29,6 @@ export class MainComponent implements OnInit {
   e;
   d;
   n;
-  nfront;
-  dfront;
 
   dback;
   nback;
@@ -38,15 +36,7 @@ export class MainComponent implements OnInit {
   constructor(private mainService: MainService) { }
   ngOnInit() {
  
-  /* KeyRSA(){
-      let p = await bigintCryptoUtils.prime(1024);
-      let q = await bigintCryptoUtils.prime(1025);
-      this.n = p * q;
-      let r = BigInt('1');
-      let phi_n = (p-r)*(q-r);
-      this.e = BigInt('65537');
-      this.d = bigintCryptoUtils.modInv(this.e, phi_n);
-    }*/
+   this.KeyRSA();
 
     this.mainService.getiv().subscribe(res => {
        this.dback = res;
@@ -56,16 +46,34 @@ export class MainComponent implements OnInit {
       this.nback = res;
      // console.log('valor de n ', this.nback)
     })
-
   }
+   async KeyRSA(){
+      let r = BigInt('1');
+      let p = await bigintCryptoUtils.prime(1024);
+      let q = await bigintCryptoUtils.prime(1025);
+      this.n = p * q;      
+      let phi_n = (p-r)*(q-r);
+      this.e = BigInt('65537');
+      console.log('la eee',this.e)
+      this.d = bigintCryptoUtils.modInv(this.e, phi_n);
+
+      this.mainService.postd(this.d).subscribe(res => {
+         //console.log('valor de d ', this.dback)
+     })
+     this.mainService.postn(this.n).subscribe(res => {
+       
+      // console.log('valor de n ', this.nback)
+     })
+    }
+
+
 
   async get() {
     console.log('empezamos en GET  ')
     // mensaje
-    this.mainService.get(this.postres[0]).subscribe(async res =>{
+    this.mainService.get().subscribe(async res =>{
       this.postres = res;
       //console.log('El mensaje proveniente del server: ' + JSON.stringify(this.postres[0]))
-
       //this.getres1 = buf2hex(Object.values(this.postres)[1]);
      // let decmens = await decrypt( hex2ab2(this.getres1), this.key, this.iv)
      let decmens = await decryptRSA(this.postres, this.dback, this.nback)
@@ -81,15 +89,15 @@ export class MainComponent implements OnInit {
   async post(){
     //encripto el mensaje y lo envio, espero que mjuetre por pantalla el mensaje encriptado
      //creo la clave del cliente
-    this.menshex = this.mens.toString();
+    this.menshex = stringToHex(this.mens)
     console.log('este es mi mens to hex: ' + this.menshex)
     //let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv) //los datos han de estar en arraybuffer
     console.log('la e ',this.e)
     let cipher = await encryptRSA(this.menshex, this.e, this.n)
-    this.postencrypt = buf2hex(cipher)
+    this.postencrypt = cipher.toString(16)
     console.log('decoded msg - comprobación: ' + this.postencrypt)
       this.mainService.post(this.postencrypt).subscribe(res => { //envio el mensage al serve en formato hexa
-        this.postres = res; //recibo la respuesta del server que es el buffer
+        //this.postres = res; //recibo la respuesta del server que es el buffer
         console.log("respuesta post2: ", this.postres) //la respuesta esta en hex e de pasarla a utf8
 
     })
@@ -193,7 +201,7 @@ function buf2hex(buffer) { // buffer is an ArrayBuffer
 
 //FUNCIONES RSA
 //funcion para crear key RSA
-async function KeyRSA(front_n, front_e, front_d){
+/*async function KeyRSA(front_n, front_e, front_d){
 	let p = await bigintCryptoUtils.prime(1024);
 	let q = await bigintCryptoUtils.prime(1025);
 	front_n = p * q;
@@ -201,7 +209,7 @@ async function KeyRSA(front_n, front_e, front_d){
   let phi_n = (p-r)*(q-r);
   front_e = BigInt('65537');
 	front_d = bigintCryptoUtils.modInv(front_e, phi_n);
-}
+}*/
 //funcion para encriptar RSA
 async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
   //let msgbuf = .from(msg,'utf8');
