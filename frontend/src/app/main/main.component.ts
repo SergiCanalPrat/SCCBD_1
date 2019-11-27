@@ -4,7 +4,7 @@ import * as arrToString from 'arraybuffer-to-string';
 //@ts-ignore
 import * as hexToArrayBuffer from 'hex-to-array-buffer';
 import * as bigintCryptoUtils from 'bigint-crypto-utils';
-
+import {Moneda} from '../models/moneda';
 
 
 @Component({
@@ -47,7 +47,7 @@ export class MainComponent implements OnInit {
      // console.log('valor de n ', this.nback)
     })
   }
-   async KeyRSA(){
+  async KeyRSA(){
       let r = BigInt('1');
       let p = await bigintCryptoUtils.prime(1024);
       let q = await bigintCryptoUtils.prime(1025);
@@ -64,9 +64,7 @@ export class MainComponent implements OnInit {
        
       // console.log('valor de n ', this.nback)
      })
-    }
-
-
+   }
 
   async get() {
     console.log('empezamos en GET  ')
@@ -197,19 +195,6 @@ function hex2ab2(hex){
 function buf2hex(buffer) { // buffer is an ArrayBuffer
   return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
 }
-
-
-//FUNCIONES RSA
-//funcion para crear key RSA
-/*async function KeyRSA(front_n, front_e, front_d){
-	let p = await bigintCryptoUtils.prime(1024);
-	let q = await bigintCryptoUtils.prime(1025);
-	front_n = p * q;
-	let r = BigInt('1');
-  let phi_n = (p-r)*(q-r);
-  front_e = BigInt('65537');
-	front_d = bigintCryptoUtils.modInv(front_e, phi_n);
-}*/
 //funcion para encriptar RSA
 async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
   //let msgbuf = .from(msg,'utf8');
@@ -230,4 +215,20 @@ async function decryptRSA(msg,d,n){
   let decryptedRSA = arrToString(decryptHex);
   console.log('desencriptado  ', decryptedRSA)
 	return decryptedRSA;
+}
+
+//Funciones de PROJECTO
+function money(){ //peticion de la monedas
+
+}
+
+function hash(moneda:Moneda) {
+  
+}
+
+function crearMoney() {//le llegaria la firma y es hash
+  
+}
+function compra (moneda:Moneda) {
+  
 }

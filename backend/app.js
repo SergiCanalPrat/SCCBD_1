@@ -82,7 +82,7 @@ app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas
 	//let denmns =  decrypt(mns);
 
 	//Faltaría pasar los valores de string a hexa
-	console.log('valore     s   ', dfront, nfront)
+	console.log('valores   ', dfront, nfront)
 	let denmnsRSA = decryptRSA(mns, dfront, nfront);
 	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmnsRSA);
 	res.json (denmnsRSA);
