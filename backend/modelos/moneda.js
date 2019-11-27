@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 
 
 const MonedaSchema = Schema({
-    valor: Number,
+    Valor: Number,
     id: String,
 
 })
