@@ -218,17 +218,21 @@ async function decryptRSA(msg,d,n){
 }
 
 //Funciones de PROJECTO
-function money(){ //peticion de la monedas
 
+//pido una moneda al banco, me la descuenta y me la envia
+function money(){ 
 }
 
-function hash(moneda:Moneda) {
-  
+//ciego la moneda
+function ciego(moneda:Moneda) {  
+}
+//creo un hash de la moneda cegada
+function hash(moneda:Moneda) {  
 }
 
-function crearMoney() {//le llegaria la firma y es hash
-  
+//la moneda principal, y su firma crean la moneda 
+function crearMoney() {  
 }
+//a la tienda eleguida se le envia la moneda y se recive si la compra es valida o no
 function compra (moneda:Moneda) {
-  
-}
+  }
