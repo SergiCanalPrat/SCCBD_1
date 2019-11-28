@@ -47,6 +47,7 @@ this.KeyRSA();
 	// console.log('valor de n ', this.nback)
 	})
 }
+
 async KeyRSA(){
 	let r = BigInt('1');
 	let p = await bigintCryptoUtils.prime(1024);
@@ -65,6 +66,7 @@ async KeyRSA(){
 	// console.log('valor de n ', this.nback)
 	})
 }
+
 
 async get() {
 	console.log('empezamos en GET  ')
@@ -98,7 +100,9 @@ async post(){
 		//this.postres = res; //recibo la respuesta del server que es el buffer
 		console.log("respuesta post2: ", this.postres) //la respuesta esta en hex e de pasarla a utf8
 
-	})}
+	})
+
+}
 }
 
 async function encrypt(msg, key, iv) {
@@ -240,3 +244,4 @@ function crearMoney() {//le llegaria la firma y el hash
 function compra (moneda: Moneda) {
 }
 }
+
