@@ -217,18 +217,18 @@ async function decryptRSA(msg,d,n){
 	return decryptedRSA;
 }
 
-//Funciones de PROJECTO
-function money(){ //peticion de la monedas
+//Funciones de PROYECTO
+function money(){ //peticion de la moneda
 
 }
 
-function hash(moneda:Moneda) {
+function hash(moneda: Moneda) {
 
 }
 
-function crearMoney() {//le llegaria la firma y es hash
+function crearMoney() {//le llegaria la firma y el hash
 
 }
-function compra (moneda:Moneda) {
+function compra (moneda: Moneda) {
 
 }
