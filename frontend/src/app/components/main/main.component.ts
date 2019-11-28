@@ -98,9 +98,8 @@ async post(){
 		//this.postres = res; //recibo la respuesta del server que es el buffer
 		console.log("respuesta post2: ", this.postres) //la respuesta esta en hex e de pasarla a utf8
 
-	})
+	})}
 }
-
 
 async function encrypt(msg, key, iv) {
 // iv will be needed for decryption
