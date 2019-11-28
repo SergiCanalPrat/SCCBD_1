@@ -4,7 +4,7 @@ import * as arrToString from 'arraybuffer-to-string';
 //@ts-ignore
 import * as hexToArrayBuffer from 'hex-to-array-buffer';
 import * as bigintCryptoUtils from 'bigint-crypto-utils';
-import {Moneda} from '../models/moneda';
+import {Moneda} from '../../models/moneda';
 
 
 @Component({
@@ -14,7 +14,7 @@ import {Moneda} from '../models/moneda';
 })
 
 export class MainComponent implements OnInit {
-  
+
   getres: Object;
   getres1: Object;
   mens
@@ -35,7 +35,7 @@ export class MainComponent implements OnInit {
 
   constructor(private mainService: MainService) { }
   ngOnInit() {
- 
+
    this.KeyRSA();
 
     this.mainService.getiv().subscribe(res => {
@@ -51,7 +51,7 @@ export class MainComponent implements OnInit {
       let r = BigInt('1');
       let p = await bigintCryptoUtils.prime(1024);
       let q = await bigintCryptoUtils.prime(1025);
-      this.n = p * q;      
+      this.n = p * q;
       let phi_n = (p-r)*(q-r);
       this.e = BigInt('65537');
       console.log('la eee',this.e)
@@ -61,7 +61,7 @@ export class MainComponent implements OnInit {
          //console.log('valor de d ', this.dback)
      })
      this.mainService.postn(this.n).subscribe(res => {
-       
+
       // console.log('valor de n ', this.nback)
      })
    }
@@ -223,12 +223,12 @@ function money(){ //peticion de la monedas
 }
 
 function hash(moneda:Moneda) {
-  
+
 }
 
 function crearMoney() {//le llegaria la firma y es hash
-  
+
 }
 function compra (moneda:Moneda) {
-  
+
 }
