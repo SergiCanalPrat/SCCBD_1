@@ -2,10 +2,6 @@
 
 const Moneda = require('../modelos/moneda')
 
- //recivir moneda por parte del cliente, hacer un hash y enviarla otra vez al cliente
-function makehash (){
-}
-
 // recive el hash de la moneda cegada y su valor, con ello firma la moneda
 function firma (){
 }
