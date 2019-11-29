@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 
 
 const TiendaSchema = Schema({
-    Saldo: Number
+    cuenta:  [{type: Schema.Types.ObjectId, ref: "Cuenta"}],
 })
 
 

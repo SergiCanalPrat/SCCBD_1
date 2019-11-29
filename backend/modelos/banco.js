@@ -4,8 +4,8 @@ const Schema = mongoose.Schema
 
 
 const BancoSchema = Schema({
-    Titular: String,
-    Saldo: Number
+   cuentas: [{type: Schema.Types.ObjectId, ref: "Cuenta"}],
+   lista_id: String(),
 })
 
 

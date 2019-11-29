@@ -6,7 +6,6 @@ const Schema = mongoose.Schema
 const MonedaSchema = Schema({
     Valor: Number,
     id: String,
-
 })
 
 
