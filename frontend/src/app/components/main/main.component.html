@@ -1,8 +1,18 @@
-<h2>SMART CITY</h2>
+<h2>BANCO SMART-CITY</h2>
 
-<label >Message: </label>
-<input type="text" name="mng" #mng="ngModel" [(ngModel)]="mens">
-<p></p>
+<label > Moneda para comprar </label>
+<input type="text" name="val" #mng="ngModel" [(ngModel)]="val">
+<br>
+<button (click)="money_req()">MONEY</button>
+<br>
+<label>Mensages <p></p>{{message}}</label>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
 <div>
     <button (click)="post()"> POST (Encrypt)</button>

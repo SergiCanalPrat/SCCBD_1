@@ -1,9 +1,10 @@
+import { NgIf } from '@angular/common';
 
 export class Moneda {
-    _id: string;
+    _id: number;
     valor: number;
 
-constructor(_id='', valor = 0){
+constructor(_id= 0 , valor = 0){
     this._id =_id;
     this.valor = valor;
 }}

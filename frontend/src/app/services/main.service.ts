@@ -29,4 +29,9 @@ export class MainService {
     console.log("envio", mens)
     return this.http.post('http://localhost:3000/post' +  `/${mens}` , mens);
   }
+
+  //RUTAS DEL PROYECTO
+  post_money(moneyblind: Object, id:Number){
+    return this.http.post('http://localhost:3000/postMoney' + `/${id}`, moneyblind );
+  }
 }
