@@ -1,9 +1,13 @@
 <h2>BANCO SMART-CITY</h2>
 
 <label > Moneda para comprar </label>
-<input type="text" name="val" #mng="ngModel" [(ngModel)]="val">
 <br>
-<button (click)="money_req()">MONEY</button>
+<br>
+<br>
+<button (click)="money_req('5')" class="boton-personalizado" > MONEY 5 </button>
+<button (click)="money_req('10')" class="boton-personalizado" > MONEY 10 </button>
+<button (click)="money_req('20')" class="boton-personalizado" > MONEY 20 </button>
+<br>
 <br>
 <label>Mensages <p></p>{{message}}</label>
 

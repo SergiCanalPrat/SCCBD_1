@@ -17,8 +17,8 @@ styleUrls: ['./main.component.css']
 export class MainComponent implements OnInit {
 
 //proyecto
-	val: number; //valor de la moneda
-	money : Moneda
+	money : Moneda;
+	message;
 
 //------------ENTREGAS------------------//
 getres: Object;
@@ -58,11 +58,11 @@ this.KeyRSA();
 
 
 //PROYECTO
-async money_req(){ //peticion de la moneda
+async money_req(value: number){ //peticion de la moneda
 	//pasamos a cerar el papel de la moneda	
 	let id = Math.random()*1024	
 	//let id = CryptoJS.randomBytes(1024);
-	this.money = new Moneda (id, this.val)
+	this.money = new Moneda (id, value)
 	console.log('papel creado', this.money)
 	
 	//MONEY creacion del hash
@@ -82,11 +82,10 @@ async money_req(){ //peticion de la moneda
 	let product = money_big * factor;
 	let money_blind = bigintCryptoUtils.modPow(product,this.e,this.n)
 	console.log('money cegado ',money_blind)
-	this.mainService.post_money(money_blind, id).subscribe(res =>{
+	this.mainService.post_money(money_blind, value).subscribe(res =>{
 		console.log('mesage de salida ', res)
+		this.message = res;
 	})
-
-
 }
 
 

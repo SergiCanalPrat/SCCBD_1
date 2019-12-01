@@ -31,7 +31,7 @@ export class MainService {
   }
 
   //RUTAS DEL PROYECTO
-  post_money(moneyblind: Object, id:Number){
-    return this.http.post('http://localhost:3000/postMoney' + `/${id}`, moneyblind );
+  post_money(moneyblind: Object, value:Number){
+    return this.http.post('http://localhost:3000/postMoney' + `/${value}`, moneyblind );
   }
 }
