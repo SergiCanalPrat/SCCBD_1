@@ -13,3 +13,18 @@
     border-style: solid;
     border-radius:35px;
 }
+
+
+.fab-button {
+    line-height: 4rem;
+    text-decoration:none;
+    font-weight:300;
+    font-size:20px;
+    color:#333333;
+    min-width: 0;
+    width: 4rem;
+    height: 4rem;
+    background-color:rgb(239, 243, 23);
+    border-style: solid;
+    border-radius: 50%;
+  }
