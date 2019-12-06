@@ -30,7 +30,12 @@ export class MainService {
     return this.http.post('http://localhost:3000/post' +  `/${mens}` , mens);
   }
 
+
+
   //RUTAS DEL PROYECTO
+  login(name:String, pass:String){
+    return this.http.post('http://localhost:3000/login' + `/${name}`, pass )
+  }
   post_money(moneyblind: Object, value:Number){
     return this.http.post('http://localhost:3000/postMoney' + `/${value}`, moneyblind );
   }

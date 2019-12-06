@@ -6,6 +6,8 @@ const cors = require('cors');
 const crypto = require('crypto');
 const app = express();
 const bigintCryptoUtils = require('bigint-crypto-utils');
+const moment = require('moment')
+const jwt = require('jwt-simple')
 
 
 app.use(logger('dev')); // Log requests (GET..)
@@ -30,6 +32,8 @@ app.unsubscribe((req, res, next) =>{
 })
 app.use(cors());
 
+
+
 //FUNCIONES POST, GET, ENCRIPTAR, DESENCRIPTAR
 
 const KEY_LENGTH = 32;
@@ -44,6 +48,24 @@ let nfront;
 let dfront;
 
 
+
+//Funciones del pryecto
+
+
+
+app.post('/login/:name',(req,res) => {
+	let name = req.params.name;
+	let password = req.params.pass;
+	console.log('usuario logeandose ',name, password)
+	let token = createToken(name)	
+	return res.json(token)
+		  
+})
+
+
+
+
+//funiones de ENTREGAS
 console.log (key);
  app.get('/getiv', (req,res) => {
 	//res.json (buf2hex(iv));
@@ -59,13 +81,10 @@ app.get('/getkey', (req,res) => {
 app.post('/postd/:d', (req,res) => {
 	dfront = req.params.d
  })
-
 app.post('/postn/:n', (req,res) => {
 	nfront = req.params.n
 	
 })
-
-
 
 app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas el mensage viene cifrado, tendria colo que descifrarlo
 	let mns = req.params.mns;
@@ -99,6 +118,20 @@ app.get('/get', (req,res) => {
 	res.json (demnsRSAhex);
 })
 
+//FUNCIONES DEL PROYECTO
+function createToken(user) {
+    const payload = {
+      sub: user,
+      ///libreria moment para las fechas, ayuda para el manejo de fechas
+      iat: moment().unix(), //fecha en la que fue creado el Token-tiempo en formato unix
+      exp:moment().add(14, 'days').unix(), //fecha en la que el token va a expirar - caduca en 14 días
+    }
+    //codificarlo
+    return jwt.encode(payload, 'miclavedetokens')
+}
+
+
+
 //funcion de encriptar
 function encrypt (msg){
 	console.log('encrypt del server 1 '+ msg);
@@ -109,7 +142,6 @@ function encrypt (msg){
 	console.log('encrypt del server 2 - final: ' + encrypted.toString());
 	return encrypted;
 	}
-
 //funcion de desencriptar
 function decrypt (msg){
 	console.log('decrypted del server 1: ' + msg);
@@ -119,13 +151,9 @@ function decrypt (msg){
 	console.log('decrypted del server 3.º: ', decrypted.toString());
 	return decrypted;
 }
-
-
 function buf2hex(buffer) { // buffer is an ArrayBuffer
 	return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
   }
-
-
 function hex2ab2(hex){
 	var typedArray = new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function(h){
 	  return parseInt(h, 16)
@@ -133,11 +161,9 @@ function hex2ab2(hex){
 	var buffer = typedArray.buffer
 	return buffer
   }
-
 function d2h(d) {
 	return d.toString(16);
   }
-
 function ascii_to_hexa(str)
   {
 	var arr1 = [];
@@ -148,8 +174,6 @@ function ascii_to_hexa(str)
 	 }
 	return arr1.join('');
    }
-
-
 //funcion para crear key RSA
 async function KeyRSA(){
 	console.log('Voy a crear la Key')

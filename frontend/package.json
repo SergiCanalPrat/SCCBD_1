@@ -20,7 +20,7 @@
     "@angular/material": "^8.2.0",
     "@angular/platform-browser": "~8.2.5",
     "@angular/platform-browser-dynamic": "~8.2.5",
-    "@angular/router": "~8.2.5",
+    "@angular/router": "^8.2.14",
     "bigint-crypto-utils": "^2.3.1",
     "node": "^13.1.0",
     "object-hash": "^2.0.0",
