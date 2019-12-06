@@ -45,7 +45,7 @@ ngOnInit() {
 
 //ENTREGAS
 
-this.KeyRSA();
+//this.KeyRSA();
 	/*this.mainService.getiv().subscribe(res => {
 	this.dback = res;
 	// console.log('valor de d ', this.dback)
@@ -59,12 +59,12 @@ this.KeyRSA();
 
 //PROYECTO
 async money_req(value: number){ //peticion de la moneda
-	//pasamos a cerar el papel de la moneda	
-	let id = Math.random()*1024	
+	//pasamos a cerar el papel de la moneda
+	let id = Math.random()*1024
 	//let id = CryptoJS.randomBytes(1024);
 	this.money = new Moneda (id, value)
 	console.log('papel creado', this.money)
-	
+
 	//MONEY creacion del hash
 	let money_string = this.money.toString()
 	let money_hash = CryptoJS.SHA256(money_string)
@@ -83,24 +83,39 @@ async money_req(value: number){ //peticion de la moneda
 	let money_blind = bigintCryptoUtils.modPow(product,this.e,this.n)
 	console.log('money cegado ',money_blind)
 	this.mainService.post_money(money_blind, value).subscribe(res =>{
-		console.log('mesage de salida ', res)
+    console.log('mesage de salida ', res)
+    let key = this.KeyRSA(value);
+    encryptRSA (money_blind, e, n)
 		this.message = res;
 	})
 }
 
-
-
-
-
 //ENTREGAS
-async KeyRSA(){
-	let r = BigInt('1');
+async KeyRSA(value){
+  let r ;
+  if (value == 5){
+    r = BigInt('5');
+  }
+  else if (value == 10){
+    r = BigInt('10');
+
+  }
+  else if (value == 20){
+    r = BigInt('20');
+
+  }
+
+  else {
+    console.log('Wrong Value!!')
+  }
 	let p = await bigintCryptoUtils.prime(1024);
 	let q = await bigintCryptoUtils.prime(1025);
 	this.n = p * q;
 	let phi_n = (p-r)*(q-r);
 	this.e = BigInt('65537');
 	this.d = bigintCryptoUtils.modInv(this.e, phi_n);
+
+
 	/*this.mainService.postd(this.d).subscribe(res => {
 		//console.log('valor de d ', this.dback)
 	})
@@ -109,6 +124,14 @@ async KeyRSA(){
 	})*/
 }
 
+async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
+	//funcion para encriptar RSA
+//let msgbuf = .from(msg,'utf8');
+  let msgbig = BigInt('0x' + msg)
+  console.log('men en big', msgbig);
+  let cryptedRSA = bigintCryptoUtils.modPow(msgbig, e, n)
+	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
+}
 
 
 /*
