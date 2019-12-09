@@ -40,10 +40,18 @@ const KEY_LENGTH = 32;
 const IV_LENGTH = 16; // For AES, this is always 16
 let iv = crypto.randomBytes(IV_LENGTH);
 let key = crypto.randomBytes(KEY_LENGTH);
-KeyRSA();
-let n;
-let d;
-let e;
+KeyRSA5();
+KeyRSA10();
+KeyRSA20();
+let n5;
+let d5;
+let e5;
+let n10;
+let d10;
+let e10;
+let n20;
+let d20;
+let e20;
 let nfront;
 let dfront;
 
@@ -54,6 +62,15 @@ let dfront;
 
 
 app.post('/login/:name',(req,res) => {
+	let value = req.params.value;
+	let moneyBlind = req.params.pass;
+	console.log('cuerpo PostMoney ',value, moneyBlind)
+	encryptRSA(value, moneyBlind)
+	return res.json(token)
+		  
+})
+
+app.post('/postMoney/:name',(req,res) => {
 	let name = req.params.name;
 	let password = req.params.pass;
 	console.log('usuario logeandose ',name, password)
@@ -61,8 +78,6 @@ app.post('/login/:name',(req,res) => {
 	return res.json(token)
 		  
 })
-
-
 
 
 //funiones de ENTREGAS
@@ -175,25 +190,67 @@ function ascii_to_hexa(str)
 	return arr1.join('');
    }
 //funcion para crear key RSA
-async function KeyRSA(){
-	console.log('Voy a crear la Key')
+async function KeyRSA5(){
+	console.log('Voy a crear la Key de 5')
 	let r = BigInt('1')
 	let p = await bigintCryptoUtils.prime(1024);
 	let q = await bigintCryptoUtils.prime(1025);
-	n = p * q;
+	n5 = p * q;
 	let phi_n = (p-r)*(q-r);	
-	e = BigInt('65537');
-	d = bigintCryptoUtils.modInv(e, phi_n);
+	e5 = BigInt('65537');
+	d5 = bigintCryptoUtils.modInv(e5, phi_n);
 	//return d;
 }
+
+//funcion para crear key RSA
+async function KeyRSA10(){
+	console.log('Voy a crear la Key de 10')
+	let r = BigInt('1')
+	let p = await bigintCryptoUtils.prime(1024);
+	let q = await bigintCryptoUtils.prime(1025);
+	n10 = p * q;
+	let phi_n = (p-r)*(q-r);	
+	e10 = BigInt('65537');
+	d10 = bigintCryptoUtils.modInv(e10, phi_n);
+	//return d;
+}
+
+//funcion para crear key RSA
+async function KeyRSA20(){
+	console.log('Voy a crear la Key de 20')
+	let r = BigInt('1')
+	let p = await bigintCryptoUtils.prime(1024);
+	let q = await bigintCryptoUtils.prime(1025);
+	n20 = p * q;
+	let phi_n = (p-r)*(q-r);	
+	e20 = BigInt('65537');
+	d20 = bigintCryptoUtils.modInv(e20, phi_n);
+	//return d;
+}
+
+
 //funcion para encriptar RSA
-function encryptRSA(msg){
+function encryptRSA(msg, value){
 	let msgbuf = Buffer.from(msg,'utf8');
 	let msgbig = BigInt('0x' + msgbuf.toString('hex'));
-	let cryptoRSA = bigintCryptoUtils.modPow(msgbig,e,n)
+	let cryptoRSA;
+	if (value == 5){
+		cryptoRSA = bigintCryptoUtils.modPow(msgbig,e5,n5)
+	}
+	else if (value == 10){
+		cryptoRSA = bigintCryptoUtils.modPow(msgbig,e10,n10)
+	}
+	else if (value == 20){
+		cryptoRSA = bigintCryptoUtils.modPow(msgbig,e20,n20)
+	}
+	else {
+		cryptoRSA = 'Valor incorrecto' 
+	}
 	console.log('3', cryptoRSA)
 	return cryptoRSA;
 }
+
+
 //funcion para desencryptar RSA
 function decryptRSA(msg, d, n){
 	let msgbig = BigInt('0x' + msg);
