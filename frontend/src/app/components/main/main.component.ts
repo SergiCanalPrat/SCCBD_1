@@ -85,7 +85,7 @@ async money_req(value: number){ //peticion de la moneda
 	this.mainService.post_money(money_blind, value).subscribe(res =>{
     console.log('mesage de salida ', res)
     let key = this.KeyRSA(value);
-    encryptRSA (money_blind, e, n)
+    encryptRSA (money_blind, this.e, this.n)
 		this.message = res;
 	})
 }
@@ -123,7 +123,7 @@ async KeyRSA(value){
 	// console.log('valor de n ', this.nback)
 	})*/
 }
-
+}
 async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
 	//funcion para encriptar RSA
 //let msgbuf = .from(msg,'utf8');
@@ -169,7 +169,7 @@ async post(){
 	})
 
 }*/
-}//CIERRA EXPORT
+//CIERRA EXPORT
 /*
 async function encrypt(msg, key, iv) {
 // iv will be needed for decryption
