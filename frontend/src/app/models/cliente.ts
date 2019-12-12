@@ -1,7 +1,12 @@
+import { NgIf } from '@angular/common';
 
-export class Comprador {
-   cuenta: String 
+export class Cliente {
+   name: string;
+   pass: string;
+   token: string;
 
-constructor(cuenta='', ){
-    this.cuenta = cuenta
+constructor(name = "", pass = "",token = "" ){
+    this.name = name,
+    this.pass = pass,
+    this.token = token
 }}

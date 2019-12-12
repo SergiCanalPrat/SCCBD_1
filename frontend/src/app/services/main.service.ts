@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Script } from 'vm';
 
 @Injectable({
   providedIn: 'root'
@@ -7,36 +8,20 @@ import { HttpClient } from '@angular/common/http';
 export class MainService {
 
   constructor(private http: HttpClient) { }
-  getiv(){
-    return this.http.get('http://localhost:3000/getiv')
-  }
-
-  getkey(){
-    return this.http.get('http://localhost:3000/getkey')
-  }
-  postn(n: Object){
-    return this.http.post('http://localhost:3000/postn'+  `/${n}` , n)
-  }
-
-  postd(d: Object){
-    return this.http.post('http://localhost:3000/postd'+  `/${d}` , d)
-  }
-  get() {
-  return this.http.get('http://localhost:3000/get');
-  } 
-
-  post(mens: Object){
-    console.log("envio", mens)
-    return this.http.post('http://localhost:3000/post' +  `/${mens}` , mens);
-  }
-
-
-
+ 
   //RUTAS DEL PROYECTO
   login(name:String, pass:String){
     return this.http.post('http://localhost:3000/login' + `/${name}`, pass )
   }
   post_money(moneyblind: Object, value:Number){
     return this.http.post('http://localhost:3000/postMoney' + `/${value}`, moneyblind );
+  }
+  post_compra(user: Script, moneyblind: Object){
+    return this.http.post('http://localhost:3000/postCompra' +`/${user}` , moneyblind );
+  }
+
+  //Esto para bank Service
+  ask_money(money: Object, value:Number){
+    return this.http.post('http://localhost:3000/askMoney' + `/${value}`, money );
   }
 }

@@ -80,6 +80,7 @@ app.post('/postMoney/:name',(req,res) => {
 })
 
 
+<<<<<<< HEAD
 //funiones de ENTREGAS
 console.log (key);
  app.get('/getiv', (req,res) => {
@@ -92,46 +93,26 @@ app.get('/getkey', (req,res) => {
 	res.json(n.toString(16));
 	
 })
+||||||| merged common ancestors
 
-app.post('/postd/:d', (req,res) => {
-	dfront = req.params.d
+
+//funiones de ENTREGAS
+console.log (key);
+ app.get('/getiv', (req,res) => {
+	//res.json (buf2hex(iv));
+	res.json(d.toString(16));
  })
-app.post('/postn/:n', (req,res) => {
-	nfront = req.params.n
+
+app.get('/getkey', (req,res) => {
+	//res.json (buf2hex(key));	
+	res.json(n.toString(16));
 	
 })
+=======
 
-app.post( '/post/:mns',	(req, res) => {  //por	que encripto y desncripto, ademas el mensage viene cifrado, tendria colo que descifrarlo
-	let mns = req.params.mns;
-	console.log('este mensaje recibo de frontend1: '+ mns);
-	//Como me está llegando el mensaje + "a" + d + "a" + n, lo que hago es dividirlo con el separador "a"  y guardar cada valor
-	/*let cadena = mns.split("a", 3);
-	let mensaje = cadena[0];
-	let d = cadena[1];
-	let n = cadena[2];
 
-	console.log('este mensaje recibo de frontend2(mensaje): '+ mensaje);
-	console.log('este mensaje recibo de frontend2(d): '+ d );
-	console.log('este mensaje recibo de frontend2(n): '+ n + "\n");*/
-	//let denmns =  decrypt(mns);
+>>>>>>> 7d4fbf9f0297abcf80eb33ab2f1f4819bf2251e6
 
-	//Faltaría pasar los valores de string a hexa
-	console.log('valores   ', dfront, nfront)
-	let denmnsRSA = decryptRSA(mns, dfront, nfront);
-	console.log('este mensaje recibo del servidor tras deseencriptar: '+ denmnsRSA);
-	res.json (denmnsRSA);
-})
-
-app.get('/get', (req,res) => {
-	let emns = 'hola'
-	let emns1 = ascii_to_hexa(emns)
-	console.log('este mensaje envio al backend: '+ emns);
-	//let demns = encrypt(emns1);
-	let demnsRSA = 	encryptRSA(emns);	
-	let demnsRSAhex = demnsRSA.toString(16);
-	console.log('este mnesage que me enviare encryptado: '+ demnsRSAhex);
-	res.json (demnsRSAhex);
-})
 
 //FUNCIONES DEL PROYECTO
 function createToken(user) {
@@ -139,33 +120,12 @@ function createToken(user) {
       sub: user,
       ///libreria moment para las fechas, ayuda para el manejo de fechas
       iat: moment().unix(), //fecha en la que fue creado el Token-tiempo en formato unix
-      exp:moment().add(14, 'days').unix(), //fecha en la que el token va a expirar - caduca en 14 días
+      exp:moment().add(365, 'days').unix(), //fecha en la que el token va a expirar - caduca en 14 días
     }
     //codificarlo
     return jwt.encode(payload, 'miclavedetokens')
 }
 
-
-
-//funcion de encriptar
-function encrypt (msg){
-	console.log('encrypt del server 1 '+ msg);
-	let cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-	let encrypted = cipher.update(msg, 'hex');
-	encrypted = Buffer.concat([encrypted, cipher.final()]);
-	let encryptedhex = buf2hex(encrypted);
-	console.log('encrypt del server 2 - final: ' + encrypted.toString());
-	return encrypted;
-	}
-//funcion de desencriptar
-function decrypt (msg){
-	console.log('decrypted del server 1: ' + msg);
-	let decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
-	let decrypted = decipher.update(msg,'hex');
-	decrypted = Buffer.concat([decrypted, decipher.final()]);
-	console.log('decrypted del server 3.º: ', decrypted.toString());
-	return decrypted;
-}
 function buf2hex(buffer) { // buffer is an ArrayBuffer
 	return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
   }
