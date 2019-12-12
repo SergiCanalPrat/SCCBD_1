@@ -124,7 +124,7 @@ function createToken(user) {
       sub: user,
       ///libreria moment para las fechas, ayuda para el manejo de fechas
       iat: moment().unix(), //fecha en la que fue creado el Token-tiempo en formato unix
-      exp:moment().add(14, 'days').unix(), //fecha en la que el token va a expirar - caduca en 14 días
+      exp:moment().add(365, 'days').unix(), //fecha en la que el token va a expirar - caduca en 14 días
     }
     //codificarlo
     return jwt.encode(payload, 'miclavedetokens')

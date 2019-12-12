@@ -5,8 +5,11 @@ import * as arrToString from 'arraybuffer-to-string';
 
 import * as hexToArrayBuffer from 'hex-to-array-buffer';
 import * as bigintCryptoUtils from 'bigint-crypto-utils';
-import {Moneda} from '../../models/moneda';
 import * as CryptoJS from 'crypto-js';
+
+import { Moneda } from '../../models/moneda';
+import { async } from 'q';
+//import { Cliente } from '../../models/cliente';
 
 @Component({
 selector: 'app-main',
@@ -38,14 +41,14 @@ n;
 dback;
 nback;
 
-
 constructor(private mainService: MainService) { }
 ngOnInit() {
 //PROYECTO
 
+
 //ENTREGAS
 
-//this.KeyRSA();
+this.KeyRSA_Cliente();
 	/*this.mainService.getiv().subscribe(res => {
 	this.dback = res;
 	// console.log('valor de d ', this.dback)
@@ -58,9 +61,19 @@ ngOnInit() {
 
 
 //PROYECTO
+KeyRSA_Cliente(){
+	let u = BigInt('1');
+	let p = bigintCryptoUtils.prime(1024);
+	let q = bigintCryptoUtils.prime(1025);
+	this.n = p * q;
+	let phi_n = (p-u)*(q-u);
+	this.e = BigInt('65537');
+	this.d = bigintCryptoUtils.modInv(this.e, phi_n);
+}
+
 async money_req(value: number){ //peticion de la moneda
 	//pasamos a cerar el papel de la moneda
-	let id = Math.random()*1024
+	let id = Math.random()*1024  //PREGUNTA COMO HACERLO BIEN 
 	//let id = CryptoJS.randomBytes(1024);
 	this.money = new Moneda (id, value)
 	console.log('papel creado', this.money)
@@ -75,7 +88,8 @@ async money_req(value: number){ //peticion de la moneda
 	//MONEY cegar papel  ---- m '\ equiv mr ^ {e} \ ({\ mathrm {mod}} \ N) ----
 	//creo el factor de ciegamiento  f ^ {e} {modulo N}
 	let f = await bigintCryptoUtils.prime(1024);
-	let factor = bigintCryptoUtils.modPow(f,this.e,this.n);
+	console.log('puta vidaaa  ' ,this.d)
+	let factor = await bigintCryptoUtils.modPow(f,this.e,this.n);
 	console.log('factor de cegamiento', factor);
 	//ciego el hash con el factor m' = mr ^ {e} {modulo N)
 	let money_big = BigInt('0x' + money_hash_hex);
@@ -85,12 +99,14 @@ async money_req(value: number){ //peticion de la moneda
 	this.mainService.post_money(money_blind, value).subscribe(res =>{
     console.log('mesage de salida ', res)
     let key = this.KeyRSA(value);
-    encryptRSA (money_blind, e, n)
+    encryptRSA (money_blind, this.e,this.n)
 		this.message = res;
 	})
 }
 
 //ENTREGAS
+
+
 async KeyRSA(value){
   let r ;
   if (value == 5){
@@ -123,18 +139,6 @@ async KeyRSA(value){
 	// console.log('valor de n ', this.nback)
 	})*/
 }
-
-async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
-	//funcion para encriptar RSA
-//let msgbuf = .from(msg,'utf8');
-  let msgbig = BigInt('0x' + msg)
-  console.log('men en big', msgbig);
-  let cryptedRSA = bigintCryptoUtils.modPow(msgbig, e, n)
-	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
-}
-
-
-/*
 async get() {
 	console.log('empezamos en GET  ')
 	// mensaje
@@ -145,7 +149,7 @@ async get() {
 	// let decmens = await decrypt( hex2ab2(this.getres1), this.key, this.iv)
 	let decmens = await decryptRSA(this.postres, this.dback, this.nback)
 	console.log('DECRYPT FET= ', decmens)
-	/* this.getres = stringToHex(Object.values(this.postres));
+	this.getres = stringToHex(Object.values(this.postres));
 	let decmenshex = buf2hex(decmens);
 	console.log('comprobacion ' + decmenshex);
 	this.enmens = decmenshex.toString();
@@ -168,9 +172,26 @@ async post(){
 
 	})
 
-}*/
-}//CIERRA EXPORT
-/*
+}
+} 
+
+//CIERRA EXPORT
+//PROYECTO
+
+
+
+
+
+
+
+async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
+	//funcion para encriptar RSA
+//let msgbuf = .from(msg,'utf8');
+  let msgbig = BigInt('0x' + msg)
+  console.log('men en big', msgbig);
+  let cryptedRSA = bigintCryptoUtils.modPow(msgbig, e, n)
+	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
+}
 async function encrypt(msg, key, iv) {
 // iv will be needed for decryption
 console.log('entra en encrypt: ',msg)
@@ -262,14 +283,6 @@ return buffer
 function buf2hex(buffer) { // buffer is an ArrayBuffer
 return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
 }
-async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
-	//funcion para encriptar RSA
-//let msgbuf = .from(msg,'utf8');
-let msgbig = BigInt('0x' + msg)
-console.log('men en big', msgbig);
-let cryptedRSA = bigintCryptoUtils.modPow(msgbig, e, n)
-	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
-}
 async function decryptRSA(msg,d,n){ //funcion para desencryptar RSA
 let msgbig = BigInt('0x' + msg);
 let dbig = BigInt('0x' + d);
@@ -281,16 +294,9 @@ let decryptHex = hexToArrayBuffer(decrypt);
 let decryptedRSA = arrToString(decryptHex);
 console.log('desencriptado  ', decryptedRSA)
 	return decryptedRSA;
-}*/
-
-
+}
 //Funciones de PROYECTO
-
-
-
-
 function crearMoney() {//le llegaria la firma y el hash
-
 }
 function compra (moneda: Moneda) {
 }
