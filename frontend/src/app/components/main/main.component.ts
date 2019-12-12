@@ -48,14 +48,7 @@ ngOnInit() {
 //ENTREGAS
 
 this.KeyRSA();
-	/*this.mainService.getiv().subscribe(res => {
-	this.dback = res;
-	// console.log('valor de d ', this.dback)
-	})
-	this.mainService.getkey().subscribe(res => {
-	this.nback = res;
-	// console.log('valor de n ', this.nback)
-	})*/
+	
 }
 
 
@@ -72,8 +65,10 @@ async KeyRSA(){
 
 async money_req(value: number){ //peticion de la moneda
 	//pasamos a cerar el papel de la moneda
-	let id = Math.random()*1024  //PREGUNTA COMO HACERLO BIEN 
-	//let id = CryptoJS.randomBytes(1024);
+	//Let id = Math.random()*1024  //PREGUNTA COMO HACERLO BIEN 
+
+	let id = bigintCryptoUtils.randBytes(128);
+
 	this.money = new Moneda (id, value)
 	console.log('papel creado', this.money)
 
