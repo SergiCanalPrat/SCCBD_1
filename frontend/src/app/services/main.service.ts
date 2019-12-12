@@ -39,4 +39,9 @@ export class MainService {
   post_money(moneyblind: Object, value:Number){
     return this.http.post('http://localhost:3000/postMoney' + `/${value}`, moneyblind );
   }
+
+  //Esto para bank Service
+  ask_money(money: Object, value:Number){
+    return this.http.post('http://localhost:3000/askMoney' + `/${value}`, money );
+  }
 }

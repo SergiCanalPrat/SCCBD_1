@@ -45,7 +45,6 @@ constructor(private mainService: MainService) { }
 ngOnInit() {
 //PROYECTO
 
-
 //ENTREGAS
 
 this.KeyRSA_Cliente();
@@ -99,14 +98,11 @@ async money_req(value: number){ //peticion de la moneda
 	this.mainService.post_money(money_blind, value).subscribe(res =>{
     console.log('mesage de salida ', res)
     let key = this.KeyRSA(value);
-    encryptRSA (money_blind, this.e,this.n)
+    encryptRSA (money_blind, this.e, this.n)
 		this.message = res;
 	})
 }
-
 //ENTREGAS
-
-
 async KeyRSA(value){
   let r ;
   if (value == 5){
@@ -139,6 +135,21 @@ async KeyRSA(value){
 	// console.log('valor de n ', this.nback)
 	})*/
 }
+}
+async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
+	//funcion para encriptar RSA
+//let msgbuf = .from(msg,'utf8');
+  let msgbig = BigInt('0x' + msg)
+  console.log('men en big', msgbig);
+  let cryptedRSA = bigintCryptoUtils.modPow(msgbig, e, n)
+	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
+}
+
+
+
+
+
+/*
 async get() {
 	console.log('empezamos en GET  ')
 	// mensaje
@@ -172,26 +183,9 @@ async post(){
 
 	})
 
-}
-} 
-
+}*/
 //CIERRA EXPORT
-//PROYECTO
-
-
-
-
-
-
-
-async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
-	//funcion para encriptar RSA
-//let msgbuf = .from(msg,'utf8');
-  let msgbig = BigInt('0x' + msg)
-  console.log('men en big', msgbig);
-  let cryptedRSA = bigintCryptoUtils.modPow(msgbig, e, n)
-	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
-}
+/*
 async function encrypt(msg, key, iv) {
 // iv will be needed for decryption
 console.log('entra en encrypt: ',msg)
@@ -299,6 +293,5 @@ console.log('desencriptado  ', decryptedRSA)
 function crearMoney() {//le llegaria la firma y el hash
 }
 function compra (moneda: Moneda) {
-}
-
+}*/
 
