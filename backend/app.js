@@ -12,6 +12,7 @@ const moneyInBank = require('./modelos/cuenta')
 const mongoose = require('mongoose')
 
 
+
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
 
