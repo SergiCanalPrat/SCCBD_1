@@ -129,9 +129,6 @@ function createToken(user) {
     //codificarlo
     return jwt.encode(payload, 'miclavedetokens')
 }
-
-
-
 //funcion de encriptar
 function encrypt (msg){
 	console.log('encrypt del server 1 '+ msg);
