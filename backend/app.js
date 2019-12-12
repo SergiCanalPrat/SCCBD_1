@@ -10,7 +10,7 @@ const moment = require('moment')
 const jwt = require('jwt-simple')
 const moneyInBank = require('./modelos/cuenta')
 const mongoose = require('mongoose')
-
+const config = require('./config')
 
 
 app.use(logger('dev')); // Log requests (GET..)
