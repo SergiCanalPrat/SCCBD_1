@@ -64,32 +64,28 @@ async KeyRSA(){
 }
 
 async money_req(value: number){ //peticion de la moneda
-	//pasamos a cerar el papel de la moneda
-	//Let id = Math.random()*1024  //PREGUNTA COMO HACERLO BIEN 
-
+	//Creamos el papel de la moneda
 	let id = bigintCryptoUtils.randBytes(128);
-
 	this.money = new Moneda (id, value)
-	console.log('papel creado', this.money)
+	//console.log('papel creado', this.money)
 
 	//MONEY creacion del hash
 	let money_string = this.money.toString()
 	let money_hash = CryptoJS.SHA256(money_string)
-	console.log('hash del mensage ',money_hash)
+	//console.log('hash del mensage ',money_hash)
 	let money_hash_hex = money_hash.toString(CryptoJS.enc.Hex)
-	console.log('hash en hex',money_hash_hex)
+	//console.log('hash en hex',money_hash_hex)
 
 	//MONEY cegar papel  ---- m '\ equiv mr ^ {e} \ ({\ mathrm {mod}} \ N) ----
 	//creo el factor de ciegamiento  f ^ {e} {modulo N}
 	let f = await bigintCryptoUtils.prime(1024);
-	console.log('puta vidaaa  ' ,this.d)
 	let factor = await bigintCryptoUtils.modPow(f,this.e,this.n);
-	console.log('factor de cegamiento', factor);
+	//console.log('factor de cegamiento', factor);
 	//ciego el hash con el factor m' = mr ^ {e} {modulo N)
 	let money_big = BigInt('0x' + money_hash_hex);
 	let product = money_big * factor;
 	let money_blind = bigintCryptoUtils.modPow(product,this.e,this.n)
-	console.log('money cegado ',money_blind)
+	//console.log('money cegado ',money_blind)
 	this.mainService.post_money(money_blind, value).subscribe(res =>{
     	console.log('mesage de salida ', res)
     	this.KeyRSA();
@@ -112,108 +108,7 @@ async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
 
 
 
-/*
-async get() {
-	console.log('empezamos en GET  ')
-	// mensaje
-	this.mainService.get().subscribe(async res =>{
-	this.postres = res;
-	//console.log('El mensaje proveniente del server: ' + JSON.stringify(this.postres[0]))
-	//this.getres1 = buf2hex(Object.values(this.postres)[1]);
-	// let decmens = await decrypt( hex2ab2(this.getres1), this.key, this.iv)
-	let decmens = await decryptRSA(this.postres, this.dback, this.nback)
-	console.log('DECRYPT FET= ', decmens)
-	this.getres = stringToHex(Object.values(this.postres));
-	let decmenshex = buf2hex(decmens);
-	console.log('comprobacion ' + decmenshex);
-	this.enmens = decmenshex.toString();
-	console.log('comprebacion 2.0'+ this.enmens)
-	})
-}
-async post(){
-	//encripto el mensaje y lo envio, espero que mjuetre por pantalla el mensaje encriptado
-	//creo la clave del cliente
-	this.menshex = stringToHex(this.mens)
-	console.log('este es mi mens to hex: ' + this.menshex)
-	//let cipher = await encrypt(hex2ab2(this.menshex), this.key, this.iv) //los datos han de estar en arraybuffer
-	console.log('la e ',this.e)
-	let cipher = await encryptRSA(this.menshex, this.e, this.n)
-	this.postencrypt = cipher.toString(16)
-	console.log('decoded msg - comprobación: ' + this.postencrypt)
-	this.mainService.post(this.postencrypt).subscribe(res => { //envio el mensage al serve en formato hexa
-		//this.postres = res; //recibo la respuesta del server que es el buffer
-		console.log("respuesta post2: ", this.postres) //la respuesta esta en hex e de pasarla a utf8
-
-	})
-
-}*/
-//CIERRA EXPORT
-/*
-async function encrypt(msg, key, iv) {
-// iv will be needed for decryption
-console.log('entra en encrypt: ',msg)
-// iv = hex2ab2(iv);
-//key = hex2ab2(key);
-// console.log('este es el iv '+ iv)
-const result = await window.crypto.subtle.importKey(
-	"raw",
-	key,
-	"AES-CBC",
-	true,
-	["encrypt", "decrypt"]
-);
-console.log ('Importo la key')
-const ret = await window.crypto.subtle.encrypt({
-	name: "AES-CBC",
-	iv
-	},
-	result,
-	msg
-);
-console.log('El resultado de la encriptacion ' + ret)
-return ret;
-}
-async function decrypt(msg, key, iv) {
-console.log('entra en decrypt ', msg)
-
-iv = hex2ab2(iv);
-console.log ('IV: ', iv)
-
-console.log ('Key: ', key)
-key = hex2ab2(key);
-
-console.log ('ENTRA AL CONST RESULT: ', key)
-
-const privateKey = await window.crypto.subtle.importKey(
-	"raw",
-	key,
-	"AES-CBC",
-	true,
-	["encrypt", "decrypt"]
-);
-
-console.log ('importKey fet: ', key)
-console.log ('iv: ', iv)
-console.log ('privateKey: ', privateKey)
-console.log ('msg: ', msg)
-
-//DOM EXCEPTION
-
-const ret = await window.crypto.subtle.decrypt(
-	{
-	name: "AES-CBC",
-	iv
-	},
-	privateKey,
-	msg
-);
-
-console.log ('surt del ret: ', ret)
-
-return ret;
-
-
-}
+//CONVERSIONES
 function d2h(d) {
 return d.toString(16);
 }
@@ -252,9 +147,4 @@ let decryptedRSA = arrToString(decryptHex);
 console.log('desencriptado  ', decryptedRSA)
 	return decryptedRSA;
 }
-//Funciones de PROYECTO
-function crearMoney() {//le llegaria la firma y el hash
-}
-function compra (moneda: Moneda) {
-}*/
 
