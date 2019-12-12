@@ -47,7 +47,7 @@ ngOnInit() {
 
 //ENTREGAS
 
-this.KeyRSA_Cliente();
+this.KeyRSA();
 	/*this.mainService.getiv().subscribe(res => {
 	this.dback = res;
 	// console.log('valor de d ', this.dback)
@@ -60,10 +60,10 @@ this.KeyRSA_Cliente();
 
 
 //PROYECTO
-KeyRSA_Cliente(){
+async KeyRSA(){
 	let u = BigInt('1');
-	let p = bigintCryptoUtils.prime(1024);
-	let q = bigintCryptoUtils.prime(1025);
+	let p = await bigintCryptoUtils.prime(1024);
+	let q = await bigintCryptoUtils.prime(1025);
 	this.n = p * q;
 	let phi_n = (p-u)*(q-u);
 	this.e = BigInt('65537');
@@ -96,45 +96,13 @@ async money_req(value: number){ //peticion de la moneda
 	let money_blind = bigintCryptoUtils.modPow(product,this.e,this.n)
 	console.log('money cegado ',money_blind)
 	this.mainService.post_money(money_blind, value).subscribe(res =>{
-    console.log('mesage de salida ', res)
-    let key = this.KeyRSA(value);
-    encryptRSA (money_blind, this.e, this.n)
+    	console.log('mesage de salida ', res)
+    	this.KeyRSA();
+    	encryptRSA (money_blind, this.e, this.n)
 		this.message = res;
 	})
 }
 //ENTREGAS
-async KeyRSA(value){
-  let r ;
-  if (value == 5){
-    r = BigInt('5');
-  }
-  else if (value == 10){
-    r = BigInt('10');
-
-  }
-  else if (value == 20){
-    r = BigInt('20');
-
-  }
-
-  else {
-    console.log('Wrong Value!!')
-  }
-	let p = await bigintCryptoUtils.prime(1024);
-	let q = await bigintCryptoUtils.prime(1025);
-	this.n = p * q;
-	let phi_n = (p-r)*(q-r);
-	this.e = BigInt('65537');
-	this.d = bigintCryptoUtils.modInv(this.e, phi_n);
-
-
-	/*this.mainService.postd(this.d).subscribe(res => {
-		//console.log('valor de d ', this.dback)
-	})
-	this.mainService.postn(this.n).subscribe(res => {
-	// console.log('valor de n ', this.nback)
-	})*/
-}
 }
 async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
 	//funcion para encriptar RSA
