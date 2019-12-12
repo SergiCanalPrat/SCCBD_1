@@ -9,14 +9,19 @@ const bigintCryptoUtils = require('bigint-crypto-utils');
 const moment = require('moment')
 const jwt = require('jwt-simple')
 
-
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
 
-//conexion al puerto
+// Conexiones a los puertos
+
 const PORT = process.env.port || 3000;
 app.listen(PORT, () => {
 	console.log('Connected to Port: ', PORT )
+});
+// TIENDA
+const PORT2 = process.env.port || 3010;
+app.listen(PORT2, () => {
+	console.log('Connected to Port: ', PORT2 )
 });
 
 //implementacion del cors
@@ -32,8 +37,6 @@ app.unsubscribe((req, res, next) =>{
 })
 app.use(cors());
 
-
-
 //FUNCIONES POST, GET, ENCRIPTAR, DESENCRIPTAR
 
 const KEY_LENGTH = 32;
@@ -47,12 +50,9 @@ let e;
 let nfront;
 let dfront;
 
+//FUNCIONES DEL PROYECTO
 
-
-//Funciones del pryecto
-
-
-
+// LOGIN
 app.post('/login/:name',(req,res) => {
 	let name = req.params.name;
 	let password = req.params.pass;
@@ -62,12 +62,17 @@ app.post('/login/:name',(req,res) => {
 		  
 })
 
+// FUNCIONES TIENDA
+app.post('/compra/:Money',(req,res) => {
+	let money = req.params.Money;
+	console.log('Consultando si la moneda está gastada ', money)
+	// wasted = askWasted(money)
+	let wasted = app.post('./askWasted/:Money',(res) => {
+		return res.json()
+	})
+	return res.json(wasted)
+})
 
-
-
-
-
-//FUNCIONES DEL PROYECTO
 function createToken(user) {
     const payload = {
       sub: user,
