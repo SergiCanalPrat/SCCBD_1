@@ -13,7 +13,6 @@ const mongoose = require('mongoose')
 const config = require('./config')
 let server;
 
-
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
 
@@ -30,6 +29,11 @@ const PORT = process.env.port || 3000;
 app.listen(PORT, () => {
 	console.log('Connected to Port: ', PORT )
 });
+// TIENDA
+const PORT2 = process.env.port || 3010;
+app.listen(PORT2, () => {
+	console.log('Connected to Port: ', PORT2 )
+});
 
 //implementacion del cors
 app.unsubscribe((req, res, next) =>{
@@ -43,8 +47,6 @@ app.unsubscribe((req, res, next) =>{
 	} next()
 })
 app.use(cors());
-
-
 
 //FUNCIONES POST, GET, ENCRIPTAR, DESENCRIPTAR
 
@@ -67,6 +69,7 @@ let e20;
 let nfront;
 let dfront;
 
+//FUNCIONES DEL PROYECTO
 
 
 //Funciones del proyecto
@@ -77,6 +80,17 @@ app.post('/login/:name',(req,res) => {
 	let token = createToken(name)	
 	return res.json(token)
 		  
+})
+
+// FUNCIONES TIENDA
+app.post('/compra/:Money',(req,res) => {
+	let money = req.params.Money;
+	console.log('Consultando si la moneda está gastada ', money)
+	// wasted = askWasted(money)
+	let wasted = app.post('./askWasted/:Money',(res) => {
+		return res.json()
+	})
+	return res.json(wasted)
 })
 
 app.post('/postMoney/:value',(req,res) => {
