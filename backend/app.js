@@ -11,6 +11,7 @@ const jwt = require('jwt-simple')
 const moneyInBank = require('./modelos/cuenta')
 const mongoose = require('mongoose')
 const config = require('./config')
+let server;
 
 
 app.use(logger('dev')); // Log requests (GET..)
