@@ -11,7 +11,7 @@ const jwt = require('jwt-simple')
 const moneyInBank = require('./modelos/cuenta')
 const mongoose = require('mongoose')
 const config = require('./config')
-let server;
+var secrets = require('secrets.js');
 
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
@@ -219,6 +219,46 @@ function decryptRSA(msg, d, n){
 	console.log('1', decryptedRSA)
 	return decryptedRSA;
 }
+
+//KEY SECRET SHARING
+//Generamos una clave random de 512 bits (En hexadecimal)
+var key = secrets.random(512);
+
+// Dividimos 10 veces con un umbral de 5. 
+//Forma: '80IDxxx...xxx' -> ['801xxx...xxx','802xxx...xxx'...]
+var shares = secrets.share(key, 10, 5); 
+
+// Si combinamos 4 trozos la key no se descubre
+var comb = secrets.combine( shares.slice(0,4) );
+console.log(comb === key); //false
+
+// Si combinamos 5 trozos la key se puede descubrir
+var comb = secrets.combine( shares.slice(4,9) );
+console.log(comb === key); //true
+
+// Si los combinamos todos la key se puede descubrir
+var comb = secrets.combine( shares );
+console.log(comb === key); //true
+
+// Se puede crear nuevos trozos con la ID que queramos (ID = 8)
+var newShare = secrets.newShare(8, shares); //newShare = '808xxx...xxx'
+
+// Podemos utilizar el nuevo share y reconstruir los 4 previos y tambien se descubre
+var comb = secrets.combine( shares.slice(1,5).concat(newShare) );
+console.log(comb === key); //true
+
+var pw = '<<SCCBD_SECRET>>';
+var pwHex = secrets.str2hex(pw); // convertimos el string a hex
+var shares = secrets.share(pwHex, 5, 3); //dividimos en 5 trozos, con un umbral de 3
+var comb = secrets.combine( shares.slice(1,3) ); //combinamos 2 trozos
+comb = secrets.hex2str(comb); //lo pasamos de nuevo a string 
+console.log( comb === pw  ); //falso, falta un trozo
+var comb = secrets.combine( [ shares[1], shares[3], shares[4] ] );//combinamos 3 trozos
+comb = secrets.hex2str(comb); //Lo pasamos a string
+console.log( comb === pw  ); //verdadero, tiene el mínimo de 3 trozos
+
+
+
 
 })
 

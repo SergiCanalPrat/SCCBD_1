@@ -29,6 +29,7 @@
     "mongoose": "^5.8.0",
     "morgan": "^1.9.1",
     "nodemon": "^1.19.4",
+    "secrets.js": "^0.1.8",
     "secure-random": "^1.1.2"
   },
   "devDependencies": {
