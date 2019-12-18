@@ -12,6 +12,8 @@ const moneyInBank = require('./modelos/cuenta')
 const mongoose = require('mongoose')
 const config = require('./config')
 var secrets = require('secrets.js');
+const paillier = require('paillier.js');
+
 var server;
 
 app.use(logger('dev')); // Log requests (GET..)
@@ -69,7 +71,8 @@ let d20;
 let e20;
 let nfront;
 let dfront;
-
+secretKeySharing();
+paillier();
 //FUNCIONES DEL PROYECTO
 
 
@@ -221,44 +224,72 @@ function decryptRSA(msg, d, n){
 	return decryptedRSA;
 }
 
+
 //KEY SECRET SHARING
-//Generamos una clave random de 512 bits (En hexadecimal)
-var keyToShare = secrets.random(512);
+function secretKeySharing(){
+	//Generamos una clave random de 512 bits (En hexadecimal)
+	var keyToShare = secrets.random(512);
 
-// Dividimos 10 veces con un umbral de 5. 
-//Forma: '80IDxxx...xxx' -> ['801xxx...xxx','802xxx...xxx'...]
-var shares = secrets.share(keyToShare, 10, 5); 
+	// Dividimos 10 veces con un umbral de 5. 
+	//Forma: '80IDxxx...xxx' -> ['801xxx...xxx','802xxx...xxx'...]
+	var shares = secrets.share(keyToShare, 10, 5); 
 
-// Si combinamos 4 trozos la keyToShare no se descubre
-var comb = secrets.combine( shares.slice(0,4) );
-console.log(comb === keyToShare); //false
+	// Si combinamos 4 trozos la keyToShare no se descubre
+	var comb = secrets.combine( shares.slice(0,4) );
+	console.log(comb === keyToShare); //false
 
-// Si combinamos 5 trozos la keyToShare se puede descubrir
-var comb = secrets.combine( shares.slice(4,9) );
-console.log(comb === keyToShare); //true
+	// Si combinamos 5 trozos la keyToShare se puede descubrir
+	var comb = secrets.combine( shares.slice(4,9) );
+	console.log(comb === keyToShare); //true
 
-// Si los combinamos todos la keyToShare se puede descubrir
-var comb = secrets.combine( shares );
-console.log(comb === keyToShare); //true
+	// Si los combinamos todos la keyToShare se puede descubrir
+	var comb = secrets.combine( shares );
+	console.log(comb === keyToShare); //true
 
-// Se puede crear nuevos trozos con la ID que queramos (ID = 8)
-var newShare = secrets.newShare(8, shares); //newShare = '808xxx...xxx'
+	// Se puede crear nuevos trozos con la ID que queramos (ID = 8)
+	var newShare = secrets.newShare(8, shares); //newShare = '808xxx...xxx'
 
-// Podemos utilizar el nuevo share y reconstruir los 4 previos y tambien se descubre
-var comb = secrets.combine( shares.slice(1,5).concat(newShare) );
-console.log(comb === keyToShare); //true
+	// Podemos utilizar el nuevo share y reconstruir los 4 previos y tambien se descubre
+	var comb = secrets.combine( shares.slice(1,5).concat(newShare) );
+	console.log(comb === keyToShare); //true
 
-var pw = '<<SCCBD_SECRET>>';
-var pwHex = secrets.str2hex(pw); // convertimos el string a hex
-var shares = secrets.share(pwHex, 5, 3); //dividimos en 5 trozos, con un umbral de 3
-var comb = secrets.combine( shares.slice(1,3) ); //combinamos 2 trozos
-comb = secrets.hex2str(comb); //lo pasamos de nuevo a string 
-console.log( comb === pw  ); //falso, falta un trozo
-var comb = secrets.combine( [ shares[1], shares[3], shares[4] ] );//combinamos 3 trozos
-comb = secrets.hex2str(comb); //Lo pasamos a string
-console.log( comb === pw  ); //verdadero, tiene el mínimo de 3 trozos
+	var pw = '<<SCCBD_SECRET>>';
+	var pwHex = secrets.str2hex(pw); // convertimos el string a hex
+	var shares = secrets.share(pwHex, 5, 3); //dividimos en 5 trozos, con un umbral de 3
+	var comb = secrets.combine( shares.slice(1,3) ); //combinamos 2 trozos
+	comb = secrets.hex2str(comb); //lo pasamos de nuevo a string 
+	console.log( comb === pw  ); //falso, falta un trozo
+	var comb = secrets.combine( [ shares[1], shares[3], shares[4] ] );//combinamos 3 trozos
+	comb = secrets.hex2str(comb); //Lo pasamos a string
+	console.log( comb === pw  ); //verdadero, tiene el mínimo de 3 trozos
 
+	}
 
+//PAILLIER
+function paillier(){
+	const {publicKey, privateKey} = paillier.generateRandomKeys(2048);//Creamos RANDOM claves Pub y Priv
+	//También podemos crear las claves segun los parámetros
+	// const publicKey = new paillier.PublicKey(n, g);	
+	// const privateKey = new paillier.PrivateKey(lambda, mu, p, q, publicKey);
+
+	//M es el texto a encriptar
+	//Cn son los textos a desencriptar
+
+	let c = publicKey.encrypt(m); //Para encriptar m
+	let d = privateKey.decrypt(c); //Para desencriptar c
+
+	//Suma homomorfica de los dos ciphertexts 
+	let c1 = publicKey.encrypt(m1);
+	let c2 = publicKey.encrypt(m2);
+	let encryptedSum = publicKey.addition(c1, c2);
+	let sum = privateKey.decrypt(encryptedSum); // m1 + m2
+
+	// Se multiplica el mensaje encriptado c1 por un numero k a escoger
+	let c1 = publicKey.encrypt(m1);
+	let encryptedMul = publicKey.multiply(c1, k);
+	let mul = privateKey.decrypt(encryptedMul); // k · m1
+
+}
 
 
 })
