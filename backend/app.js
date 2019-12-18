@@ -12,6 +12,7 @@ const moneyInBank = require('./modelos/cuenta')
 const mongoose = require('mongoose')
 const config = require('./config')
 var secrets = require('secrets.js');
+var server;
 
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
@@ -222,30 +223,30 @@ function decryptRSA(msg, d, n){
 
 //KEY SECRET SHARING
 //Generamos una clave random de 512 bits (En hexadecimal)
-var key = secrets.random(512);
+var keyToShare = secrets.random(512);
 
 // Dividimos 10 veces con un umbral de 5. 
 //Forma: '80IDxxx...xxx' -> ['801xxx...xxx','802xxx...xxx'...]
-var shares = secrets.share(key, 10, 5); 
+var shares = secrets.share(keyToShare, 10, 5); 
 
-// Si combinamos 4 trozos la key no se descubre
+// Si combinamos 4 trozos la keyToShare no se descubre
 var comb = secrets.combine( shares.slice(0,4) );
-console.log(comb === key); //false
+console.log(comb === keyToShare); //false
 
-// Si combinamos 5 trozos la key se puede descubrir
+// Si combinamos 5 trozos la keyToShare se puede descubrir
 var comb = secrets.combine( shares.slice(4,9) );
-console.log(comb === key); //true
+console.log(comb === keyToShare); //true
 
-// Si los combinamos todos la key se puede descubrir
+// Si los combinamos todos la keyToShare se puede descubrir
 var comb = secrets.combine( shares );
-console.log(comb === key); //true
+console.log(comb === keyToShare); //true
 
 // Se puede crear nuevos trozos con la ID que queramos (ID = 8)
 var newShare = secrets.newShare(8, shares); //newShare = '808xxx...xxx'
 
 // Podemos utilizar el nuevo share y reconstruir los 4 previos y tambien se descubre
 var comb = secrets.combine( shares.slice(1,5).concat(newShare) );
-console.log(comb === key); //true
+console.log(comb === keyToShare); //true
 
 var pw = '<<SCCBD_SECRET>>';
 var pwHex = secrets.str2hex(pw); // convertimos el string a hex
