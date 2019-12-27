@@ -85,8 +85,8 @@ async money_req(value: number){ //peticion de la moneda
 	let money_big = BigInt('0x' + money_hash_hex);
 	let product = money_big * factor;
 	let money_blind = bigintCryptoUtils.modPow(product,this.e,this.n)
-	//console.log('money cegado ',money_blind)
-	this.mainService.post_money(money_blind, value).subscribe(res =>{
+	console.log('money cegado ',money_blind)
+	this.mainService.post_money(value, money_blind).subscribe(res =>{
     	console.log('mesage de salida ', res)
     	this.KeyRSA();
     	encryptRSA (money_blind, this.e, this.n)
