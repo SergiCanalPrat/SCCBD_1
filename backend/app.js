@@ -16,34 +16,35 @@ const mongoose = require('mongoose')
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
 
-mongoose.connect(config.db, (err, res) => {
+const PORT = process.env.port || 3000;
+const db =  process.env.MONGODB || 'mongodb://localhost:27017/SCCBD';
+
+mongoose.connect(db, (err, res) => {
 	if (err) {return console.log(`Error al conectar a la base de datos: ${err}`)}
 	console.log('Conexión a la base de datos establecida...')
-	server = app.listen(config.port, (err, res) => {
-	  console.log(`API REST corriendo en http://localhost:${config.port}`)
+	server = app.listen(PORT, (err, res) => {
+	  console.log(`API REST corriendo en http://localhost:${PORT}`)
 	})
 
-
 //conexion al puerto
-const PORT = process.env.port || 3000;
 app.listen(PORT, () => {
 	console.log('Connected to Port: ', PORT )
 });
 
 //implementacion del cors
 app.unsubscribe((req, res, next) =>{
-	res.header("Access-Control-Allow-Headers" ,"http://localhost:4200");
+	res.header("Access-Control-Allow-Headers" ,"http://localhost:4200"); //http://localhost:4200
 	res.header(
         "Access-Control-Allow-Headers",
         "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     );
 	if(req.method == 'OPTIONS'){
-		res.header("Access-Control-Allow-Headers", "POST", "GET" )
+		res.header("Access-Control-Allow-Headers", 'PUT, POST, PATCH, DELETE, GET' )
 	} next()
 })
 app.use(cors());
 
-
+})
 
 //FUNCIONES POST, GET, ENCRIPTAR, DESENCRIPTAR
 
@@ -82,7 +83,7 @@ app.post('/postMoney/:value',(req,res) => {
 	let value = req.params.value;
 	let moneyBlind = req.params.pass;
 	console.log('cuerpo PostMoney', value, moneyBlind)
-	moneyInBank = moneyInBank - value; //El banco resta de la cuenta del cliente el valor de la moneda
+	//moneyInBank = moneyInBank - value; //El banco resta de la cuenta del cliente el valor de la moneda
 	let signMoney = signMoney(value, moneyBlind) //El banco firma la moneda
 	return res.json(signMoney)
 })
@@ -205,5 +206,5 @@ function decryptRSA(msg, d, n){
 	return decryptedRSA;
 }
 
-})
+
 
