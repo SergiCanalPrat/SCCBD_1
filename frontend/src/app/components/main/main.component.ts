@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MainService } from 'src/app/services/main.service';
 import * as arrToString from 'arraybuffer-to-string';
+import { Router, ActivatedRoute} from "@angular/router";
 //@ts-ignore
 
 import * as hexToArrayBuffer from 'hex-to-array-buffer';
@@ -9,7 +10,7 @@ import * as CryptoJS from 'crypto-js';
 
 import { Moneda } from '../../models/moneda';
 import { async } from 'q';
-//import { Cliente } from '../../models/cliente';
+import { Cliente } from '../../models/cliente';
 
 @Component({
 selector: 'app-main',
@@ -22,6 +23,7 @@ export class MainComponent implements OnInit {
 //proyecto
 	money : Moneda;
 	message;
+	cliente: Cliente;
 
 //------------ENTREGAS------------------//
 getres: Object;
@@ -34,6 +36,8 @@ key;
 menshex;
 postencrypt;
 
+
+
 //Parametros de RSA
 e;
 d;
@@ -41,12 +45,19 @@ n;
 dback;
 nback;
 
-constructor(private mainService: MainService) { }
+constructor(private mainService: MainService, private activatedRouter: ActivatedRoute) { 
+ this.cliente = new Cliente("","","")
+}
 ngOnInit() {
 //PROYECTO
-
+this.activatedRouter.params.subscribe(params => {
+    if (typeof params['name'] !== 'undefined') {
+      this.cliente.name = params['name'];      
+    } else {
+	  this.cliente.name = '';
+	}
+})
 //ENTREGAS
-
 this.KeyRSA();
 	
 }
@@ -87,10 +98,28 @@ async money_req(value: number){ //peticion de la moneda
 	let money_blind = bigintCryptoUtils.modPow(product,this.e,this.n)
 	console.log('money cegado ',money_blind)
 	this.mainService.post_money(value, money_blind).subscribe(res =>{
-    	console.log('mesage de salida ', res)
-    	this.KeyRSA();
+		console.log('mesage de salida ', res) //ya tengo la firma de la moneda
+		let blind_money = res;
+		this.create_coin(id, value, blind_money);
+    /*	this.KeyRSA();
     	encryptRSA (money_blind, this.e, this.n)
-		this.message = res;
+		this.message = res;*/
+	})
+}
+//pasamos a crear la moneda
+create_coin(id, value, blind) {
+	console.log('creamos la coin con los datos', id, value,blind)
+	let coin = new Moneda(id,value,blind)
+	//sumamos la moneda al monedaro del cliente
+	//mostramos en la pantalla las monedas del cliente
+}
+
+
+
+compra_req (coin){
+	//enviar la peticion de compra a la tienda
+	this.mainService.post_compra(this.cliente.name,coin).subscribe(res =>{
+		console.log('estado de la compra', res);
 	})
 }
 //ENTREGAS
