@@ -17,8 +17,8 @@ export class MainService {
   post_money( value:Number, moneyblind: Object){
     return this.http.post('http://localhost:3000/postMoney' + `/${value}`+ `/${moneyblind}`, value );
   }
-  
-  post_compra(user: Script, moneyblind: Object){
+
+  post_compra(user: String, moneyblind: Object){
     return this.http.post('http://localhost:3000/postCompra' +`/${user}` , moneyblind );
   }
 
