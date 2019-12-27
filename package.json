@@ -26,6 +26,7 @@
     "hex-to-array-buffer": "^1.1.0",
     "jwt-simple": "^0.5.6",
     "moment": "^2.24.0",
+    "mongoose": "^5.8.0",
     "morgan": "^1.9.1",
     "nodemon": "^1.19.4",
     "secure-random": "^1.1.2"
