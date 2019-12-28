@@ -22,8 +22,8 @@ export class MainService {
     return this.http.post('http://localhost:3000/postCompra' +`/${user}` , moneyblind );
   }
 
-  //Esto para bank Service
-  ask_money(money: Object, value:Number){
-    return this.http.post('http://localhost:3000/askMoney' + `/${value}`, money );
+  //Esto para la tienda
+  compra(money: Object, value:Number){
+    return this.http.post('http://localhost:3010/compra' + `/${value}`, money );
   }
 }

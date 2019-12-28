@@ -10,8 +10,10 @@ const moment = require('moment')
 const jwt = require('jwt-simple')
 const moneyInBank = require('./modelos/cuenta')
 const mongoose = require('mongoose')
+const config = require('./config')
 
 
+var server;
 
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
@@ -28,6 +30,11 @@ mongoose.connect(db, (err, res) => {
 app.listen(PORT, () => {
 	console.log('Connected to Port: ', PORT )
 });
+// TIENDA
+const PORT2 = process.env.port || 3010;
+app.listen(PORT2, () => {
+	console.log('Connected to Port: ', PORT2 )
+});
 
 //implementacion del cors
 app.unsubscribe((req, res, next) =>{
@@ -41,8 +48,6 @@ app.unsubscribe((req, res, next) =>{
 	} next()
 })
 app.use(cors());
-
-
 
 //FUNCIONES POST, GET, ENCRIPTAR, DESENCRIPTAR
 
@@ -65,6 +70,7 @@ let e20;
 let nfront;
 let dfront;
 
+//FUNCIONES DEL PROYECTO
 
 
 //Funciones del proyecto
@@ -77,7 +83,18 @@ app.post('/login/:name',(req,res) => {
 		  
 })
 
-app.post('/postMoney/:value/:moneyblind',(req,res) => {
+// FUNCIONES TIENDA
+app.post('/compra/:Money',(req,res) => {
+	let money = req.params.Money;
+	console.log('Consultando si la moneda está gastada ', money)
+	// wasted = askWasted(money)
+	let wasted = app.post('./askWasted/:Money',(res) => {
+		return res.json()
+	})
+	return res.json(wasted)
+})
+
+app.post('/postMoney/:value',(req,res) => {
 	let value = req.params.value;
 	let moneyBlind = req.params.moneyblind;
 	console.log('cuerpo PostMoney', value, moneyBlind)
@@ -183,6 +200,11 @@ function decryptRSA(msg, d, n){
 
 
 
+})
+
+
+
+
 function buf2hex(buffer) { // buffer is an ArrayBuffer
 	return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
 }
@@ -209,4 +231,4 @@ function ascii_to_hexa(str)
 		}
 	return arr1.join('');
 }
-})
+
