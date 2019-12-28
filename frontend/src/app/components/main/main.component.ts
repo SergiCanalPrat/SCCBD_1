@@ -24,6 +24,7 @@ export class MainComponent implements OnInit {
 	money : Moneda;
 	message;
 	cliente: Cliente;
+	monedero: Moneda[];
 
 //------------ENTREGAS------------------//
 getres: Object;
@@ -46,7 +47,8 @@ dback;
 nback;
 
 constructor(private mainService: MainService, private activatedRouter: ActivatedRoute) { 
- this.cliente = new Cliente("","","")
+ this.cliente = new Cliente("","","",[])
+ this.monedero = []
 }
 ngOnInit() {
 //PROYECTO
@@ -58,10 +60,8 @@ this.activatedRouter.params.subscribe(params => {
 	}
 })
 //ENTREGAS
-this.KeyRSA();
-	
+this.KeyRSA();	
 }
-
 
 //PROYECTO
 async KeyRSA(){
@@ -79,14 +79,12 @@ async money_req(value: number){ //peticion de la moneda
 	let id = bigintCryptoUtils.randBytes(128);
 	this.money = new Moneda (id, value)
 	//console.log('papel creado', this.money)
-
 	//MONEY creacion del hash
 	let money_string = this.money.toString()
 	let money_hash = CryptoJS.SHA256(money_string)
 	//console.log('hash del mensage ',money_hash)
 	let money_hash_hex = money_hash.toString(CryptoJS.enc.Hex)
 	//console.log('hash en hex',money_hash_hex)
-
 	//MONEY cegar papel  ---- m '\ equiv mr ^ {e} \ ({\ mathrm {mod}} \ N) ----
 	//creo el factor de ciegamiento  f ^ {e} {modulo N}
 	let f = await bigintCryptoUtils.prime(1024);
@@ -111,6 +109,8 @@ create_coin(id, value, blind) {
 	console.log('creamos la coin con los datos', id, value,blind)
 	let coin = new Moneda(id,value,blind)
 	//sumamos la moneda al monedaro del cliente
+	let leng = this.cliente.monedas.push(coin)
+	console.log('monedas  ',leng, this.cliente.monedas)
 	//mostramos en la pantalla las monedas del cliente
 }
 
