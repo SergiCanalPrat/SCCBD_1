@@ -46,7 +46,7 @@ n;
 dback;
 nback;
 
-constructor(private mainService: MainService, private activatedRouter: ActivatedRoute) { 
+constructor(private mainService: MainService, private activatedRouter: ActivatedRoute) {
  this.cliente = new Cliente("","","",[])
  this.monedero = []
 }
@@ -54,13 +54,13 @@ ngOnInit() {
 //PROYECTO
 this.activatedRouter.params.subscribe(params => {
     if (typeof params['name'] !== 'undefined') {
-      this.cliente.name = params['name'];      
+      this.cliente.name = params['name'];
     } else {
 	  this.cliente.name = '';
 	}
 })
 //ENTREGAS
-this.KeyRSA();	
+this.KeyRSA();
 }
 
 //PROYECTO
@@ -104,6 +104,8 @@ async money_req(value: number){ //peticion de la moneda
 		this.message = res;*/
 	})
 }
+
+
 //pasamos a crear la moneda
 create_coin(id, value, blind) {
 	console.log('creamos la coin con los datos', id, value,blind)
@@ -154,26 +156,31 @@ for (; i < tmp_len; i += 1) {
 }
 return str;
 }
+
+
 function hex2ab2(hex){
-var typedArray = new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function (h) {
-	return parseInt(h, 16)
-}))
-var buffer = typedArray.buffer
-return buffer
+  var typedArray = new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function (h) {
+    return parseInt(h, 16)
+  }))
+  var buffer = typedArray.buffer
+  return buffer
 }
+
+
 function buf2hex(buffer) { // buffer is an ArrayBuffer
-return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+  return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
 }
+
 async function decryptRSA(msg,d,n){ //funcion para desencryptar RSA
-let msgbig = BigInt('0x' + msg);
-let dbig = BigInt('0x' + d);
-let nbig = BigInt('0x' + n);
-console.log('el message  ', msgbig)
-let decryptRSA  = bigintCryptoUtils.modPow(msgbig, dbig, nbig);
-let decrypt = decryptRSA.toString(16);
-let decryptHex = hexToArrayBuffer(decrypt);
-let decryptedRSA = arrToString(decryptHex);
-console.log('desencriptado  ', decryptedRSA)
+  let msgbig = BigInt('0x' + msg);
+  let dbig = BigInt('0x' + d);
+  let nbig = BigInt('0x' + n);
+  console.log('el message  ', msgbig)
+  let decryptRSA  = bigintCryptoUtils.modPow(msgbig, dbig, nbig);
+  let decrypt = decryptRSA.toString(16);
+  let decryptHex = hexToArrayBuffer(decrypt);
+  let decryptedRSA = arrToString(decryptHex);
+  console.log('desencriptado  ', decryptedRSA)
 	return decryptedRSA;
 }
 
