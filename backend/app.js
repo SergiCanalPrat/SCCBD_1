@@ -13,7 +13,8 @@ const mongoose = require('mongoose')
 const config = require('./config')
 
 
-var server;
+const prueva = require('./controllers/banco')
+
 
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
@@ -24,7 +25,7 @@ const db =  process.env.MONGODB || 'mongodb://localhost:27017/SCCBD';
 mongoose.connect(db, (err, res) => {
 	if (err) {return console.log(`Error al conectar a la base de datos: ${err}`)}
 	console.log('Conexión a la base de datos establecida...')
-	
+
 
 //conexion al puerto
 app.listen(PORT, () => {
@@ -69,7 +70,7 @@ let d20;
 let e20;
 let nfront;
 let dfront;
-
+prueva.getCuentas();
 //FUNCIONES DEL PROYECTO
 
 
@@ -94,7 +95,7 @@ app.post('/compra/:Money',(req,res) => {
 	return res.json(wasted)
 })
 
-app.post('/postMoney/:value',(req,res) => {
+app.post('/postMoney/:value/:moneyblind',(req,res) => {
 	let value = req.params.value;
 	let moneyBlind = req.params.moneyblind;
 	console.log('cuerpo PostMoney', value, moneyBlind)
@@ -149,7 +150,6 @@ async function KeyRSA5(){
 	d5 = bigintCryptoUtils.modInv(e5, phi_n);
 	//return d;
 }
-
 //funcion para crear key RSA
 async function KeyRSA10(){
 	console.log('Voy a crear la Key de 10')
@@ -162,7 +162,6 @@ async function KeyRSA10(){
 	d10 = bigintCryptoUtils.modInv(e10, phi_n);
 	//return d;
 }
-
 //funcion para crear key RSA
 async function KeyRSA20(){
 	console.log('Voy a crear la Key de 20')
@@ -176,10 +175,7 @@ async function KeyRSA20(){
 	//return d;
 }
 
-
 //funcion para encriptar RSA
-
-
 //funcion para desencryptar RSA
 function decryptRSA(msg, d, n){
 	let msgbig = BigInt('0x' + msg);
@@ -195,12 +191,6 @@ function decryptRSA(msg, d, n){
 	console.log('1', decryptedRSA)
 	return decryptedRSA;
 }
-
-
-
-
-
-})
 
 
 
@@ -231,4 +221,4 @@ function ascii_to_hexa(str)
 		}
 	return arr1.join('');
 }
-
+}) //cierra la conxion de mongo

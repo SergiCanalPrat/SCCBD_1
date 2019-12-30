@@ -20,9 +20,6 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     
   }
-  
-
-
   goBANK(){
     console.log('el nombre', this.name,this.password);
       
