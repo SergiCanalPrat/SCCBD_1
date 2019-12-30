@@ -5,6 +5,7 @@ const Schema = mongoose.Schema
 
 const CuentaSchema = Schema({
     Titular: String,
+    Password: String,
     Saldo: Number,
     Monedas5: Number,
     Monedas10: Number,

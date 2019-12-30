@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit {
   name: string;
   password: string;
   token: string;
+  
 
   constructor(private mainService: MainService, private router: Router) { }
 
@@ -26,8 +27,12 @@ export class LoginComponent implements OnInit {
     this.mainService.login(this.name, this.password).subscribe(res => {
       console.log('el token ', res)
       this.token = res.toString();
-      this.router.navigateByUrl('/bank/'+this.name);
-
+      if (this.token == ''){
+          this.error ='el usuario no esta logeado en el banco'
+      }
+      else{
+        this.router.navigateByUrl('/bank/'+this.name);
+      }
       //Creamos un cliente
       let cliente = new Cliente (this.name, this.password, this.token);
       console.log('el nuevo cliente es: ', cliente)

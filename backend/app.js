@@ -6,14 +6,12 @@ const cors = require('cors');
 const crypto = require('crypto');
 const app = express();
 const bigintCryptoUtils = require('bigint-crypto-utils');
-const moment = require('moment')
-const jwt = require('jwt-simple')
+
+
 const moneyInBank = require('./modelos/cuenta')
 const mongoose = require('mongoose')
 const config = require('./config')
-
-
-const prueva = require('./controllers/banco')
+const banco = require('./controllers/banco')
 
 
 app.use(logger('dev')); // Log requests (GET..)
@@ -70,19 +68,11 @@ let d20;
 let e20;
 let nfront;
 let dfront;
-prueva.getCuentas();
 //FUNCIONES DEL PROYECTO
 
 
 //Funciones del proyecto
-app.post('/login/:name',(req,res) => {
-	let name = req.params.name;
-	let password = req.params.pass;
-	console.log('usuario logeandose ',name, password)
-	let token = createToken(name)	
-	return res.json(token)
-		  
-})
+app.post('/login/:name', banco.getCuenta)
 
 // FUNCIONES TIENDA
 app.post('/compra/:Money',(req,res) => {
@@ -126,16 +116,7 @@ function signMoney(msg, value){
 }
 
 //FUNCIONES DEL PROYECTO
-function createToken(user) {
-    const payload = {
-      sub: user,
-      ///libreria moment para las fechas, ayuda para el manejo de fechas
-      iat: moment().unix(), //fecha en la que fue creado el Token-tiempo en formato unix
-      exp:moment().add(365, 'days').unix(), //fecha en la que el token va a expirar - caduca en 14 días
-    }
-    //codificarlo
-    return jwt.encode(payload, 'miclavedetokens')
-}
+
 
 
 //funcion para crear key RSA
