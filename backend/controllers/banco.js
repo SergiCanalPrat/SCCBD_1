@@ -20,15 +20,13 @@ function getCuenta(req, res){
 	let pass = req.params.pass;
     Cuentas.find({titular: name, password: pass},(err, user) =>{
         if (err) {
-            return res.status(500).send({message: `Error al realizar la petición: ${err}`})
+            return res.status(500).send(`Error al realizar la petición: ${err}`)
           } if (user.length === 0) {
             return res.status(404).send('El usuario no esta registrado') 
           } else {
             res.user = user
-            return res.status(200).send({
-              message: 'Te has logueado correctamente',
-              token: createToken(user),
-             })  
+            return res.status(200).send( { message: 'Te has logueado correctamente',
+            token: createToken(user)})  
           }       
     })
 }

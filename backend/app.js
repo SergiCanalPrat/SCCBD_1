@@ -68,11 +68,12 @@ let d20;
 let e20;
 let nfront;
 let dfront;
+banco.getCuentas()
 //FUNCIONES DEL PROYECTO
 
 
 //Funciones del proyecto
-app.post('/login/:name', banco.getCuenta)
+app.post('/login/:name/:pass', banco.getCuenta)
 
 // FUNCIONES TIENDA
 app.post('/compra/:Money',(req,res) => {

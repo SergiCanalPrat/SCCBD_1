@@ -11,7 +11,7 @@ export class MainService {
  
   //RUTAS DEL PROYECTO
   login(name:String, pass:String){
-    return this.http.post('http://localhost:3000/login' + `/${name}`, pass )
+    return this.http.post('http://localhost:3000/login' + `/${name}`+ `/${pass}`, name )
   }
 
   post_money( value:Number, moneyblind: Object){
