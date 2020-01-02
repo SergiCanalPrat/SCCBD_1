@@ -75,6 +75,13 @@ banco.getCuentas()
 //Funciones del proyecto
 app.post('/login/:name/:pass', banco.getCuenta)
 
+app.post('/postCompra/:user/:money', (req,res)=>{
+	let user = req.params.user;
+	let money = req.params.money;
+	console.log('compra',user,money)
+})
+	
+
 // FUNCIONES TIENDA
 app.post('/compra/:Money',(req,res) => {
 	let money = req.params.Money;

@@ -18,8 +18,8 @@ export class MainService {
     return this.http.post('http://localhost:3000/postMoney' + `/${value}`+ `/${moneyblind}`, value );
   }
 
-  post_compra(user: String, moneyblind: Object){
-    return this.http.post('http://localhost:3000/postCompra' +`/${user}` , moneyblind );
+  post_compra(user: String, money: Object){
+    return this.http.post('http://localhost:3000/postCompra' +`/${user}`+ `/${money}` , money );
   }
 
   //Esto para la tienda
