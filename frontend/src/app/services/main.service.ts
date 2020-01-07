@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Script } from 'vm';
+
 
 @Injectable({
   providedIn: 'root'
@@ -18,12 +18,8 @@ export class MainService {
     return this.http.post('http://localhost:3000/postMoney' + `/${value}`+ `/${moneyblind}`, value );
   }
 
-  post_compra(user: String, money: Object){
-    return this.http.post('http://localhost:3000/postCompra' +`/${user}`+ `/${money}` , money );
-  }
-
-  //Esto para la tienda
-  compra(money: Object, value:Number){
+    //Esto para la tienda
+  post_compra(money: Object, value:Number){
     return this.http.post('http://localhost:3010/compra' + `/${value}` + `/${money}`, money );
   }
 }

@@ -9,7 +9,6 @@ import * as bigintCryptoUtils from 'bigint-crypto-utils';
 import * as CryptoJS from 'crypto-js';
 
 import { Moneda } from '../../models/moneda';
-import { async } from 'q';
 import { Cliente } from '../../models/cliente';
 
 @Component({
@@ -103,7 +102,7 @@ create_coin(id, value, blind) {
 }
 compra_req (){
 	//enviar la peticion de compra a la tienda
-	this.mainService.post_compra(this.cliente.name,this.money.toString()).subscribe(res =>{
+	this.mainService.post_compra(this.money.toString(), this.money.valor).subscribe(res =>{
 		console.log('estado de la compra', res);
 	})
 }
@@ -117,6 +116,20 @@ async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
   let cryptedRSA = bigintCryptoUtils.modPow(msgbig, e, n)
 	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
 }
+
+async function decryptRSA(msg,d,n){ //funcion para desencryptar RSA
+	let msgbig = BigInt('0x' + msg);
+	let dbig = BigInt('0x' + d);
+	let nbig = BigInt('0x' + n);
+	console.log('el message  ', msgbig)
+	let decryptRSA  = bigintCryptoUtils.modPow(msgbig, dbig, nbig);
+	let decrypt = decryptRSA.toString(16);
+	let decryptHex = hexToArrayBuffer(decrypt);
+	let decryptedRSA = arrToString(decryptHex);
+	console.log('desencriptado  ', decryptedRSA)
+		return decryptedRSA;
+	}
+	
 
 
 
@@ -148,17 +161,5 @@ return buffer
 }
 function buf2hex(buffer) { // buffer is an ArrayBuffer
 return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
-}
-async function decryptRSA(msg,d,n){ //funcion para desencryptar RSA
-let msgbig = BigInt('0x' + msg);
-let dbig = BigInt('0x' + d);
-let nbig = BigInt('0x' + n);
-console.log('el message  ', msgbig)
-let decryptRSA  = bigintCryptoUtils.modPow(msgbig, dbig, nbig);
-let decrypt = decryptRSA.toString(16);
-let decryptHex = hexToArrayBuffer(decrypt);
-let decryptedRSA = arrToString(decryptHex);
-console.log('desencriptado  ', decryptedRSA)
-	return decryptedRSA;
 }
 

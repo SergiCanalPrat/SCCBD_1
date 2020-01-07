@@ -83,8 +83,9 @@ app.post('/postCompra/:user/:money', (req,res)=>{
 	
 
 // FUNCIONES TIENDA
-app.post('/compra/:Money',(req,res) => {
+app.post('/compra/:value/:Money',(req,res) => {
 	let money = req.params.Money;
+	let value = req.params.value;
 	console.log('Consultando si la moneda está gastada ', money)
 	// wasted = askWasted(money)
 	let wasted = app.post('./askWasted/:Money',(res) => {
