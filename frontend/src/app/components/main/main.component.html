@@ -1,6 +1,6 @@
 <h2>BANCO SMART-CITY</h2>
 
-<label > MONEY </label>
+<h3 > Money {{user}}</h3>
 <br>
 <br>
 <br>
@@ -10,23 +10,6 @@
 
 <br>
 <br>
-<label>Mensages; <p></p>{{message}}</label>
-
+<p><label>Monedas: <p></p>{{money.valor}}</label></p>
+<button (click)="compra_req()" > COMPRA </button>
 <br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-<div>
-    
-    <button (click)="post()"> POST (Encrypt)</button>
-    <label>  Encrypted message: <p></p> {{postencrypt}}</label>
-    <p></p>
-</div>
-
-<div>
-    <button (click)="get()" >GET (Decrypt)</button>
-    <label>  Decrypted message:<p></p> {{enmens}} </label>
-</div>
