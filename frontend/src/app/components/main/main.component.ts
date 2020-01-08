@@ -22,6 +22,7 @@ export class MainComponent implements OnInit {
 //proyecto
 	money : Moneda;
 	message;
+	respuesta;
 
 //------------ENTREGAS------------------//
 getres: Object;
@@ -92,6 +93,14 @@ async money_req(value: number){ //peticion de la moneda
     	encryptRSA (money_blind, this.e, this.n)
 		this.message = res;
 	})
+}
+
+async compra_tienda(Money){
+	this.mainService.compra(Money).subscribe(res => {
+		console.log("Respuesta del backend ", res)
+		this.respuesta = res;
+	})
+
 }
 //ENTREGAS
 }

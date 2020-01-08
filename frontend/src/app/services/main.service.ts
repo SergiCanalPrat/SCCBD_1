@@ -21,7 +21,7 @@ export class MainService {
   }
 
   //Esto para la tienda
-  compra(money: Object, value:Number){
-    return this.http.post('http://localhost:3010/compra' + `/${value}`, money );
+  compra(money: Object){
+    return this.http.post('http://localhost:3010/compra' + `/${money}`, money );
   }
 }

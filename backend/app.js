@@ -92,6 +92,7 @@ app.post('/compra/:Money',(req,res) => {
 	let wasted = app.post('./askWasted/:Money',(res) => {
 		return res.json()
 	})
+	console.log('Consulta realizada. Respuesta:  ', wasted)
 	return res.json(wasted)
 })
 
