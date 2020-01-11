@@ -122,6 +122,7 @@ function signMoney(msg, value){
 		signMoney = 'Valor incorrecto' 
 	}
 	console.log('3', signMoney)
+	//Restar saldo a la base de datos
 	return signMoney;
 }
 
