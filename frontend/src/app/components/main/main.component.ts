@@ -75,7 +75,9 @@ async KeyRSA(){
 
 async money_req(value: number){ //peticion de la moneda
 	//Creamos el papel de la moneda
-	let id = bigintCryptoUtils.randBytes(128);
+	let preid = await bigintCryptoUtils.randBytes(128, true);
+	let id = preid.join("")
+	console.log("Mi id de money_req es: ", id)
 	this.money = new Moneda (id, value)
 	//console.log('papel creado', this.money)
 	//MONEY creacion del hash
@@ -107,7 +109,7 @@ async money_req(value: number){ //peticion de la moneda
 
 //pasamos a crear la moneda
 create_coin(id, value, blind) {
-
+	console.log('creamos la coin con _id', id)
 	this.money = new Moneda(id,value,blind)
 	console.log('creamos la coin con los datos', this.money)
 	//sumamos la moneda al monedaro del cliente
@@ -117,7 +119,9 @@ create_coin(id, value, blind) {
 }
 compra_req (){
 	//enviar la peticion de compra a la tienda
-	this.mainService.compra(this.money.toString()).subscribe(res =>{
+	console.log("Mi firma es:", this.money.firma)
+	let compra_request = this.money._id + "," + this.money.valor + "," + this.money.firma
+	this.mainService.compra(compra_request).subscribe(res =>{
 		console.log('estado de la compra', res);
 	})
 }
@@ -152,11 +156,6 @@ async function decryptRSA(msg,d,n){ //funcion para desencryptar RSA
 	console.log('desencriptado  ', decryptedRSA)
 		return decryptedRSA;
 	}
-
-
-
-
-
 
 //CONVERSIONES
 function d2h(d) {

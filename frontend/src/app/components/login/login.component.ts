@@ -42,5 +42,16 @@ export class LoginComponent implements OnInit {
   
 
   }
+  goAutoBANK(){
+    console.log('el nombre', this.name,this.password); 
+             
+    //Creamos un cliente
+    let cliente = new Cliente (this.name, this.password, this.token);
+    console.log('el nuevo cliente es: ', cliente)
 
+    //console.log('el token ', token)
+    this.router.navigateByUrl('/bank/'+this.name);
+      
+  }
 }
+

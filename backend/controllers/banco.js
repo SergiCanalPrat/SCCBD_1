@@ -4,7 +4,7 @@ const jwt = require('jwt-simple')
 const mongoose = require('mongoose')
 const Moneda = require('../modelos/moneda')
 const Cuentas = require('../modelos/cuenta')
-
+const lista_gastados = []
 
 //get las cunatas de la base de datos 
 function getCuentas(){
@@ -54,7 +54,17 @@ function getMoneda (){
  //recibo la moneda, compruevo si el ID esta gastado 
  //si no lo esta la marco como gastada y añado el valor a la cuenta de la tienda
  //si esta gastada informo a la tienda de que lo esta
-function gastado (){
+function gastado (moneda){
+  console.log("recibimos de la tienda: ", moneda)
+  let _id = moneda[0]
+  let valor = moneda[1]
+  let firma = moneda[2]
+  if (lista_gastados.indexOf(_id) >= 0)
+    return "Pago denegado"
+  else
+    lista_gastados.push(_id)
+    console.log("Hemos añadido la moneda a la lista de gastadas ", lista_gastados)
+    return "Pago aceptado"
 }
 
 module.exports = {

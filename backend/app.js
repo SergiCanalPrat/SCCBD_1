@@ -7,12 +7,10 @@ const crypto = require('crypto');
 const app = express();
 const bigintCryptoUtils = require('bigint-crypto-utils');
 
-
 const moneyInBank = require('./modelos/cuenta')
 const mongoose = require('mongoose')
 const config = require('./config')
 const banco = require('./controllers/banco')
-
 
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
@@ -68,6 +66,7 @@ let d20;
 let e20;
 let nfront;
 let dfront;
+let moneyBlind;
 banco.getCuentas()
 //FUNCIONES DEL PROYECTO
 
@@ -81,42 +80,44 @@ app.post('/postCompra/:user/:money', (req,res)=>{
 	console.log('compra',user,money)
 })
 	
-
-// FUNCIONES TIENDA
-app.post('/compra/:value/:Money',(req,res) => {
-	let money = req.params.Money;
-	let value = req.params.value;
-	console.log('Consultando si la moneda está gastada ', money)
-	// wasted = askWasted(money)
-	let wasted = app.post('./askWasted/:Money',(res) => {
-		return res.json()
-	})
-	console.log('Consulta realizada. Respuesta:  ', wasted)
-	return res.json(wasted)
+app.post('/compracliente/:Money', (req,res)=>{
+	let money = req.params.Money.split(',');
+	let _id = money[0]
+	let valor = money[1]
+	let firma = BigInt(money[2])
+	// Comprobamos que la moneda que nos han enviado tiene el valor que dice tener
+	let verification = verify(valor, firma)
+	console.log('La verificacion es: ', verification)
+	console.log('La m de verificación es: ', moneyBlind)
+	console.log('La moneda que nos envia cliente es: ', _id, valor, firma)
+	//Ahora enviaremos la moneda que hemos recibido al banco para que compruebe la validez
+	let respuesta = banco.gastado(money)
+	console.log("La respuesta de la consulta al banco es: ", respuesta)
+	return res.json(respuesta)
 })
 
+// FUNCIONES TIENDA
 app.post('/postMoney/:value/:moneyblind',(req,res) => {
 	let value = req.params.value;
-	let moneyBlind = req.params.moneyblind;
+	moneyBlind = req.params.moneyblind;
 	console.log('cuerpo PostMoney', value, moneyBlind)
 	//moneyInBank = moneyInBank - value; //El banco resta de la cuenta del cliente el valor de la moneda
 	let sign = signMoney(moneyBlind,value) //El banco firma la moneda
-	return res.json(sign.toString())
+	return res.json(sign.toString(16))
 })
-
-
 function signMoney(msg, value){
+	console.log("La moneda que quiero firmar es: ", msg)
 	//let msgbuf = Buffer.from(msg,'utf8');
 	//let msgbig = BigInt('0x' + msgbuf.toString('hex'));
 	let signMoney;
 	if (value == 5){
-		signMoney = bigintCryptoUtils.modPow(msg,e5,n5)
+		signMoney = bigintCryptoUtils.modPow(msg,d5,n5)
 	}
 	else if (value == 10){
-		signMoney = bigintCryptoUtils.modPow(msg,e10,n10)
+		signMoney = bigintCryptoUtils.modPow(msg,d10,n10)
 	}
 	else if (value == 20){
-		signMoney = bigintCryptoUtils.modPow(msg,e20,n20)
+		signMoney = bigintCryptoUtils.modPow(msg,d20,n20)
 	}
 	else {
 		signMoney = 'Valor incorrecto' 
@@ -128,6 +129,23 @@ function signMoney(msg, value){
 
 //FUNCIONES DEL PROYECTO
 
+function verify(valor, firma){
+	let verification;
+	if (valor == 5){
+		verification = bigintCryptoUtils.modPow(firma, e5, n5)
+	}
+	else if (valor == 10){
+		verification = bigintCryptoUtils.modPow(firma, e10, n10)
+	}
+	else if (valor == 20){
+		verification = bigintCryptoUtils.modPow(firma, e20, n20)
+	}
+	else {
+		verification = 'Valor incorrecto' 
+	}
+	console.log('FUNCTION VERIFY', verification)
+		return verification;
+	}
 
 
 //funcion para crear key RSA
@@ -166,6 +184,7 @@ async function KeyRSA20(){
 	d20 = bigintCryptoUtils.modInv(e20, phi_n);
 	//return d;
 }
+
 
 //funcion para encriptar RSA
 //funcion para desencryptar RSA

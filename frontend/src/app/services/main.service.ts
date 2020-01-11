@@ -18,14 +18,8 @@ export class MainService {
     return this.http.post('http://localhost:3000/postMoney' + `/${value}`+ `/${moneyblind}`, value );
   }
 
-<<<<<<< HEAD
   //Esto para la tienda
   compra(money: Object){
-    return this.http.post('http://localhost:3010/compra' + `/${money}`, money );
-=======
-    //Esto para la tienda
-  post_compra(money: Object, value:Number){
-    return this.http.post('http://localhost:3010/compra' + `/${value}` + `/${money}`, money );
->>>>>>> cb09dd866e0bc94d5ac33373f2ba2428801f0310
+    return this.http.post('http://localhost:3010/compracliente' + `/${money}`, money );
   }
 }
