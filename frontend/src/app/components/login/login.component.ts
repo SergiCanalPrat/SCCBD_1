@@ -14,6 +14,8 @@ export class LoginComponent implements OnInit {
   name: string;
   password: string;
   token: string;
+  error;
+  
 
   constructor(private mainService: MainService, private router: Router) { }
 
@@ -21,16 +23,19 @@ export class LoginComponent implements OnInit {
     
   }
   goBANK(){
-    console.log('el nombre', this.name,this.password);
-      
+    console.log('el nombre', this.name,this.password);  
     this.mainService.login(this.name, this.password).subscribe(res => {
-      console.log('el token ', res)
-      this.token = res.toString();
-      this.router.navigateByUrl('/bank/'+this.name);
-
+      let token = res['token'];
+      this.error = res['message'];
+             
       //Creamos un cliente
       let cliente = new Cliente (this.name, this.password, this.token);
       console.log('el nuevo cliente es: ', cliente)
+
+      //console.log('el token ', token)
+      this.router.navigateByUrl('/bank/'+this.name);
+      
+     
 
 
     })  

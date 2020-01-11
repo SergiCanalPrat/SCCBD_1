@@ -9,7 +9,6 @@ import * as bigintCryptoUtils from 'bigint-crypto-utils';
 import * as CryptoJS from 'crypto-js';
 
 import { Moneda } from '../../models/moneda';
-import { async } from 'q';
 import { Cliente } from '../../models/cliente';
 
 @Component({
@@ -22,23 +21,9 @@ export class MainComponent implements OnInit {
 
 //proyecto
 	money : Moneda;
-	message;
 	cliente: Cliente;
-	monedero: Moneda[];
-
-//------------ENTREGAS------------------//
-getres: Object;
-getres1: Object;
-mens
-postres: Object;
-enmens: string;
-iv;
-key;
-menshex;
-postencrypt;
-
-
-
+	user;
+	monedero: Number[];
 //Parametros de RSA
 e;
 d;
@@ -48,13 +33,14 @@ nback;
 
 constructor(private mainService: MainService, private activatedRouter: ActivatedRoute) {
  this.cliente = new Cliente("","","",[])
- this.monedero = []
+ this.money =new Moneda(null,null,"")
 }
 ngOnInit() {
 //PROYECTO
 this.activatedRouter.params.subscribe(params => {
     if (typeof params['name'] !== 'undefined') {
-      this.cliente.name = params['name'];
+	  this.cliente.name = params['name'];
+	  this.user = this.cliente.name;
     } else {
 	  this.cliente.name = '';
 	}
@@ -97,30 +83,28 @@ async money_req(value: number){ //peticion de la moneda
 	console.log('money cegado ',money_blind)
 	this.mainService.post_money(value, money_blind).subscribe(res =>{
 		console.log('mesage de salida ', res) //ya tengo la firma de la moneda
-		let blind_money = res;
+		//descegamos la moneda firmada
+		let blind_factor_money = BigInt('0x' + res);
+		let productf = blind_factor_money * factor;
+		let blind_money = bigintCryptoUtils.modPow(productf,this.e,this.n)
 		this.create_coin(id, value, blind_money);
-    /*	this.KeyRSA();
-    	encryptRSA (money_blind, this.e, this.n)
-		this.message = res;*/
 	})
 }
 
 
 //pasamos a crear la moneda
 create_coin(id, value, blind) {
-	console.log('creamos la coin con los datos', id, value,blind)
-	let coin = new Moneda(id,value,blind)
+
+	this.money = new Moneda(id,value,blind)
+	console.log('creamos la coin con los datos', this.money)
 	//sumamos la moneda al monedaro del cliente
-	let leng = this.cliente.monedas.push(coin)
+	let leng = this.cliente.monedas.push(this.money)
 	console.log('monedas  ',leng, this.cliente.monedas)
 	//mostramos en la pantalla las monedas del cliente
 }
-
-
-
-compra_req (coin){
+compra_req (){
 	//enviar la peticion de compra a la tienda
-	this.mainService.post_compra(this.cliente.name,coin).subscribe(res =>{
+	this.mainService.post_compra(this.money.toString(), this.money.valor).subscribe(res =>{
 		console.log('estado de la compra', res);
 	})
 }
@@ -134,6 +118,20 @@ async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
   let cryptedRSA = bigintCryptoUtils.modPow(msgbig, e, n)
 	return cryptedRSA; //convertir a strng 16 depende de como quiero la respuesta
 }
+
+async function decryptRSA(msg,d,n){ //funcion para desencryptar RSA
+	let msgbig = BigInt('0x' + msg);
+	let dbig = BigInt('0x' + d);
+	let nbig = BigInt('0x' + n);
+	console.log('el message  ', msgbig)
+	let decryptRSA  = bigintCryptoUtils.modPow(msgbig, dbig, nbig);
+	let decrypt = decryptRSA.toString(16);
+	let decryptHex = hexToArrayBuffer(decrypt);
+	let decryptedRSA = arrToString(decryptHex);
+	console.log('desencriptado  ', decryptedRSA)
+		return decryptedRSA;
+	}
+
 
 
 
@@ -169,18 +167,5 @@ function hex2ab2(hex){
 
 function buf2hex(buffer) { // buffer is an ArrayBuffer
   return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
-}
-
-async function decryptRSA(msg,d,n){ //funcion para desencryptar RSA
-  let msgbig = BigInt('0x' + msg);
-  let dbig = BigInt('0x' + d);
-  let nbig = BigInt('0x' + n);
-  console.log('el message  ', msgbig)
-  let decryptRSA  = bigintCryptoUtils.modPow(msgbig, dbig, nbig);
-  let decrypt = decryptRSA.toString(16);
-  let decryptHex = hexToArrayBuffer(decrypt);
-  let decryptedRSA = arrToString(decryptHex);
-  console.log('desencriptado  ', decryptedRSA)
-	return decryptedRSA;
 }
 
