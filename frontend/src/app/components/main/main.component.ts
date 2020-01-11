@@ -31,7 +31,7 @@ n;
 dback;
 nback;
 
-constructor(private mainService: MainService, private activatedRouter: ActivatedRoute) { 
+constructor(private mainService: MainService, private activatedRouter: ActivatedRoute) {
  this.cliente = new Cliente("","","",[])
  this.money =new Moneda(null,null,"")
 }
@@ -39,14 +39,14 @@ ngOnInit() {
 //PROYECTO
 this.activatedRouter.params.subscribe(params => {
     if (typeof params['name'] !== 'undefined') {
-	  this.cliente.name = params['name'];  
-	  this.user = this.cliente.name;    
+	  this.cliente.name = params['name'];
+	  this.user = this.cliente.name;
     } else {
 	  this.cliente.name = '';
 	}
 })
 //ENTREGAS
-this.KeyRSA();	
+this.KeyRSA();
 }
 
 //PROYECTO
@@ -84,15 +84,17 @@ async money_req(value: number){ //peticion de la moneda
 	this.mainService.post_money(value, money_blind).subscribe(res =>{
 		console.log('mesage de salida ', res) //ya tengo la firma de la moneda
 		//descegamos la moneda firmada
-		let blind_factor_money = BigInt('0x' + res);	
+		let blind_factor_money = BigInt('0x' + res);
 		let productf = blind_factor_money * factor;
 		let blind_money = bigintCryptoUtils.modPow(productf,this.e,this.n)
 		this.create_coin(id, value, blind_money);
 	})
 }
+
+
 //pasamos a crear la moneda
 create_coin(id, value, blind) {
-	
+
 	this.money = new Moneda(id,value,blind)
 	console.log('creamos la coin con los datos', this.money)
 	//sumamos la moneda al monedaro del cliente
@@ -129,7 +131,7 @@ async function decryptRSA(msg,d,n){ //funcion para desencryptar RSA
 	console.log('desencriptado  ', decryptedRSA)
 		return decryptedRSA;
 	}
-	
+
 
 
 
@@ -152,14 +154,18 @@ for (; i < tmp_len; i += 1) {
 }
 return str;
 }
+
+
 function hex2ab2(hex){
-var typedArray = new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function (h) {
-	return parseInt(h, 16)
-}))
-var buffer = typedArray.buffer
-return buffer
+  var typedArray = new Uint8Array(hex.match(/[\da-f]{2}/gi).map(function (h) {
+    return parseInt(h, 16)
+  }))
+  var buffer = typedArray.buffer
+  return buffer
 }
+
+
 function buf2hex(buffer) { // buffer is an ArrayBuffer
-return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+  return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
 }
 

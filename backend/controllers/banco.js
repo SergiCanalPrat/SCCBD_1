@@ -44,6 +44,7 @@ function createToken(user) {
 
 // recive el hash de la moneda cegada y su valor, con ello firma la moneda
 function firma (){
+    
 }
 
 //se recive del cliente la cantidad que quiere gastar y se le descuenta su valor de la cuenta
