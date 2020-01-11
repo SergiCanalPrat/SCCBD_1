@@ -10,7 +10,6 @@ const bigintCryptoUtils = require('bigint-crypto-utils');
 
 const moneyInBank = require('./modelos/cuenta')
 const mongoose = require('mongoose')
-const config = require('./config')
 const banco = require('./controllers/banco')
 
 
@@ -68,12 +67,16 @@ let d20;
 let e20;
 let nfront;
 let dfront;
-banco.getCuentas()
+//banco.getCuentas()
 //FUNCIONES DEL PROYECTO
 
 
 //Funciones del proyecto
 app.post('/login/:name/:pass', banco.getCuenta)
+
+app.post('/cuenta/:name', banco.getInfo)
+
+
 
 app.post('/postCompra/:user/:money', (req,res)=>{
 	let user = req.params.user;

@@ -32,17 +32,22 @@ dback;
 nback;
 
 constructor(private mainService: MainService, private activatedRouter: ActivatedRoute) {
- this.cliente = new Cliente("","","",[])
- this.money =new Moneda(null,null,"")
+	this.cliente = new Cliente(null,"","",null,null,null,null)
+ 	this.money =new Moneda(null,null,"")
 }
 ngOnInit() {
 //PROYECTO
 this.activatedRouter.params.subscribe(params => {
     if (typeof params['name'] !== 'undefined') {
-	  this.cliente.name = params['name'];
-	  this.user = this.cliente.name;
+	  let name = params['name'];
+	  this.mainService.cuenta(name).subscribe( res =>{
+		  let re = res['res'];
+		  this.cliente = new Cliente(re[0]._id, re[0].titular, re[0].password, re[0].saldo, re[0].Monedas5, re[0].Monedas10, re[0].Monedas20);
+		  console.log('respuesta de compra', this.cliente)
+	  })
+	 
     } else {
-	  this.cliente.name = '';
+	  this.cliente.Titular = '';
 	}
 })
 //ENTREGAS
@@ -98,8 +103,8 @@ create_coin(id, value, blind) {
 	this.money = new Moneda(id,value,blind)
 	console.log('creamos la coin con los datos', this.money)
 	//sumamos la moneda al monedaro del cliente
-	let leng = this.cliente.monedas.push(this.money)
-	console.log('monedas  ',leng, this.cliente.monedas)
+	//let leng = this.cliente.monedas.push(this.money)
+	//console.log('monedas  ',leng, this.cliente.monedas)
 	//mostramos en la pantalla las monedas del cliente
 }
 compra_req (){

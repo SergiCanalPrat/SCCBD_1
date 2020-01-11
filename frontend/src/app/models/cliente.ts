@@ -2,14 +2,22 @@ import { NgIf } from '@angular/common';
 import { Moneda } from './moneda';
 
 export class Cliente {
-   name: string;
-   pass: string;
-   token: string;
-   monedas: Moneda[];
+    _id: number;
+   Titular: string;
+   Password: String;
+   Saldo: Number;
+   Monedas5: Number;
+   Monedas10: Number;
+   Monedas20: Number;
 
-constructor(name = "", pass = "",token = "", monedas = [] ){
-    this.name = name,
-    this.pass = pass,
-    this.token = token,
-    this.monedas = monedas
+
+constructor(id: 0, name = "", pass = "",saldo = null, monedas5 = 0, monedas10 = 0, monedas20 = 0 ){
+    this._id = id,
+    this.Titular = name,
+    this.Password = pass,
+    this.Saldo = saldo,
+    this.Monedas5 = monedas5,
+    this.Monedas10 = monedas10,
+    this.Monedas20 = monedas20
+
 }}

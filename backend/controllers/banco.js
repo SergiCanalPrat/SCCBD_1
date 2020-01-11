@@ -8,25 +8,25 @@ const Cuentas = require('../modelos/cuenta')
 
 //get las cunatas de la base de datos 
 function getCuentas(){
-    Cuentas.find((err, cuenta) => {
+    Cuentas.find((err, cuentas) => {
         if (err) {console.log(err)}
-        console.log('las cuentas', cuenta)
+        console.log('las cuentas', cuentas)
     })
 }
 
 //para comprobar si el usuario esta en el banco
 function getCuenta(req, res){
-    let name = req.params.name;
+  let name = req.params.name;
 	let pass = req.params.pass;
-    Cuentas.find({titular: name, password: pass},(err, user) =>{
+    Cuentas.find({titular: name, password: pass},(err, cuenta) =>{
         if (err) {
             return res.status(500).send({message:`Error al realizar la petición: ${err}`})
-          } if (user.length === 0) {
+          } if (cuenta.length === 0) {
             return res.status(404).send({message:'El usuario no esta registrado'}) 
           } else {
-            res.user = user
+            console.log('la cuenta es ', cuenta)
             return res.status(200).send( { message: 'Te has logueado correctamente',
-            token: createToken(user)})  
+            token: createToken(cuenta), res: cuenta})  
           }       
     })
 }
@@ -42,6 +42,22 @@ function createToken(user) {
     return jwt.encode(payload, 'miclavedetokens')
 }
 
+
+//para comprobar si el usuario esta en el banco
+function getInfo(req, res){
+  let name = req.params.name;
+    Cuentas.find({titular: name},(err, cuenta) =>{
+        if (err) {
+            return res.status(500).send({message:`Error al realizar la petición: ${err}`})
+          } if (cuenta.length === 0) {
+            return res.status(404).send({message:'El usuario no esta registrado'}) 
+          } else {
+            console.log('la cuenta es ', cuenta)
+            return res.status(200).send( { message: 'Te has logueado correctamente',
+            token: createToken(cuenta), res: cuenta})  
+          }       
+    })
+}
 // recive el hash de la moneda cegada y su valor, con ello firma la moneda
 function firma (){
     
@@ -60,7 +76,6 @@ function gastado (){
 module.exports = {
     getCuentas,
     getCuenta,
-    firma,
-    getMoneda,
-    gastado,
+    getInfo,
+   
 }
