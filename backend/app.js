@@ -66,7 +66,7 @@ let e20;
 let nfront;
 let dfront;
 let moneyBlind;
-banco.getCuentas()
+//banco.getMonedero()
 //FUNCIONES DEL PROYECTO
 
 
@@ -75,6 +75,7 @@ app.post('/login/:name/:pass', banco.getCuenta)
 
 app.post('/cuenta/:name', banco.getInfo)
 
+app.post('/monedero/:id',banco.getMonedero)
 
 
 app.post('/postCompra/:user/:money', (req,res)=>{

@@ -10,6 +10,7 @@ import * as CryptoJS from 'crypto-js';
 
 import { Moneda } from '../../models/moneda';
 import { Cliente } from '../../models/cliente';
+import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 
 @Component({
 selector: 'app-main',
@@ -53,12 +54,28 @@ ngOnInit() {
 this.activatedRouter.params.subscribe(params => {
     if (typeof params['name'] !== 'undefined') {
 	  let name = params['name'];
-	  this.mainService.cuenta(name).subscribe( res =>{
-		  let re = res['res'];
-		  this.cliente = new Cliente(re[0]._id, re[0].titular, re[0].password, re[0].saldo, re[0].Monedas5, re[0].Monedas10, re[0].Monedas20);
-		  console.log('respuesta de compra', this.cliente)
-	  })
-	 
+	  //daros de la cuenta  cliente
+	this.mainService.cuenta(name).subscribe( res =>{
+		res = res['res'];
+		this.cliente = new Cliente(res[0]._id, res[0].titular, res[0].password, res[0].saldo, null,null,null);
+		console.log('respuesta de compra',  this.cliente)
+		
+		//racogo las monedas del monedero
+	  	for( var i = 0; i < res[0].Monedas5.length; i++){
+			this.mainService.monedero(res[0].Monedas5[i]).subscribe( res => {
+				this.cliente.Monedas5 = new Moneda(res['res'])
+				console.log('la moneda completa',this.cliente.Monedas5);
+			})
+		}for( var i = 0; i < res[0].Monedas10.length; i++){
+			this.mainService.monedero(res[0].Monedas10[i]).subscribe( res => {
+				console.log('la moneda completa',res['res']);
+			})
+		}for( var i = 0; i < res[0].Monedas20.length; i++){
+			this.mainService.monedero(res[0].Monedas20[i]).subscribe( res => {
+				console.log('la moneda completa',res['res']);
+			})
+		}
+	  })	 
     } else {
 	  this.cliente.Titular = '';
 	}
