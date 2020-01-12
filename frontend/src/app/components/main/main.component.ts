@@ -57,24 +57,30 @@ this.activatedRouter.params.subscribe(params => {
 	  //daros de la cuenta  cliente
 	this.mainService.cuenta(name).subscribe( res =>{
 		res = res['res'];
-		this.cliente = new Cliente(res[0]._id, res[0].titular, res[0].password, res[0].saldo, null,null,null);
-		console.log('respuesta de compra',  this.cliente)
-		
+		this.cliente = new Cliente(res[0]._id, res[0].titular, res[0].password, res[0].saldo);
+		//console.log('respuesta de compra',  this.cliente)		
 		//racogo las monedas del monedero
-	  	for( var i = 0; i < res[0].Monedas5.length; i++){
-			this.mainService.monedero(res[0].Monedas5[i]).subscribe( res => {
-				this.cliente.Monedas5 = new Moneda(res['res'])
-				console.log('la moneda completa',this.cliente.Monedas5);
-			})
-		}for( var i = 0; i < res[0].Monedas10.length; i++){
-			this.mainService.monedero(res[0].Monedas10[i]).subscribe( res => {
-				console.log('la moneda completa',res['res']);
-			})
-		}for( var i = 0; i < res[0].Monedas20.length; i++){
-			this.mainService.monedero(res[0].Monedas20[i]).subscribe( res => {
-				console.log('la moneda completa',res['res']);
-			})
+	  		for( var i = 0; i < res[0].Monedas5.length; i++){
+				this.mainService.monedero(res[0].Monedas5[i]).subscribe( respu => {
+					respu = respu['res']		
+					this.cliente.Monedas5.push( new Moneda(respu[0]._id, respu[0].valor, respu[0].firma));
+					console.log('respuesta ',this.cliente.Monedas5)
+				})
+			}for( var i = 0; i < res[0].Monedas10.length; i++){
+				this.mainService.monedero(res[0].Monedas10[i]).subscribe( respu => {
+					respu = respu['res']
+					this.cliente.Monedas10.push(new Moneda(respu[0]._id, respu[0].valor, respu[0].firma))
+					console.log('respuesta10  ',this.cliente.Monedas10)
+				})
+			}for( var i = 0; i < res[0].Monedas20.length; i++){
+				this.mainService.monedero(res[0].Monedas20[i]).subscribe( respu => {
+					respu = respu['res']
+					this.cliente.Monedas20.push(new Moneda(respu[0]._id, respu[0].valor, respu[0].firma));
+					console.log('respuesta 20  ',this.cliente.Monedas20)
+				})
+				//console.log('respuesta de compra',  this.cliente)	
 		}
+		
 	  })	 
     } else {
 	  this.cliente.Titular = '';
