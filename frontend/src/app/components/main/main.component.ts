@@ -92,24 +92,17 @@ async money_req(value: number){ //peticion de la moneda
 		let blind_factor_money = BigInt('0x' + res);
 		let productf = blind_factor_money * factor;
 		let blind_money = bigintCryptoUtils.modPow(productf,this.e,this.n)
-		this.create_coin(id, value, blind_money);
+		this.money = new Moneda(id,value,blind_money)
+		console.log('creamos la coin con los datos', this.money)
 	})
 }
 
+compra_req (valor: number){
+	//consulta de una moneda del usuario con ese valor
+	 
 
-//pasamos a crear la moneda
-create_coin(id, value, blind) {
-
-	this.money = new Moneda(id,value,blind)
-	console.log('creamos la coin con los datos', this.money)
-	//sumamos la moneda al monedaro del cliente
-	//let leng = this.cliente.monedas.push(this.money)
-	//console.log('monedas  ',leng, this.cliente.monedas)
-	//mostramos en la pantalla las monedas del cliente
-}
-compra_req (){
 	//enviar la peticion de compra a la tienda
-	this.mainService.post_compra(this.money.toString(), this.money.valor).subscribe(res =>{
+	this.mainService.post_compra(this.money.toString(), valor).subscribe(res =>{
 		console.log('estado de la compra', res);
 	})
 }
