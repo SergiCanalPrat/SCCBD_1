@@ -45,7 +45,6 @@ function createToken(user) {
     return jwt.encode(payload, 'miclavedetokens')
 }
 
-
 //para comprobar si el usuario esta en el banco
 function getInfo(req, res){
   let name = req.params.name;
@@ -61,6 +60,20 @@ function getInfo(req, res){
           }       
     })
 }
+
+function getMonedero(req,res){
+  let id = req.params.id;
+    Moneda.find({_id:id},(err,moneda) => {
+      if(err){ return res.status(500).send({message:'Eror al reliazar la peticion:'})
+      } if (moneda.length === 0) {
+        return res.status(404).send({message:'La moneda no existe'})
+      }else {
+        return res.status(200).send({message:'La moneda del cliente', res:moneda})
+      }
+    })
+  }
+
+
 // recive el hash de la moneda cegada y su valor, con ello firma la moneda
 function firma (){
     
@@ -95,6 +108,8 @@ module.exports = {
     getCuentas,
     getCuenta,
     getInfo,
-    gastado
+    gastado,
+    getMonedero,
+    
    
 }
