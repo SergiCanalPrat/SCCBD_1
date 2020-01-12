@@ -2,9 +2,12 @@
 const moment = require('moment')
 const jwt = require('jwt-simple')
 const mongoose = require('mongoose')
-const Moneda = require('../modelos/moneda')
+const moneda = require('../modelos/moneda')
 const Cuentas = require('../modelos/cuenta')
 const lista_gastados = []
+const app = require('../app');
+const CryptoJS = require ('crypto-js');
+
 
 //get las cunatas de la base de datos 
 function getCuentas(){
@@ -70,6 +73,7 @@ function getMoneda (){
  //recibo la moneda, compruevo si el ID esta gastado 
  //si no lo esta la marco como gastada y añado el valor a la cuenta de la tienda
  //si esta gastada informo a la tienda de que lo esta
+
 function gastado (moneda){
   console.log("recibimos de la tienda: ", moneda)
   let _id = moneda[0]
@@ -80,6 +84,10 @@ function gastado (moneda){
   else
     lista_gastados.push(_id)
     console.log("Hemos añadido la moneda a la lista de gastadas ", lista_gastados)
+    console.log("La moneda no estaba gastada")
+    // let coinSignedByBank = app.signMoney(moneda, valor);
+    // let hashedCoinSignedByBank = CryptoJS.SHA256(coinSignedByBank);
+    // if(hashedCoinSignedByBank == )
     return "Pago aceptado"
 }
 
@@ -87,5 +95,6 @@ module.exports = {
     getCuentas,
     getCuenta,
     getInfo,
+    gastado
    
 }
