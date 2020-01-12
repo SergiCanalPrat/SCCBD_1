@@ -123,10 +123,10 @@ async money_req(value: number){ //peticion de la moneda
 	})
 }
 
-compra_req (){
+compra_req (coin: Moneda){
 	//enviar la peticion de compra a la tienda
-	console.log("Mi firma es:", this.money.firma)
-	let compra_request = this.money._id + "," + this.money.valor + "," + this.money.firma
+	console.log("Mi compre es de ", coin)
+	let compra_request = coin._id + "," + coin.valor + "," + coin.firma
 	this.mainService.compra(compra_request).subscribe(res =>{
 		console.log('estado de la compra', res);
 	})

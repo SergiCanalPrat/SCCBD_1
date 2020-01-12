@@ -6,7 +6,7 @@ const cors = require('cors');
 const crypto = require('crypto');
 const app = express();
 const bigintCryptoUtils = require('bigint-crypto-utils');
-
+const Moneda = require('./modelos/moneda')
 const moneyInBank = require('./modelos/cuenta')
 const mongoose = require('mongoose')
 const banco = require('./controllers/banco')
@@ -77,15 +77,13 @@ app.post('/cuenta/:name', banco.getInfo)
 
 app.post('/monedero/:id',banco.getMonedero)
 
+// FUNCIONES 	FIRMA POR PARTE DEL BANCO 
+app.post('/postMoney/:value/:moneyblind',banco.firma)
 
-app.post('/postCompra/:user/:money', (req,res)=>{
-	let user = req.params.user;
-	let money = req.params.money;
-	console.log('compra',user,money)
-})
+
 	
-app.post('/compracliente/:Money', (req,res)=>{
-	let money = req.params.Money.split(',');
+app.post('/compracliente/:money', (req,res)=>{
+	console.log('vfdvd', money)
 	let _id = money[0]
 	let valor = money[1]
 	let firma = BigInt(money[2])
@@ -99,37 +97,6 @@ app.post('/compracliente/:Money', (req,res)=>{
 	console.log("La respuesta de la consulta al banco es: ", respuesta)
 	return res.json(respuesta)
 })
-
-// FUNCIONES TIENDA
-app.post('/postMoney/:value/:moneyblind',(req,res) => {
-	let value = req.params.value;
-	moneyBlind = req.params.moneyblind;
-	console.log('cuerpo PostMoney', value, moneyBlind)
-	//moneyInBank = moneyInBank - value; //El banco resta de la cuenta del cliente el valor de la moneda
-	let sign = signMoney(moneyBlind,value) //El banco firma la moneda
-	return res.json(sign.toString(16))
-})
-function signMoney(msg, value){
-	console.log("La moneda que quiero firmar es: ", msg)
-	//let msgbuf = Buffer.from(msg,'utf8');
-	//let msgbig = BigInt('0x' + msgbuf.toString('hex'));
-	let signMoney;
-	if (value == 5){
-		signMoney = bigintCryptoUtils.modPow(msg,d5,n5)
-	}
-	else if (value == 10){
-		signMoney = bigintCryptoUtils.modPow(msg,d10,n10)
-	}
-	else if (value == 20){
-		signMoney = bigintCryptoUtils.modPow(msg,d20,n20)
-	}
-	else {
-		signMoney = 'Valor incorrecto' 
-	}
-	console.log('3', signMoney)
-	//Restar saldo a la base de datos
-	return signMoney;
-}
 
 //FUNCIONES DEL PROYECTO
 

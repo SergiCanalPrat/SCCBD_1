@@ -68,18 +68,38 @@ function getMonedero(req,res){
         return res.status(200).send({message:'La moneda del cliente', res:moneda})
       }
     })
-  }
-
-
-// recive el hash de la moneda cegada y su valor, con ello firma la moneda
-function firma (){
-    
 }
 
-//se recive del cliente la cantidad que quiere gastar y se le descuenta su valor de la cuenta
-function getMoneda (){ 
+function firma(req,res){
+	let value = req.params.value;
+	moneyBlind = req.params.moneyblind;
+	console.log('cuerpo PostMoney', value, moneyBlind)
+	//moneyInBank = moneyInBank - value; //El banco resta de la cuenta del cliente el valor de la moneda
+	let sign = signMoney(moneyBlind,value) //El banco firma la moneda
+	return res.json(sign.toString(16))
 }
 
+function signMoney(msg, value){
+	console.log("La moneda que quiero firmar es: ", msg)
+	//let msgbuf = Buffer.from(msg,'utf8');
+	//let msgbig = BigInt('0x' + msgbuf.toString('hex'));
+	let signMoney;
+	if (value == 5){
+		signMoney = bigintCryptoUtils.modPow(msg,d5,n5)
+	}
+	else if (value == 10){
+		signMoney = bigintCryptoUtils.modPow(msg,d10,n10)
+	}
+	else if (value == 20){
+		signMoney = bigintCryptoUtils.modPow(msg,d20,n20)
+	}
+	else {
+		signMoney = 'Valor incorrecto' 
+	}
+	console.log('3', signMoney)
+	//Restar saldo a la base de datos
+	return signMoney;
+}
  //recibo la moneda, compruevo si el ID esta gastado 
  //si no lo esta la marco como gastada y añado el valor a la cuenta de la tienda
  //si esta gastada informo a la tienda de que lo esta
@@ -101,6 +121,7 @@ module.exports = {
     getCuenta,
     getInfo,
     getMonedero,
+    firma,
     gastado
    
 }
