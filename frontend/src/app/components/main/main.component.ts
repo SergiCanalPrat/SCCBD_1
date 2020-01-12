@@ -21,9 +21,22 @@ export class MainComponent implements OnInit {
 
 //proyecto
 	money : Moneda;
-	cliente: Cliente;
-	user;
-	monedero: Number[];
+	message;
+	respuesta;
+
+//------------ENTREGAS------------------//
+getres: Object;
+getres1: Object;
+mens
+postres: Object;
+enmens: string;
+iv;
+key;
+menshex;
+postencrypt;
+cliente: Cliente;
+user;
+monedero: Number[];
 //Parametros de RSA
 e;
 d;
@@ -67,7 +80,9 @@ async KeyRSA(){
 
 async money_req(value: number){ //peticion de la moneda
 	//Creamos el papel de la moneda
-	let id = bigintCryptoUtils.randBytes(128);
+	let preid = await bigintCryptoUtils.randBytes(128, true);
+	let id = preid.join("")
+	console.log("Mi id de money_req es: ", id)
 	this.money = new Moneda (id, value)
 	//console.log('papel creado', this.money)
 	//MONEY creacion del hash
@@ -97,14 +112,21 @@ async money_req(value: number){ //peticion de la moneda
 	})
 }
 
-compra_req (valor: number){
-	//consulta de una moneda del usuario con ese valor
-	 
-
+compra_req (){
 	//enviar la peticion de compra a la tienda
-	this.mainService.post_compra(this.money.toString(), valor).subscribe(res =>{
+	console.log("Mi firma es:", this.money.firma)
+	let compra_request = this.money._id + "," + this.money.valor + "," + this.money.firma
+	this.mainService.compra(compra_request).subscribe(res =>{
 		console.log('estado de la compra', res);
 	})
+}
+
+async compra_tienda(Money){
+	this.mainService.compra(Money).subscribe(res => {
+		console.log("Respuesta del backend ", res)
+		this.respuesta = res;
+	})
+
 }
 //ENTREGAS
 }
@@ -129,11 +151,6 @@ async function decryptRSA(msg,d,n){ //funcion para desencryptar RSA
 	console.log('desencriptado  ', decryptedRSA)
 		return decryptedRSA;
 	}
-
-
-
-
-
 
 //CONVERSIONES
 function d2h(d) {
