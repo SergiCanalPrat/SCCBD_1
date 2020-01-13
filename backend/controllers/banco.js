@@ -118,9 +118,7 @@ function gastado (moneda){
     lista_gastados.push(_id)
     console.log("Hemos añadido la moneda a la lista de gastadas ", lista_gastados)
     console.log("La moneda no estaba gastada")
-    // let coinSignedByBank = app.signMoney(moneda, valor);
-    // let hashedCoinSignedByBank = CryptoJS.SHA256(coinSignedByBank);
-    // if(hashedCoinSignedByBank == )
+
     return "Pago aceptado"
 }
 
