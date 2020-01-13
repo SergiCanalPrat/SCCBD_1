@@ -114,7 +114,7 @@ async money_req(value: number){ //peticion de la moneda
 	//console.log('hash en hex',money_hash_hex)
 	let cegado = await encryptRSA(money_hash_hex,this.e,this.n)
 	console.log('money cegado ', cegado)
-	this.mainService.post_money(value, cegado).subscribe(async res =>{
+	this.mainService.post_money(value,id, cegado,this.cliente._id).subscribe(async res =>{
 		console.log('mesage de salida ', res) //ya tengo la firma de la moneda	
 		let blind_money = await decryptRSA(res,this.d, this.n)
 		this.money = new Moneda(null,id,value,blind_money)

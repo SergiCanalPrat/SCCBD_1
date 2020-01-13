@@ -14,6 +14,11 @@ const banco = require('./controllers/banco')
 const tienda = require('./controllers/tienda')
 const lista_gastados = []
 
+
+const moment = require('moment')
+const jwt = require('jwt-simple')
+const Cuentas = require('./modelos/cuenta')
+
 app.use(logger('dev')); // Log requests (GET..)
 app.use(express.json()); // Needed to retrieve JSON
 
@@ -81,12 +86,16 @@ app.post('/cuenta/:name', banco.getInfo)
 app.post('/monedero/:id',banco.getMonedero)
 
 // FUNCIONES 	FIRMA POR PARTE DEL BANCO 
-app.post('/postMoney/:value/:moneyblind',(req,res) => {
+app.post('/postMoney/:value/:id/:moneyblind/:_id',(req,res) => {
 	let value = req.params.value;
+	let id = req.params.id;
+	let _id = req.params._id
 	moneyBlind = req.params.moneyblind;
-	console.log('cuerpo PostMoney', value, moneyBlind)
+	console.log('cuerpo PostMoney', value, id)
 	//moneyInBank = moneyInBank - value; //El banco resta de la cuenta del cliente el valor de la moneda
-  let sign = signMoney(moneyBlind,value) //El banco firma la moneda
+ 	let sign = signMoney(moneyBlind,value) //El banco firma la moneda
+	let respu = banco.saveMoney(value,id,sign,_id)
+	console.log(respu)
 	return res.json(sign.toString(16))
 })
 
@@ -122,33 +131,53 @@ app.post('/compracliente/:money',(req,res)=> {
 	let id = money[1]
 	let valor = money[2]
     let firma = money[3]
-    res = "GASTADO"
+    let result = "GASTADO"
 	
 	if (lista_gastados.indexOf(id)){
-		   res = "NO-GASTADO"
+		   result = "NO-GASTADO"
 		   lista_gastados.push(id);
 		   console.log('resultado', res)
 		   let msgbig = BigInt('0x' + firma.toString())
-			console.log("La moneda que quiero VERFICAR  es: ", msgbig, valor)
-			res = verify(valor,id, msgbig );
-    } else{	console.log('resiltadooo', res)
-    }     
+			console.log("La moneda que quiero VERFICAR  es: ", firma,)
+			result = verify(valor,id, msgbig );
+	} else{return res.json(result.toString(16))
+	 }     
 })
 //FUNCIONES DEL PROYECTO
 function verify(valor,id, firma){
-	console.log('datos', valor,id,firma)		
+	//console.log('datos', valor,id,firma)
+	let res		
 	let verification;
 	if (valor == 5){
 		verification = bigintCryptoUtils.modPow(firma, e5, n5)
-		//let hash = crypto.subtle.digest('SHA-256', id2);
 		let hash = cryptojs.SHA256(id)
-		console.log('El hash el libro',hash )
+		console.log('El hash el libro',hash.toString() , " y la vevrificacion", verification.toString(16))
+		if(hash == verification){
+			res = "VERIFICADA"
+			console.log(res)
+		}
 	}
 	else if (valor == 10){
-		verification = bigintCryptoUtils.modPow(firma, e1s0, n10)
+		verification = bigintCryptoUtils.modPow(firma, e10, n10)
+		let hash = cryptojs.SHA256(id)
+	
+		console.log('El hash el libro',hash.toString() , " y la vevrificacion", verification.toString(16))
+		if(hash == verification){
+			res = "VERIFICADA"
+			console.log(res)
+		}
 	}
 	else if (valor == 20){
 		verification = bigintCryptoUtils.modPow(firma, e20, n20)
+		let hash = cryptojs.SHA256(id)
+		let msgbig = BigInt('0x' + hash.toString())
+		let hash_send = bigintCryptoUtils.modPow(msgbig,d20,n20) 
+		
+		console.log( " y la vevrificacion", hash_send)
+		if(hash == verification){
+			res = "VERIFICADA"
+			console.log(res)
+		}
 	}
 	else {
 		verification = 'Valor incorrecto' 
@@ -169,8 +198,6 @@ async function KeyRSA5(){
 	d5 = BigInt ('10946341923364556098740375465019054647743782929935977352793341973022254778450411699070050894481863756665338105484807527306516416952695407755584214094026087783996388567466086863986831835788794629437558101410861036568734981949337789885620349390793248349691849434469678607426767642226489494905877680457467904904011936204147995786166438164128967181428394863931870094513811532909687250909168551770810358668991016894240993582284757181549552616216782945644796769638688895710268758529449490314109812858138653022870752847373168370626415182549517830193697214608955128665805482953179588656658740569096005335988851805163827200897')
 	e5 = BigInt('65537');
 //	d5 = bigintCryptoUtils.modInv(e5, phi_n);
-	//console.log('hol ahola hola hola hola jola hola hola hola hila jola hola hila hjola ',e5,d5,'separacion seprcios',n5)
-	//return d;
 }
 //funcion para crear key RSA
 async function KeyRSA10(){
@@ -178,11 +205,12 @@ async function KeyRSA10(){
 	let r = BigInt('1')
 	let p = await bigintCryptoUtils.prime(1024);
 	let q = await bigintCryptoUtils.prime(1025);
-	n10 = p * q;
+	n10 = BigInt('17009576215749279853719082143825216456820375740171399848367792414259689686646120053537132921214303317961631018745154643415957398851703844683508275515870889767769348605400704195776477696021010776484360909347698709848364494656975966898461661242950295288880107508951468423186221167476595514228449370005580327173324748242953967735210224778520100195934213759737994322510886239212510403879633978205329151804673079268081314074797650932992722736244148738973034846947449374953557256117071816897560411863112173639736024331689597624742597225581829055979650405373879099651538116393204917155158071330074369631404089663236431705313')
+	//n10 = p * q;
 	let phi_n = (p-r)*(q-r);	
 	e10 = BigInt('65537');
-	d10 = bigintCryptoUtils.modInv(e10, phi_n);
-	//return d;
+	d10 = BigInt('11479783413931159455114648554305707449251904105520868924319938756353210164182744649404167512065395884107617095535604849671654358737960430813071311386582927587747471781825206330521528067697717741957669215578345997456444603249655980467306372559576033552381952717219775086225334520326797018323062454563327943775134793654537969601464229144071831509398840151998274230707712455769882566995188510272443751192030601820467243961477167324462477514504820603478514519782396962799466441287404624942112772445833150349073790389161691155785222534127956412237091291747269431076007542688121272231949931640042864918272897090303769799377')
+	//d10 = bigintCryptoUtils.modInv(e10, phi_n);
 }
 //funcion para crear key RSA
 async function KeyRSA20(){
@@ -190,11 +218,12 @@ async function KeyRSA20(){
 	let r = BigInt('1')
 	let p = await bigintCryptoUtils.prime(1024);
 	let q = await bigintCryptoUtils.prime(1025);
-	n20 = p * q;
+	n20 = BigInt('28672654403672456233051771434347126962819093740095376734863610916626200663004362688354343182876246608787168583846737715345055704592502624702805743828033820023036633188653925846065502374641402761256055649161060832836851021168131897740638348668728545159992997977607329327982293955943679993225312080566337897856551387483498810174849108443128145863879251853707958530073216297170209607329776818245619103907834580656328662430957709201835935511940433410106543130023723156229313510659583359870531334321366225687011349757518643091389119635551373822902197454955714427122819935921896379517896223137849990612531522429391684741797')
+	//n20 = p * q;
 	let phi_n = (p-r)*(q-r);	
 	e20 = BigInt('65537');
-	d20 = bigintCryptoUtils.modInv(e20, phi_n);
-	//return d;
+	d20 = BigInt(' 8857254503598713344189284109561890006595855055437858034351798266736308229283051140969737365722105262598169400185806568002207191959888545968053195657392689417678206797752395269139510437990985228216562348250082801482857758572239044658120197274797586047027759037744486049788692511681642453314104140730663758519578391114967313978952409224902934600172185632162410158149931192913009573878885838298170007517739162334291937014743800144278674563158819554496509740761842313546923603831959524118585019537216609728279260906436095400264571454244234434120106615990481409905816643675201443211398495447705823027695335293073161364733')
+	//d20 = bigintCryptoUtils.modInv(e20, phi_n);
 }
 
 

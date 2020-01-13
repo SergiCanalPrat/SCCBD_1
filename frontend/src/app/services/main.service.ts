@@ -21,8 +21,8 @@ export class MainService {
     return this.http.post('http://localhost:3000/monedero' + `/${id}`, id)
   }
 
-  post_money( value:Number, moneyblind: Object){
-    return this.http.post('http://localhost:3000/postMoney' + `/${value}`+ `/${moneyblind}`, value );
+  post_money( value:Number,id:String, moneyblind: Object,_id:Number){
+    return this.http.post('http://localhost:3000/postMoney' + `/${value}` + `/${id}` + `/${moneyblind}` + `/${_id}`, value );
   }
 
 

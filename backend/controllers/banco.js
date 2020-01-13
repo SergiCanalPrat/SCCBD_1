@@ -14,6 +14,58 @@ function getCuentas(){
         console.log('las cuentas', cuentas)
     })
 }
+function saveMoney(value,id,sign,iden){
+  let money = new Moneda();
+	money.id = id;
+	money.valor = value;
+  money.firma = sign;
+      if(value ==5){
+      money.save((err, moneda) => {
+        console.log("la moneda",moneda)
+        console.log(err)  
+        Cuentas.update({_id:iden},{"$push":{"Monedas5":moneda._id}}, (err,result)=>{
+          console.log("el titular", result)
+          if (err) {return "Error al salvar en la base"}
+          if(!result) {return "El titular no existe"}
+          else{
+            
+            return result}
+        })      
+      })
+    }
+
+    if(value ==10){
+      money.save((err, moneda) => {
+        console.log("la moneda",moneda)
+        console.log(err)  
+        Cuentas.update({_id:iden},{"$push":{"Monedas10":moneda._id}}, (err,result)=>{
+          console.log("el titular", result)
+          if (err) {return "Error al salvar en la base"}
+          if(!result) {return "El titular no existe"}
+          else{
+            
+            return result}
+        })      
+      })
+    }
+
+    if(value ==20){
+      money.save((err, moneda) => {
+        console.log("la moneda",moneda)
+        console.log(err)  
+        Cuentas.update({_id:iden},{"$push":{"Monedas20":moneda._id}}, (err,result)=>{
+          console.log("el titular", result)
+          if (err) {return "Error al salvar en la base"}
+          if(!result) {return "El titular no existe"}
+          else{
+            
+            return result}
+        })      
+      })
+    }
+ 
+
+}
 
 //para comprobar si el usuario esta en el banco
 function getCuenta(req, res){
@@ -82,6 +134,7 @@ module.exports = {
     getCuentas,
     getCuenta,
     getInfo,
-    getMonedero
+    getMonedero,
+    saveMoney
    
 }
