@@ -1,14 +1,22 @@
 
 'use string'
-
+const moment = require('moment')
+const jwt = require('jwt-simple')
+const mongoose = require('mongoose')
+const app = require('../app')
+const bigintCryptoUtils = require('bigint-crypto-utils');
 const Moneda = require('../modelos/moneda')
+const Cuentas = require('../modelos/cuenta')
+const apli = require('../app')
 
-//el cliente pide la compra de una moneda, se comprueba su valor (firma), 
-//Una vez verificada se manda al banco para verificar si esta gastada o no
-function compra(){
-    
-}
+	
+	
+function gastado (req,res){
+  
+  
+	 
+   }
 
 module.exports = {
-    compra,
+    gastado
 }

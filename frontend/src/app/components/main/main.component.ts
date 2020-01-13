@@ -48,7 +48,7 @@ nback;
 
 constructor(private mainService: MainService, private activatedRouter: ActivatedRoute) {
 	this.cliente = new Cliente(null,"","",null,null,null,null)
- 	this.money =new Moneda(null,null,"")
+ 	this.money =new Moneda(null,null,null,"")
 }
 ngOnInit() {
 //PROYECTO
@@ -64,19 +64,19 @@ this.activatedRouter.params.subscribe(params => {
 	  		for( var i = 0; i < res[0].Monedas5.length; i++){
 				this.mainService.monedero(res[0].Monedas5[i]).subscribe( respu => {
 					respu = respu['res']		
-					this.cliente.Monedas5.push( new Moneda(respu[0]._id, respu[0].valor, respu[0].firma));
+					this.cliente.Monedas5.push( new Moneda(respu[0]._id, respu[0].id, respu[0].valor, respu[0].firma));
 					//console.log('respuesta ',this.cliente.Monedas5)
 				})
 			}for( var i = 0; i < res[0].Monedas10.length; i++){
 				this.mainService.monedero(res[0].Monedas10[i]).subscribe( respu => {
 					respu = respu['res']
-					this.cliente.Monedas10.push(new Moneda(respu[0]._id, respu[0].valor, respu[0].firma))
+					this.cliente.Monedas10.push(new Moneda(respu[0]._id,respu[0].id, respu[0].valor, respu[0].firma))
 				//	console.log('respuesta10  ',this.cliente.Monedas10)
 				})
 			}for( var i = 0; i < res[0].Monedas20.length; i++){
 				this.mainService.monedero(res[0].Monedas20[i]).subscribe( respu => {
 					respu = respu['res']
-					this.cliente.Monedas20.push(new Moneda(respu[0]._id, respu[0].valor, respu[0].firma));
+					this.cliente.Monedas20.push(new Moneda(respu[0]._id,respu[0].id, respu[0].valor, respu[0].firma));
 				//	console.log('respuesta 20  ',this.cliente.Monedas20)
 				})
 				//console.log('respuesta de compra',  this.cliente)	
@@ -104,13 +104,12 @@ async KeyRSA(){
 
 async money_req(value: number){ //peticion de la moneda
 	//Creamos el papel de la moneda
-	let preid = await bigintCryptoUtils.randBytes(128, true);
-	let id = preid.join("")
-	this.money = new Moneda (id, value)
-	console.log('papel creado', this.money)
+	let id = bigintCryptoUtils.randBetween(BigInt(2) ** BigInt(256));
+	this.money = new Moneda (null, id, value)
+	//console.log('papel creado', this.money)
 	//MONEY creacion del hash
-	let money_hash = CryptoJS.SHA256(this.money.toString());
-	//console.log('hash del mensage ',money_hash)
+	let money_hash = CryptoJS.SHA256(id);
+	console.log('hash del mensage ',money_hash)
 	let money_hash_hex = money_hash.toString(CryptoJS.enc.Hex)
 	//console.log('hash en hex',money_hash_hex)
 	let cegado = await encryptRSA(money_hash_hex,this.e,this.n)
@@ -118,7 +117,7 @@ async money_req(value: number){ //peticion de la moneda
 	this.mainService.post_money(value, cegado).subscribe(async res =>{
 		console.log('mesage de salida ', res) //ya tengo la firma de la moneda	
 		let blind_money = await decryptRSA(res,this.d, this.n)
-		this.money = new Moneda(id,value,blind_money)
+		this.money = new Moneda(null,id,value,blind_money)
 		console.log('creamos la coin con los datos', this.money)
 	})
 }
@@ -126,7 +125,8 @@ async money_req(value: number){ //peticion de la moneda
 compra_req (coin: Moneda){
 	//enviar la peticion de compra a la tienda
 	console.log("Mi compre es de ", coin)
-	let compra_request = coin._id + "," + coin.valor + "," + coin.firma
+	let compra_request = coin._id+","+ coin.id + "," + coin.valor + "," + coin.firma
+	console.log('string de moneda ', compra_request)
 	this.mainService.compra(compra_request).subscribe(res =>{
 		console.log('estado de la compra', res);
 	})
