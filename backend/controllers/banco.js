@@ -4,8 +4,11 @@ const jwt = require('jwt-simple')
 const mongoose = require('mongoose')
 const app = require('../app')
 const Moneda = require('../modelos/moneda')
+const moneda = require('../modelos/moneda')
 const Cuentas = require('../modelos/cuenta')
 const lista_gastados = []
+const CryptoJS = require ('crypto-js');
+
 
 //get las cunatas de la base de datos 
 function getCuentas(){
@@ -134,7 +137,9 @@ module.exports = {
     getCuentas,
     getCuenta,
     getInfo,
+    gastado,
     getMonedero,
-    saveMoney
+    saveMoney,
+    firma
    
 }
