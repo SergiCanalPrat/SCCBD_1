@@ -137,9 +137,7 @@ module.exports = {
     getCuentas,
     getCuenta,
     getInfo,
-    gastado,
     getMonedero,
     saveMoney,
-    firma
    
 }

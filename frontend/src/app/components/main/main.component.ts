@@ -46,6 +46,7 @@ n;
 dback;
 nback;
 
+
 constructor(private mainService: MainService, private activatedRouter: ActivatedRoute) {
 	this.cliente = new Cliente(null,"","",null,null,null,null)
  	this.money =new Moneda(null,null,null,"")
@@ -59,11 +60,11 @@ this.activatedRouter.params.subscribe(params => {
 	this.mainService.cuenta(name).subscribe( res =>{
 		res = res['res'];
 		this.cliente = new Cliente(res[0]._id, res[0].titular, res[0].password, res[0].saldo);
-		//console.log('respuesta de compra',  this.cliente)		
+		//console.log('respuesta de compra',  this.cliente)
 		//racogo las monedas del monedero
 	  		for( var i = 0; i < res[0].Monedas5.length; i++){
 				this.mainService.monedero(res[0].Monedas5[i]).subscribe( respu => {
-					respu = respu['res']		
+					respu = respu['res']
 					this.cliente.Monedas5.push( new Moneda(respu[0]._id, respu[0].id, respu[0].valor, respu[0].firma));
 					//console.log('respuesta ',this.cliente.Monedas5)
 				})
@@ -79,10 +80,10 @@ this.activatedRouter.params.subscribe(params => {
 					this.cliente.Monedas20.push(new Moneda(respu[0]._id,respu[0].id, respu[0].valor, respu[0].firma));
 				//	console.log('respuesta 20  ',this.cliente.Monedas20)
 				})
-				//console.log('respuesta de compra',  this.cliente)	
+				//console.log('respuesta de compra',  this.cliente)
 		}
-		
-	  })	 
+
+	  })
     } else {
 	  this.cliente.Titular = '';
 	}
@@ -115,7 +116,7 @@ async money_req(value: number){ //peticion de la moneda
 	let cegado = await encryptRSA(money_hash_hex,this.e,this.n)
 	console.log('money cegado ', cegado)
 	this.mainService.post_money(value,id, cegado,this.cliente._id).subscribe(async res =>{
-		console.log('mesage de salida ', res) //ya tengo la firma de la moneda	
+		console.log('mesage de salida ', res) //ya tengo la firma de la moneda
 		let blind_money = await decryptRSA(res,this.d, this.n)
 		this.money = new Moneda(null,id,value,blind_money)
 		console.log('creamos la coin con los datos', this.money)
@@ -128,7 +129,16 @@ compra_req (coin: Moneda){
 	let compra_request = coin._id+","+ coin.id + "," + coin.valor + "," + coin.firma
 	console.log('string de moneda ', compra_request)
 	this.mainService.compra(compra_request).subscribe(res =>{
-		console.log('estado de la compra', res);
+    console.log('estado de la compra', res);
+    this.respuesta = res;
+    if (this.respuesta == 'GASTADO'){
+      var greenRect = document.getElementById('accepted').style.display = 'inline';
+      var redRect = document.getElementById('denied').style.display = 'none';
+    }
+    else if (this.respuesta == 'NO-GASTADO'){
+      var greenRect = document.getElementById('accepted').style.display = 'none';
+      var redRect = document.getElementById('denied').style.display = 'inline';
+    }
 	})
 }
 
@@ -139,6 +149,9 @@ async compra_tienda(Money){
 	})
 
 }
+
+
+
 //ENTREGAS
 }
 async function encryptRSA(msg,e,n){ // MANDAR EN HEXA

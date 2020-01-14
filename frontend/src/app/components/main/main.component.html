@@ -20,3 +20,7 @@
 <div *ngFor = "let coin of this.cliente.Monedas20; let i=index">
     <button (click)="compra_req(coin)" class= "boton-personalizado">Compra de 20 </button>
 </div>
+
+<div id='accepted'  style="background-color: lightgreen; display: none;"><a>Pago aceptado</a></div>
+<div id='denied' style="background-color: lightcoral; display: none"><a>Pago denegado</a></div>
+
