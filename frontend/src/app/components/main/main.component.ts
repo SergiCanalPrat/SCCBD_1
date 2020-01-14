@@ -132,12 +132,12 @@ compra_req (coin: Moneda){
     console.log('estado de la compra', res);
     this.respuesta = res;
     if (this.respuesta == 'GASTADO'){
-      var greenRect = document.getElementById('accepted').style.display = 'inline';
-      var redRect = document.getElementById('denied').style.display = 'none';
-    }
-    else if (this.respuesta == 'NO-GASTADO'){
       var greenRect = document.getElementById('accepted').style.display = 'none';
       var redRect = document.getElementById('denied').style.display = 'inline';
+    }
+    else if (this.respuesta == 'NO-GASTADO'){
+      var greenRect = document.getElementById('accepted').style.display = 'inline';
+      var redRect = document.getElementById('denied').style.display = 'none';
     }
 	})
 }
