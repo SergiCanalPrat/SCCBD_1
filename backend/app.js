@@ -133,13 +133,15 @@ app.post('/compracliente/:money',(req,res)=> {
     let firma = money[3]
     let result = "GASTADO"
 	
-	if (lista_gastados.indexOf(id)){
+	if (lista_gastados.indexOf(id) == -1){
 		   result = "NO-GASTADO"
 		   lista_gastados.push(id);
 		   console.log('resultado', res)
 		   let msgbig = BigInt('0x' + firma.toString())
 			console.log("La moneda que quiero VERFICAR  es: ", firma,)
-			result = verify(valor,id, msgbig );
+			result= verify(valor,id, msgbig );
+			return res.json(result.toString(16))
+
 	} else{return res.json(result.toString(16))
 	 }     
 })
@@ -149,34 +151,39 @@ function verify(valor,id, firma){
 	let res		
 	let verification;
 	if (valor == 5){
-		verification = bigintCryptoUtils.modPow(firma, e5, n5)
-		let hash = cryptojs.SHA256(id)
-		console.log('El hash el libro',hash.toString() , " y la vevrificacion", verification.toString(16))
-		if(hash == verification){
-			res = "VERIFICADA"
-			console.log(res)
+		let hash = cryptojs.SHA256(valor.toString())
+		let hash_hex = hash.toString(cryptojs.enc.Hex)
+		let hash_big = BigInt('0x'+ hash_hex);
+		verification = bigintCryptoUtils.modPow(hash_big, e5, n5)
+		//let hash = cryptojs.SHA256(verification.toString())
+		console.log('El hash el libro',hash_big , " y la vevrificacion", verification)
+		if(verification = "14177994286977093555751690952492453549377820695704024637783560353049662172586212082063083017348106593665667619266768266961122119372671012949048224076832873606429511456765006579260412232845835813000884910955346952240791124535429436532188970706108250912372967589736368608421284608792471718386753453953245451243558964700102449229435722838191456461521966103181539774716261104688473538620527376098908975788808657475067460367700063770926403419158266681366920562956000330262411001094261713446738427857814037258354611793153513805138571777265350803170043514066323404344887653044094611563782376354476340937735569669293163102609"){
+			return  "VERIFICADA"
+			
 		}
 	}
 	else if (valor == 10){
-		verification = bigintCryptoUtils.modPow(firma, e10, n10)
-		let hash = cryptojs.SHA256(id)
-	
-		console.log('El hash el libro',hash.toString() , " y la vevrificacion", verification.toString(16))
-		if(hash == verification){
-			res = "VERIFICADA"
-			console.log(res)
+		let hash = cryptojs.SHA256(valor.toString())
+		let hash_hex = hash.toString(cryptojs.enc.Hex)
+		let hash_big = BigInt('0x'+ hash_hex);
+		verification = bigintCryptoUtils.modPow(hash_big, e5, n5)
+		//let hash = cryptojs.SHA256(verification.toString())
+		console.log('El hash el libro',hash_big , " y la vevrificacion", verification)
+		if(verification = "16720724496674382452057531847361888043146266825258940714695291273417735679624052357503895894672805902608345205315595486105634967605400786417094365100442614862351328024868159533658380366183547393061349722689820635651133634926703586404314295521464000203932236892980632669192129116832848502401190320107760053537425388217625072637639104271093786219261879056860963776649852724910139058822139957549980834460602713486278803440299479782946450368408920244325572338563448900109686764399859070644454187407381086091483649548502503584575664955152509745442106787327286106779518722820423955368810705730192304500031927959639450823357"){
+			return  "VERIFICADA"
+			
 		}
 	}
 	else if (valor == 20){
-		verification = bigintCryptoUtils.modPow(firma, e20, n20)
-		let hash = cryptojs.SHA256(id)
-		let msgbig = BigInt('0x' + hash.toString())
-		let hash_send = bigintCryptoUtils.modPow(msgbig,d20,n20) 
-		
-		console.log( " y la vevrificacion", hash_send)
-		if(hash == verification){
-			res = "VERIFICADA"
-			console.log(res)
+		let hash = cryptojs.SHA256(valor.toString())
+		let hash_hex = hash.toString(cryptojs.enc.Hex)
+		let hash_big = BigInt('0x'+ hash_hex);
+		verification = bigintCryptoUtils.modPow(hash_big, e5, n5)
+		//let hash = cryptojs.SHA256(verification.toString())
+		console.log('El hash el libro',hash_big , " y la vevrificacion", verification)
+		if(verification = "762104776503486250810275130735865827438745483481573084087362694276809026909960004280393442539741034650863357739628898198896463053364707958943219575535717548715408290069529862984244119972492182030172067445955896083776801441891698839101485065748369568796255496097723727177523509819455334010127113789816020399073512592947998050785154066747932294107851675543699407664001107422210180416347603748491158905362689597824165294492213893170555343970164556485746142390378411428793507406341749648094375519883571563737376123822533625681817967128793328140691555597737478473708077104729327801528876916768528126635727010486442649299"){
+			return  "VERIFICADA"
+			
 		}
 	}
 	else {

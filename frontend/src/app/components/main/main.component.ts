@@ -106,12 +106,12 @@ async money_req(value: number){ //peticion de la moneda
 	//Creamos el papel de la moneda
 	let id = bigintCryptoUtils.randBetween(BigInt(2) ** BigInt(256));
 	this.money = new Moneda (null, id, value)
-	//console.log('papel creado', this.money)
+	console.log('papel creado', this.money.id)
 	//MONEY creacion del hash
-	let money_hash = CryptoJS.SHA256(id);
+	let money_hash = CryptoJS.SHA256(value.toString());
 	console.log('hash del mensage ',money_hash)
 	let money_hash_hex = money_hash.toString(CryptoJS.enc.Hex)
-	//console.log('hash en hex',money_hash_hex)
+	console.log('hash en hex',money_hash_hex)
 	let cegado = await encryptRSA(money_hash_hex,this.e,this.n)
 	console.log('money cegado ', cegado)
 	this.mainService.post_money(value,id, cegado,this.cliente._id).subscribe(async res =>{
