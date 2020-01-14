@@ -138,6 +138,5 @@ module.exports = {
     getCuenta,
     getInfo,
     getMonedero,
-    saveMoney,
-   
+    saveMoney,   
 }
