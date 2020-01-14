@@ -107,18 +107,30 @@ async money_req(value: number){ //peticion de la moneda
 	//Creamos el papel de la moneda
 	let id = bigintCryptoUtils.randBetween(BigInt(2) ** BigInt(256));
 	this.money = new Moneda (null, id, value)
-	console.log('papel creado', this.money.id)
+	//console.log('papel creado', this.money.id)
 	//MONEY creacion del hash
-	let money_hash = CryptoJS.SHA256(value.toString());
-	console.log('hash del mensage ',money_hash)
-	let money_hash_hex = money_hash.toString(CryptoJS.enc.Hex)
-	console.log('hash en hex',money_hash_hex)
-	let cegado = await encryptRSA(money_hash_hex,this.e,this.n)
-	console.log('money cegado ', cegado)
+	let hash = CryptoJS.SHA256(this.money.toString());
+	//console.log('hash del mensage ',money_hash)
+	let hash_hex = hash.toString(CryptoJS.enc.Hex)
+	console.log('hash en hex',hash_hex)
+	//HASH MNEY CEGADO /*m '\ equiv mr ^ {e} \ ({\ mathrm {mod}} \ N)   f ^ {e} {modulo N}*/
+	let f = await bigintCryptoUtils.prime(1024);
+	
+	//ciego el hash con el factor m' = mr ^ {e} {modulo N)
+		let hash_big = BigInt('0x' + hash_hex);
+		let exponent = BigInt('0x' + Math.pow(f, this.e));
+		let product = exponent * hash_big
+		let cegado = bigintCryptoUtils.modPow(product,this.e,this.n)
+		console.log('money cegado ',cegado)
 	this.mainService.post_money(value,id, cegado,this.cliente._id).subscribe(async res =>{
 		console.log('mesage de salida ', res) //ya tengo la firma de la moneda
-		let blind_money = await decryptRSA(res,this.d, this.n)
-		this.money = new Moneda(null,id,value,blind_money)
+		//DESCIEGO LA MONEDA
+		let blind_money = BigInt('0x' + res);
+		let expo_blind = BigInt('0x' + Math.pow(f,-1))
+		let productf = blind_money * expo_blind;
+		let blind = bigintCryptoUtils.modPow(productf,this.e,this.n)
+		this.money = new Moneda(null,id,value,blind)
+		
 		console.log('creamos la coin con los datos', this.money)
 	})
 }
