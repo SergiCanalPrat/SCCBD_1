@@ -21,7 +21,6 @@
     "big-integer": "^1.6.47",
     "bigint-as-any-ts": "^1.0.2",
     "bigint-crypto-utils": "^2.3.1",
-    "bootstrap": "^4.4.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "crypto-browserify": "^3.12.0",
