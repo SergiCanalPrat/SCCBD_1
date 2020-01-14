@@ -150,14 +150,14 @@ function verify(valor,id, firma){
 	//console.log('datos', valor,id,firma)
 	let res		
 	let verification;
+	//Para verificarla, hace falta
+	//1 desfirmo la firma //2 esto me tiene que dar igual al valor mas la id
 	if (valor == 5){
-		let hash = cryptojs.SHA256(valor.toString())
-		let hash_hex = hash.toString(cryptojs.enc.Hex)
-		let hash_big = BigInt('0x'+ hash_hex);
-		verification = bigintCryptoUtils.modPow(hash_big, e5, n5)
+		let hash = bigintCryptoUtils.modPow(firma, e5,n5)
+		let hash2 = cryptojs.SHA256(id,valor)
 		//let hash = cryptojs.SHA256(verification.toString())
-		console.log('El hash el libro',hash_big , " y la vevrificacion", verification)
-		if(verification = "14177994286977093555751690952492453549377820695704024637783560353049662172586212082063083017348106593665667619266768266961122119372671012949048224076832873606429511456765006579260412232845835813000884910955346952240791124535429436532188970706108250912372967589736368608421284608792471718386753453953245451243558964700102449229435722838191456461521966103181539774716261104688473538620527376098908975788808657475067460367700063770926403419158266681366920562956000330262411001094261713446738427857814037258354611793153513805138571777265350803170043514066323404344887653044094611563782376354476340937735569669293163102609"){
+		console.log('El hash el libro',hash , " y la vevrificacion", hash2)
+		if(hash == hash2 ){
 			return  "NO-GASTADO"
 			
 		}
