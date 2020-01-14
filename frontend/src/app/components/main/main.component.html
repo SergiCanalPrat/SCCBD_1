@@ -10,16 +10,21 @@
 <p><label>Compra </label></p>
 
 <div *ngFor = "let coin of this.cliente.Monedas5; let i=index">
+    <br>
     <button (click)="compra_req(coin)" class= "boton-personalizado">Compra de 5 </button>
 </div>
 
 <div *ngFor = "let coin of this.cliente.Monedas10; let i=index">
+    <br>
     <button (click)="compra_req(coin)" class= "boton-personalizado">Compra de 10 </button>
 </div>
 
 <div *ngFor = "let coin of this.cliente.Monedas20; let i=index">
+    <br>
     <button (click)="compra_req(coin)" class= "boton-personalizado">Compra de 20 </button>
 </div>
+
+<br> <br> <br>
 
 <div id='accepted' width="200px" height="200px" style="background-color: lightgreen; display: none;"><a>Pago aceptado</a></div>
 
