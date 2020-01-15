@@ -139,10 +139,20 @@ app.post('/compracliente/:money',(req,res)=> {
 		   console.log('resultado', res)
 		   let msgbig = BigInt('0x' + firma.toString())
 			console.log("La moneda que quiero VERFICAR  es: ", firma,)
-			result= verify(valor,id, msgbig );
-			return res.json(result.toString(16))
+			//verify(valor,id, msgbig );
 
-	} else{return res.json(result.toString(16))
+
+			if (valor == 5){
+				let hash = bigintCryptoUtils.modPow(firma, e5,n5)
+				let hash2 = cryptojs.SHA256(firma)
+				//let hash = cryptojs.SHA256(verification.toString())
+				console.log('El hash el libro',hash , " y la vevrificacion", hash2.toString())
+				if(hash == hash2 ){
+					result =  "VERIFICADO"					
+				}
+				
+			}return res.json(result.toString(16))
+	} else { return res.json(result.toString(16))
 	 }     
 })
 //FUNCIONES DEL PROYECTO
