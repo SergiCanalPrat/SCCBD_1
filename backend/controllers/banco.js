@@ -6,6 +6,7 @@ const app = require('../app')
 const Moneda = require('../modelos/moneda')
 const moneda = require('../modelos/moneda')
 const Cuentas = require('../modelos/cuenta')
+const Cuentas1 = require('../modelos/cuenta')
 const lista_gastados = []
 const CryptoJS = require ('crypto-js');
 
@@ -17,12 +18,30 @@ function getCuentas(){
         console.log('las cuentas', cuentas)
     })
 }
+
+function saveSaldo(value,saldo,iden){
+  let s = saldo - value;
+  console.log('identologuico',s)
+
+  Cuentas.findById(iden,function(err,result) {
+    if (err) {return "Error al salvar en la base"}
+    if(!result) {return "El titular no existe"}
+    else{   
+      result.saldo = result.saldo - 5 
+        console.log('la cuenta', result)
+      result.save((err,resultado) => {
+        console.log('guardad nuevos datos', resultado)
+      })
+      }
+  })
+ 
+}
 function saveMoney(value,id,sign,iden){
   let money = new Moneda();
 	money.id = id;
 	money.valor = value;
   money.firma = sign;
-      if(value ==5){
+    if(value ==5){
       money.save((err, moneda) => {
         console.log("la moneda",moneda)
         console.log(err)  
@@ -30,10 +49,11 @@ function saveMoney(value,id,sign,iden){
           console.log("el titular", result)
           if (err) {return "Error al salvar en la base"}
           if(!result) {return "El titular no existe"}
-          else{
-            
-            return result}
+          else{        
+            return result
+          }
         })      
+      
       })
     }
 
@@ -138,5 +158,6 @@ module.exports = {
     getCuenta,
     getInfo,
     getMonedero,
-    saveMoney,   
+    saveMoney,  
+    saveSaldo 
 }

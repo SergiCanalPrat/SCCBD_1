@@ -118,15 +118,15 @@ async money_req(value: number){ //peticion de la moneda
 	//HASH MNEY CEGADO /*m '\ equiv mr ^ {e} \ ({\ mathrm {mod}} \ N)   f ^ {e} {modulo N}*/
 	let f = await bigintCryptoUtils.prime(1024);	
 	//ciego el hash con el factor m' = mr ^ {e} {modulo N)		
-		let expo = f^this.e
+		let expo = Math.pow(f, this.e)
 		let exponent = BigInt('0x' + expo);
 		let cegado = bigintCryptoUtils.modPow(hash_big,exponent,this.n)
 		console.log('money cegado ',cegado)
-	this.mainService.post_money(value,id, cegado,this.cliente._id).subscribe(async res =>{
+	this.mainService.post_money(value,id, cegado,this.cliente._id,this.cliente.Saldo).subscribe(async res =>{
 		//DESFIRMO LA MONEDA
 		let blind_money = BigInt('0x' + res);
 		console.log('blind_money',blind_money)
-		let expoceg = f^BigInt(-1)
+		let expoceg = Math.pow(f, -1)
 		let blind = bigintCryptoUtils.modPow(blind_money,expoceg,this.n)
 		console.log('firmaaa ', blind)
 		this.money = new Moneda(null,id,value,blind)

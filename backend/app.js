@@ -86,15 +86,17 @@ app.post('/cuenta/:name', banco.getInfo)
 app.post('/monedero/:id',banco.getMonedero)
 
 // FUNCIONES 	FIRMA POR PARTE DEL BANCO 
-app.post('/postMoney/:value/:id/:moneyblind/:_id',(req,res) => {
+app.post('/postMoney/:value/:id/:moneyblind/:_id/:saldo',(req,res) => {
 	let value = req.params.value;
 	let id = req.params.id;
-	let _id = req.params._id
+	let _id = req.params._id;
+	let saldo = req.params.saldo;
 	moneyBlind = req.params.moneyblind;
 	console.log('cuerpo PostMoney', value, id)
 	//moneyInBank = moneyInBank - value; //El banco resta de la cuenta del cliente el valor de la moneda
  	let sign = signMoney(moneyBlind,value) //El banco firma la moneda
 	let respu = banco.saveMoney(value,id,sign,_id)
+	let ress = banco.saveSaldo(value,saldo,_id)
 	console.log(respu)
 	return res.json(sign.toString(16))
 })
@@ -140,17 +142,15 @@ app.post('/compracliente/:money',(req,res)=> {
 		   let msgbig = BigInt('0x' + firma.toString())
 			console.log("La moneda que quiero VERFICAR  es: ", firma,)
 			//verify(valor,id, msgbig );
-
-
 			if (valor == 5){
 				let hash = bigintCryptoUtils.modPow(firma, e5,n5)
 				let hash2 = cryptojs.SHA256(firma)
 				//let hash = cryptojs.SHA256(verification.toString())
 				console.log('El hash el libro',hash , " y la vevrificacion", hash2.toString())
-				if(hash == hash2 ){
+				if(hash2 == valor ){
 					result =  "VERIFICADO"					
-				}
-				
+			}	// 
+
 			}return res.json(result.toString(16))
 	} else { return res.json(result.toString(16))
 	 }     
