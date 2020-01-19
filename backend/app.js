@@ -142,12 +142,13 @@ app.post('/compracliente/:money',(req,res)=> {
 		console.log("La moneda que quiero VERFICAR  es: ", firma,)
 		//result = await verify(valor,id, firma );
 		if (valor == 5){
-			let msgbig = BigInt(firma)
-			let hash = bigintCryptoUtils.modPow(valor, d5,n5)
+			let hash2 = cryptojs.SHA256(valor.toString())
+			let hash3 = BigInt('0x' + hash2)
+			let hash = bigintCryptoUtils.modPow(firma, e5,n5)
 			//console.log('la firma', firma)
-			let hash2 = cryptojs.SHA256(hash)
+			
 			//let hash = cryptojs.SHA256(verification.toString())
-			console.log('El desfirmado',hash , " y la vevrificacion", hash2)
+			console.log('El desfirmado    ',hash , "  ", hash3, "     y la vevrificacion   ", hash2)
 				if(hash == firma ){
 					result =  "VERIFICADO"
 					return res.json(result.toString(16))

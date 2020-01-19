@@ -129,11 +129,11 @@ async money_req(value: number){ //peticion de la moneda
 	//	let cegado = await bigintCryptoUtils.modPow(hash_big,factor,this.n)
 		console.log('money cegado ',cegado)
 
-	this.mainService.post_money(value,id, cegado ,this.cliente._id,this.cliente.Saldo).subscribe(async res =>{
+	this.mainService.post_money(value,id, product ,this.cliente._id,this.cliente.Saldo).subscribe(async res =>{
 		//DESFIRMO LA MONEDA
 		let blind_money = BigInt('0x' + res);
 		console.log('blind_money',blind_money)
-		let factor_des = await bigintCryptoUtils.modPow(f,-1,this.n)
+		let factor_des = await bigintCryptoUtils.modInv(f,this.n)
 		let product_des = blind_money*factor_des;
 		let blind = await bigintCryptoUtils.toZn(product_des, this.n)
 		//let blind = await bigintCryptoUtils.modPow(blind_money,factor_des,this.n)
