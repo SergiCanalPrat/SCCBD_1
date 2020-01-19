@@ -47,12 +47,16 @@ dback;
 nback;
 
 
+
 constructor(private mainService: MainService, private activatedRouter: ActivatedRoute) {
 	this.cliente = new Cliente(null,"","",null,null,null,null)
  	this.money =new Moneda(null,null,null,"")
 }
 ngOnInit() {
 //PROYECTO
+
+
+
 this.activatedRouter.params.subscribe(params => {
     if (typeof params['name'] !== 'undefined') {
 	  let name = params['name'];
@@ -105,6 +109,7 @@ async KeyRSA(){
 
 async money_req(value: number){ //peticion de la moneda
 	//Creamos el papel de la moneda
+	let f = await bigintCryptoUtils.prime(1024);
 	let id = bigintCryptoUtils.randBetween(BigInt(2) ** BigInt(256));
 	this.money = new Moneda (null, id, value)
 	//console.log('papel creado', this.money.id)
@@ -115,19 +120,22 @@ async money_req(value: number){ //peticion de la moneda
 	console.log('hash en hex',hash_hex)
 	let hash_big = BigInt('0x' + hash_hex);
 	console.log('jas en big', hash_big)
-	//HASH MNEY CEGADO /*m '\ equiv mr ^ {e} \ ({\ mathrm {mod}} \ N)   f ^ {e} {modulo N}*/
-	let f = await bigintCryptoUtils.prime(1024);	
-	//ciego el hash con el factor m' = mr ^ {e} {modulo N)		
-		let expo = Math.pow(f, this.e)
-		let exponent = BigInt('0x' + expo);
-		let cegado = bigintCryptoUtils.modPow(hash_big,exponent,this.n)
+	//HASH MNEY CEGADO /*m '\ equiv mr ^ {e} \ ({\ mathrm {mod}} \ N)   f ^ {e} {modulo N}*/	
+	let factor = await bigintCryptoUtils.modPow(f,this.e,this.n); 	
+	//ciego el hash con el factor m' = mr ^ {e} {modulo N)	
+	let product = factor * hash_big;
+	let cegado = await bigintCryptoUtils.toZn(product, this.n)
+	//	let cegado = await bigintCryptoUtils.modPow(hash_big,factor,this.n)
 		console.log('money cegado ',cegado)
-	this.mainService.post_money(value,id, cegado,this.cliente._id,this.cliente.Saldo).subscribe(async res =>{
+
+	this.mainService.post_money(value,id, cegado ,this.cliente._id,this.cliente.Saldo).subscribe(async res =>{
 		//DESFIRMO LA MONEDA
 		let blind_money = BigInt('0x' + res);
 		console.log('blind_money',blind_money)
-		let expoceg = Math.pow(f, -1)
-		let blind = bigintCryptoUtils.modPow(blind_money,expoceg,this.n)
+		let factor_des = await bigintCryptoUtils.modPow(f,-1,this.n)
+		let product_des = blind_money*factor_des;
+		let blind = await bigintCryptoUtils.toZn(product_des, this.n)
+		//let blind = await bigintCryptoUtils.modPow(blind_money,factor_des,this.n)
 		console.log('firmaaa ', blind)
 		this.money = new Moneda(null,id,value,blind)
 		console.log('creamos la coin con los datos', this.money)
@@ -167,7 +175,7 @@ async compra_tienda(Money){
 }
 async function encryptRSA(msg,e,n){ // MANDAR EN HEXA
 	//funcion para encriptar RSA
-//let msgbuf = .from(msg,'utf8');
+ // let msgbuf = bigintCryptoUtils.from(msg,'utf8');
   let msgbig = BigInt('0x' + msg)
   //console.log('men en big', msgbig);
   let cryptedRSA = bigintCryptoUtils.modPow(msgbig, e, n)

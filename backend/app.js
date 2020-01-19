@@ -136,25 +136,29 @@ app.post('/compracliente/:money',(req,res)=> {
     let result = "GASTADO"
 	
 	if (lista_gastados.indexOf(id) == -1){
-		   result = "NO-GASTADO"
-		   lista_gastados.push(id);
-		   console.log('resultado', res)
-		   let msgbig = BigInt('0x' + firma.toString())
-			console.log("La moneda que quiero VERFICAR  es: ", firma,)
-			//verify(valor,id, msgbig );
-			if (valor == 5){
-				let hash = bigintCryptoUtils.modPow(firma, e5,n5)
-				let hash2 = cryptojs.SHA256(firma)
-				//let hash = cryptojs.SHA256(verification.toString())
-				console.log('El hash el libro',hash , " y la vevrificacion", hash2.toString())
+		result = "NO-GASTADO"
+		lista_gastados.push(id);
+		//console.log('resultado', res)		 
+		console.log("La moneda que quiero VERFICAR  es: ", firma,)
+		//result = await verify(valor,id, firma );
+		if (valor == 5){
+			//let msgbig = BigInt('0x' + firma.toString())
+			let hash = bigintCryptoUtils.modPow(firma, e5,n5)
+			//console.log('la firma', firma)
+			let hash2 = cryptojs.SHA256(hash)
+			//let hash = cryptojs.SHA256(verification.toString())
+			console.log('El desfirmado',hash , " y la vevrificacion", hash2)
 				if(hash2 == valor ){
-					result =  "VERIFICADO"					
-			}	// 
+					result =  "VERIFICADO"
+					return res.json(result.toString(16))
+				}
+		}	
+		
+		
 
-			}return res.json(result.toString(16))
-	} else { return res.json(result.toString(16))
-	 }     
+	} else { return res.json(result.toString(16))}
 })
+
 //FUNCIONES DEL PROYECTO
 function verify(valor,id, firma){
 	//console.log('datos', valor,id,firma)
@@ -162,17 +166,9 @@ function verify(valor,id, firma){
 	let verification;
 	//Para verificarla, hace falta
 	//1 desfirmo la firma //2 esto me tiene que dar igual al valor mas la id
-	if (valor == 5){
-		let hash = bigintCryptoUtils.modPow(firma, e5,n5)
-		let hash2 = cryptojs.SHA256(id,valor)
-		//let hash = cryptojs.SHA256(verification.toString())
-		console.log('El hash el libro',hash , " y la vevrificacion", hash2)
-		if(hash == hash2 ){
-			return  "NO-GASTADO"
-			
-		}
-	}
-	else if (valor == 10){
+	
+	
+	 if (valor == 10){
 		let hash = cryptojs.SHA256(valor.toString())
 		let hash_hex = hash.toString(cryptojs.enc.Hex)
 		let hash_big = BigInt('0x'+ hash_hex);
@@ -198,8 +194,9 @@ function verify(valor,id, firma){
 	}
 	else {
 		verification = 'Valor incorrecto' 
-	}
 		return verification;
+	}
+		
 }
 
 
