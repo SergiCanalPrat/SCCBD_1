@@ -142,19 +142,29 @@ app.post('/compracliente/:money',(req,res)=> {
 		console.log("La moneda que quiero VERFICAR  es: ", firma,)
 		//result = await verify(valor,id, firma );
 		if (valor == 5){
-			//let msgbig = BigInt('0x' + firma.toString())
-			let hash = bigintCryptoUtils.modPow(firma, e5,n5)
+			let msgbig = BigInt(firma)
+			let hash = bigintCryptoUtils.modPow(valor, d5,n5)
 			//console.log('la firma', firma)
 			let hash2 = cryptojs.SHA256(hash)
 			//let hash = cryptojs.SHA256(verification.toString())
 			console.log('El desfirmado',hash , " y la vevrificacion", hash2)
-				if(hash2 == valor ){
+				if(hash == firma ){
 					result =  "VERIFICADO"
 					return res.json(result.toString(16))
 				}
 		}	
-		
-		
+		else if (valor ==10){
+		let msgbig = BigInt(firma)
+			let hash = bigintCryptoUtils.modPow(valor, d5,n5)
+			//console.log('la firma', firma)
+			let hash2 = cryptojs.SHA256(hash)
+			//let hash = cryptojs.SHA256(verification.toString())
+			console.log('El desfirmado',hash , " y la vevrificacion", hash2)
+				if(hash == firma ){
+					result =  "VERIFICADO"
+					return res.json(result.toString(16))
+				}
+			}
 
 	} else { return res.json(result.toString(16))}
 })
@@ -168,19 +178,9 @@ function verify(valor,id, firma){
 	//1 desfirmo la firma //2 esto me tiene que dar igual al valor mas la id
 	
 	
-	 if (valor == 10){
-		let hash = cryptojs.SHA256(valor.toString())
-		let hash_hex = hash.toString(cryptojs.enc.Hex)
-		let hash_big = BigInt('0x'+ hash_hex);
-		verification = bigintCryptoUtils.modPow(hash_big, e5, n5)
-		//let hash = cryptojs.SHA256(verification.toString())
-		console.log('El hash el libro',hash_big , " y la vevrificacion", verification)
-		if(verification = "16720724496674382452057531847361888043146266825258940714695291273417735679624052357503895894672805902608345205315595486105634967605400786417094365100442614862351328024868159533658380366183547393061349722689820635651133634926703586404314295521464000203932236892980632669192129116832848502401190320107760053537425388217625072637639104271093786219261879056860963776649852724910139058822139957549980834460602713486278803440299479782946450368408920244325572338563448900109686764399859070644454187407381086091483649548502503584575664955152509745442106787327286106779518722820423955368810705730192304500031927959639450823357"){
-			return  "NO-GASTADO"
-			
-		}
-	}
-	else if (valor == 20){
+	 
+	
+	 if (valor == 20){
 		let hash = cryptojs.SHA256(valor.toString())
 		let hash_hex = hash.toString(cryptojs.enc.Hex)
 		let hash_big = BigInt('0x'+ hash_hex);

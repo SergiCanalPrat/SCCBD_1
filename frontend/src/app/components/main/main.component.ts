@@ -120,6 +120,7 @@ async money_req(value: number){ //peticion de la moneda
 	console.log('hash en hex',hash_hex)
 	let hash_big = BigInt('0x' + hash_hex);
 	console.log('jas en big', hash_big)
+
 	//HASH MNEY CEGADO /*m '\ equiv mr ^ {e} \ ({\ mathrm {mod}} \ N)   f ^ {e} {modulo N}*/	
 	let factor = await bigintCryptoUtils.modPow(f,this.e,this.n); 	
 	//ciego el hash con el factor m' = mr ^ {e} {modulo N)	
