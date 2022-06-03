@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@angular/common": "^8.2.14",
-    "@angular/core": "^8.2.14",
+    "@angular/core": "^11.0.5",
     "@angular/language-service": "^8.2.11",
     "@angular/router": "^8.2.14",
     "@types/jquery": "^3.3.31",
